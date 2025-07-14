@@ -29,10 +29,8 @@ export default function RootLayout({
         <SWRConfig
           value={{
             fallback: {
-              // We do NOT await here
-              // Only components that read this data will suspend
-              '/api/user': getUser(),
-              '/api/agency': getAgencyForUser()
+              // We do NOT preload user data in root layout
+              // Let components handle their own data loading
             }
           }}
         >

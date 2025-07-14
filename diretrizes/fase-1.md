@@ -64,21 +64,21 @@ No terminal do VS Code, vamos criar as pastas necessárias. Digite cada comando 
 
 ```bash
 # Criar estrutura em lib
-mkdir -p lib/actions/auth
-mkdir -p lib/actions/agency
-mkdir -p lib/actions/users
-mkdir -p lib/validations
-mkdir -p lib/db/schema
-mkdir -p lib/db/queries
-mkdir -p lib/services/auth
-mkdir -p lib/services/activity-logger
-mkdir -p lib/services/error-handler
-mkdir -p lib/services/cache
-mkdir -p lib/config
+mkdir -p lib/actions/auth;
+mkdir -p lib/actions/agency;
+mkdir -p lib/actions/users;
+mkdir -p lib/validations;
+mkdir -p lib/db/schema;
+mkdir -p lib/db/queries;
+mkdir -p lib/services/auth;
+mkdir -p lib/services/activity-logger;
+mkdir -p lib/services/error-handler;
+mkdir -p lib/services/cache;
+mkdir -p lib/config;
 
 # Criar estrutura em app
-mkdir -p app/api/v1/auth
-mkdir -p app/api/v1/agency
+mkdir -p app/api/v1/auth;
+mkdir -p app/api/v1/agency;
 mkdir -p app/api/v1/webhooks
 ```
 
@@ -98,7 +98,7 @@ Agora vamos reorganizar os arquivos que já existem:
 2. Vamos mover alguns arquivos para os novos locais:
 
 **Movendo arquivos de autenticação:**
-- Encontre o arquivo `app/(auth)/actions.ts` (se existir)
+- Encontre o arquivo `app/(login)/actions.ts` (se existir)
 - Clique com o botão direito > Cut (Recortar)
 - Navegue até `lib/actions/auth`
 - Clique com o botão direito > Paste (Colar)

@@ -31,16 +31,23 @@ export async function signToken(payload: SessionData) {
 }
 
 export async function verifyToken(input: string) {
-  const { payload } = await jwtVerify(input, key, {
-    algorithms: ['HS256'],
-  });
-  return payload as SessionData;
+  try {
+    const { payload } = await jwtVerify(input, key, {
+      algorithms: ['HS256'],
+    });
+    return payload as SessionData;
+  } catch (error) {
+    // Token is invalid, expired, or malformed
+    return null;
+  }
 }
 
 export async function getSession() {
   const session = (await cookies()).get('session')?.value;
   if (!session) return null;
-  return await verifyToken(session);
+  
+  const sessionData = await verifyToken(session);
+  return sessionData;
 }
 
 export async function setSession(user: NewUser) {

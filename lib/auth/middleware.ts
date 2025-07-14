@@ -61,11 +61,11 @@ type ActionWithAgencyFunction<T> = (
 export function withAgency<T>(action: ActionWithAgencyFunction<T>) {
   return async (formData: FormData): Promise<T> => {
     const user = await getUser();
-    if (!user) {
+    if (!user || !user.id) {
       redirect('/sign-in');
     }
 
-    const agency = await getAgencyForUser();
+    const agency = await getAgencyForUser(user.id);
     if (!agency) {
       throw new Error('Agency not found');
     }
