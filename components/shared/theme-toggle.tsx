@@ -11,18 +11,47 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import styles from "./theme-toggle.module.css"
 
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = React.useState(false)
+
+  React.useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) {
+    return (
+      <Button variant="outline" size="icon" className={styles.themeToggleButton}>
+        <Sun 
+          className={styles.themeIcon} 
+          style={{
+            color: 'hsl(var(--foreground))',
+            fill: 'currentColor',
+            stroke: 'currentColor',
+            opacity: 1
+          }} 
+        />
+      </Button>
+    )
+  }
 
   const getThemeIcon = () => {
+    const iconStyle = {
+      color: 'hsl(var(--foreground))',
+      fill: 'currentColor',
+      stroke: 'currentColor',
+      opacity: 1
+    }
+    
     switch (theme) {
       case THEMES.LIGHT:
-        return <Sun className="h-4 w-4" />
+        return <Sun className={styles.themeIcon} style={iconStyle} />
       case THEMES.DARK:
-        return <Moon className="h-4 w-4" />
+        return <Moon className={styles.themeIcon} style={iconStyle} />
       default:
-        return <Monitor className="h-4 w-4" />
+        return <Monitor className={styles.themeIcon} style={iconStyle} />
     }
   }
 
@@ -32,33 +61,33 @@ export function ThemeToggle() {
         <Button 
           variant="outline" 
           size="icon"
-          className="h-9 w-9"
+          className={styles.themeToggleButton}
           aria-label="Alterar tema"
         >
           {getThemeIcon()}
-          <span className="sr-only">Alterar tema</span>
+          <span className={styles.screenReaderOnly}>Alterar tema</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="min-w-[8rem]">
+      <DropdownMenuContent align="end" className={styles.dropdownContent}>
         <DropdownMenuItem 
           onClick={() => setTheme(THEMES.LIGHT)}
-          className="flex items-center gap-2"
+          className={styles.dropdownItem}
         >
-          <Sun className="h-4 w-4" />
+          <Sun className={styles.itemIcon} />
           {THEME_LABELS[THEMES.LIGHT]}
         </DropdownMenuItem>
         <DropdownMenuItem 
           onClick={() => setTheme(THEMES.DARK)}
-          className="flex items-center gap-2"
+          className={styles.dropdownItem}
         >
-          <Moon className="h-4 w-4" />
+          <Moon className={styles.itemIcon} />
           {THEME_LABELS[THEMES.DARK]}
         </DropdownMenuItem>
         <DropdownMenuItem 
           onClick={() => setTheme(THEMES.SYSTEM)}
-          className="flex items-center gap-2"
+          className={styles.dropdownItem}
         >
-          <Monitor className="h-4 w-4" />
+          <Monitor className={styles.itemIcon} />
           {THEME_LABELS[THEMES.SYSTEM]}
         </DropdownMenuItem>
       </DropdownMenuContent>

@@ -13,8 +13,9 @@ import {
 } from 'lucide-react';
 import { ActivityType } from '@/lib/db/schema';
 import { getActivityLogs } from '@/lib/db/queries';
+import styles from './page.module.css';
 
-const iconMap: Record<ActivityType, LucideIcon> = {
+const iconMap: Partial<Record<ActivityType, LucideIcon>> = {
   [ActivityType.SIGN_UP]: UserPlus,
   [ActivityType.SIGN_IN]: UserCog,
   [ActivityType.SIGN_OUT]: LogOut,
@@ -75,8 +76,8 @@ export default async function ActivityPage() {
   const logs = await getActivityLogs();
 
   return (
-    <section className="flex-1 p-4 lg:p-8">
-      <h1 className="text-lg lg:text-2xl font-medium text-gray-900 mb-6">
+    <section className={styles.container}>
+      <h1 className={styles.title}>
         Activity Log
       </h1>
       <Card>
@@ -85,25 +86,24 @@ export default async function ActivityPage() {
         </CardHeader>
         <CardContent>
           {logs.length > 0 ? (
-            <ul className="space-y-4">
+            <ul className={styles.activityList}>
               {logs.map((log) => {
-                const Icon = iconMap[log.action as ActivityType] || Settings;
+                const Icon = iconMap[log.type as ActivityType] || Settings;
                 const formattedAction = formatAction(
-                  log.action as ActivityType
+                  log.type as ActivityType
                 );
 
                 return (
-                  <li key={log.id} className="flex items-center space-x-4">
-                    <div className="bg-orange-100 rounded-full p-2">
-                      <Icon className="w-5 h-5 text-orange-600" />
+                  <li key={log.id} className={styles.activityItem}>
+                    <div className={styles.iconContainer}>
+                      <Icon className={styles.icon} />
                     </div>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-gray-900">
+                    <div className={styles.activityContent}>
+                      <p className={styles.activityText}>
                         {formattedAction}
-                        {log.ipAddress && ` from IP ${log.ipAddress}`}
                       </p>
-                      <p className="text-xs text-gray-500">
-                        {getRelativeTime(new Date(log.timestamp))}
+                      <p className={styles.activityTime}>
+                        {getRelativeTime(new Date(log.createdAt))}
                       </p>
                     </div>
                   </li>
@@ -111,12 +111,12 @@ export default async function ActivityPage() {
               })}
             </ul>
           ) : (
-            <div className="flex flex-col items-center justify-center text-center py-12">
-              <AlertCircle className="h-12 w-12 text-orange-500 mb-4" />
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <div className={styles.emptyState}>
+              <AlertCircle className={styles.emptyIcon} />
+              <h3 className={styles.emptyTitle}>
                 No activity yet
               </h3>
-              <p className="text-sm text-gray-500 max-w-sm">
+              <p className={styles.emptyDescription}>
                 When you perform actions like signing in or updating your
                 account, they'll appear here.
               </p>

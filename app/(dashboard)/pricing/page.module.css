@@ -1,0 +1,93 @@
+/* Pricing Page Styles */
+.container {
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 3rem 1rem;
+}
+
+@media (min-width: 640px) {
+  .container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+.grid {
+  display: grid;
+  gap: 2rem;
+  max-width: 36rem;
+  margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.card {
+  padding-top: 1.5rem;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: var(--foreground);
+  margin-bottom: 0.5rem;
+}
+
+.trial {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  margin-bottom: 1rem;
+}
+
+.price {
+  font-size: 2.25rem;
+  font-weight: 500;
+  color: var(--foreground);
+  margin-bottom: 1.5rem;
+}
+
+.priceUnit {
+  font-size: 1.25rem;
+  font-weight: normal;
+  color: var(--muted-foreground);
+}
+
+.featuresList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.featureItem {
+  display: flex;
+  align-items: flex-start;
+}
+
+.featureIcon {
+  height: 1.25rem;
+  width: 1.25rem;
+  color: var(--primary);
+  margin-right: 0.5rem;
+  margin-top: 0.125rem;
+  flex-shrink: 0;
+}
+
+.featureText {
+  color: var(--foreground);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+}

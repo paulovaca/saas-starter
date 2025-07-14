@@ -14,6 +14,7 @@ import { Agency, User } from '@/lib/db/schema';
 import useSWR from 'swr';
 import { Suspense } from 'react';
 import { Loader2 } from 'lucide-react';
+import styles from './page.module.css';
 
 type ActionState = {
   error?: string;
@@ -34,9 +35,9 @@ function SubscriptionSkeleton() {
         <CardTitle>Assinatura da Agência</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="animate-pulse space-y-4">
-          <div className="h-4 bg-muted rounded w-3/4"></div>
-          <div className="h-4 bg-muted rounded w-1/2"></div>
+        <div className={styles.skeletonContainer}>
+          <div className={`${styles.skeletonLine} ${styles.large}`}></div>
+          <div className={`${styles.skeletonLine} ${styles.medium}`}></div>
         </div>
       </CardContent>
     </Card>
@@ -80,12 +81,12 @@ function Subscription() {
         <CardTitle>Assinatura da Agência</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
-          <div>
-            <p className="text-sm text-gray-600">
+        <div className={styles.infoSection}>
+          <div className={styles.infoGroup}>
+            <p className={styles.label}>
               Plano Atual: {agencyData.agency.planName || 'Gratuito'}
             </p>
-            <p className="text-sm text-gray-600">
+            <p className={styles.value}>
               Status: {agencyData.agency.subscriptionStatus === 'active'
                 ? 'Ativo'
                 : agencyData.agency.subscriptionStatus === 'trialing'
@@ -96,11 +97,11 @@ function Subscription() {
         </div>
       </CardContent>
       <CardFooter>
-        <form action={formAction} className="w-full">
-          <Button type="submit" disabled={pending} className="w-full">
+        <form action={formAction} className={styles.form}>
+          <Button type="submit" disabled={pending} className={styles.submitButton}>
             {pending ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className={`${styles.buttonIcon} ${styles.spinIcon}`} />
                 Carregando...
               </>
             ) : (
@@ -109,7 +110,7 @@ function Subscription() {
           </Button>
         </form>
         {state?.error && (
-          <p className="text-destructive text-sm mt-2">{state.error}</p>
+          <p className={`${styles.errorMessage} ${styles.footerError}`}>{state.error}</p>
         )}
       </CardFooter>
     </Card>
@@ -139,9 +140,9 @@ function AgencyInfo() {
           <CardTitle>Informações da Agência</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="animate-pulse space-y-4">
-            <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-            <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+          <div className={styles.skeletonContainer}>
+            <div className={`${styles.skeletonLine} ${styles.large}`}></div>
+            <div className={`${styles.skeletonLine} ${styles.medium}`}></div>
           </div>
         </CardContent>
       </Card>
@@ -154,22 +155,22 @@ function AgencyInfo() {
         <CardTitle>Informações da Agência</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
-          <div>
-            <p className="text-sm font-medium">Nome da Agência:</p>
-            <p className="text-sm text-gray-600">{agencyData.agency.name}</p>
+        <div className={styles.infoSection}>
+          <div className={styles.infoGroup}>
+            <p className={styles.label}>Nome da Agência:</p>
+            <p className={styles.value}>{agencyData.agency.name}</p>
           </div>
-          <div>
-            <p className="text-sm font-medium">Email:</p>
-            <p className="text-sm text-gray-600">{agencyData.agency.email}</p>
+          <div className={styles.infoGroup}>
+            <p className={styles.label}>Email:</p>
+            <p className={styles.value}>{agencyData.agency.email}</p>
           </div>
-          <div>
-            <p className="text-sm font-medium">Usuário Master:</p>
-            <p className="text-sm text-gray-600">{agencyData.user.name || agencyData.user.email}</p>
+          <div className={styles.infoGroup}>
+            <p className={styles.label}>Usuário Master:</p>
+            <p className={styles.value}>{agencyData.user.name || agencyData.user.email}</p>
           </div>
-          <div>
-            <p className="text-sm font-medium">Data de Criação:</p>
-            <p className="text-sm text-gray-600">
+          <div className={styles.infoGroup}>
+            <p className={styles.label}>Data de Criação:</p>
+            <p className={styles.value}>
               {new Date(agencyData.agency.createdAt).toLocaleDateString('pt-BR')}
             </p>
           </div>
@@ -181,15 +182,15 @@ function AgencyInfo() {
 
 export default function SettingsPage() {
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Configurações da Agência</h1>
-        <p className="text-gray-600">
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <h1 className={styles.title}>Configurações da Agência</h1>
+        <p className={styles.description}>
           Gerencie as configurações e assinatura da sua agência.
         </p>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className={styles.grid}>
         <Suspense fallback={<SubscriptionSkeleton />}>
           <Subscription />
         </Suspense>

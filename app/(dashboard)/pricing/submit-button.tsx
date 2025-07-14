@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Loader2 } from 'lucide-react';
 import { useFormStatus } from 'react-dom';
+import styles from './submit-button.module.css';
 
 export function SubmitButton() {
   const { pending } = useFormStatus();
@@ -12,17 +13,17 @@ export function SubmitButton() {
       type="submit"
       disabled={pending}
       variant="outline"
-      className="w-full rounded-full"
+      className={styles.button}
     >
       {pending ? (
         <>
-          <Loader2 className="animate-spin mr-2 h-4 w-4" />
+          <Loader2 className={`${styles.icon} ${styles.iconLeft} ${styles.spinIcon}`} />
           Loading...
         </>
       ) : (
         <>
           Get Started
-          <ArrowRight className="ml-2 h-4 w-4" />
+          <ArrowRight className={`${styles.icon} ${styles.iconRight}`} />
         </>
       )}
     </Button>

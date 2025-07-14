@@ -1,0 +1,6 @@
+/* Estilos específicos para o layout raiz */
+.rootBody {
+  min-height: 100dvh;
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+}

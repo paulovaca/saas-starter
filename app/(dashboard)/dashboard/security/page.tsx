@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Lock, Trash2, Loader2 } from 'lucide-react';
 import { useActionState } from 'react';
 import { updatePassword, deleteAccount } from '@/app/(login)/actions';
+import styles from './page.module.css';
 
 type PasswordState = {
   currentPassword?: string;
@@ -34,18 +35,18 @@ export default function SecurityPage() {
   >(deleteAccount, {});
 
   return (
-    <section className="flex-1 p-4 lg:p-8">
-      <h1 className="text-lg lg:text-2xl font-medium bold text-foreground mb-6">
+    <section className={styles.container}>
+      <h1 className={styles.title}>
         Configurações de Segurança
       </h1>
-      <Card className="mb-8">
+      <Card className={styles.passwordCard}>
         <CardHeader>
           <CardTitle>Password</CardTitle>
         </CardHeader>
         <CardContent>
-          <form className="space-y-4" action={passwordAction}>
-            <div>
-              <Label htmlFor="current-password" className="mb-2">
+          <form className={styles.form} action={passwordAction}>
+            <div className={styles.fieldGroup}>
+              <Label htmlFor="current-password" className={styles.label}>
                 Current Password
               </Label>
               <Input
@@ -59,8 +60,8 @@ export default function SecurityPage() {
                 defaultValue={passwordState.currentPassword}
               />
             </div>
-            <div>
-              <Label htmlFor="new-password" className="mb-2">
+            <div className={styles.fieldGroup}>
+              <Label htmlFor="new-password" className={styles.label}>
                 New Password
               </Label>
               <Input
@@ -74,8 +75,8 @@ export default function SecurityPage() {
                 defaultValue={passwordState.newPassword}
               />
             </div>
-            <div>
-              <Label htmlFor="confirm-password" className="mb-2">
+            <div className={styles.fieldGroup}>
+              <Label htmlFor="confirm-password" className={styles.label}>
                 Confirm New Password
               </Label>
               <Input
@@ -89,24 +90,24 @@ export default function SecurityPage() {
               />
             </div>
             {passwordState.error && (
-              <p className="text-destructive text-sm">{passwordState.error}</p>
+              <p className={styles.errorMessage}>{passwordState.error}</p>
             )}
             {passwordState.success && (
-              <p className="text-accent text-sm">{passwordState.success}</p>
+              <p className={styles.successMessage}>{passwordState.success}</p>
             )}
             <Button
               type="submit"
-              className="bg-primary hover:bg-primary/90 text-primary-foreground"
+              className={styles.updateButton}
               disabled={isPasswordPending}
             >
               {isPasswordPending ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className={`${styles.buttonIcon} ${styles.spinIcon}`} />
                   Updating...
                 </>
               ) : (
                 <>
-                  <Lock className="mr-2 h-4 w-4" />
+                  <Lock className={styles.buttonIcon} />
                   Update Password
                 </>
               )}
@@ -120,12 +121,12 @@ export default function SecurityPage() {
           <CardTitle>Delete Account</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground mb-4">
+          <p className={styles.deleteDescription}>
             A exclusão da conta é irreversível. Proceda com cautela.
           </p>
-          <form action={deleteAction} className="space-y-4">
-            <div>
-              <Label htmlFor="delete-password" className="mb-2">
+          <form action={deleteAction} className={styles.form}>
+            <div className={styles.fieldGroup}>
+              <Label htmlFor="delete-password" className={styles.label}>
                 Confirm Password
               </Label>
               <Input
@@ -139,7 +140,7 @@ export default function SecurityPage() {
               />
             </div>
             {deleteState.error && (
-              <p className="text-destructive text-sm">{deleteState.error}</p>
+              <p className={styles.errorMessage}>{deleteState.error}</p>
             )}
             <Button
               type="submit"
@@ -148,12 +149,12 @@ export default function SecurityPage() {
             >
               {isDeletePending ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className={`${styles.buttonIcon} ${styles.spinIcon}`} />
                   Deleting...
                 </>
               ) : (
                 <>
-                  <Trash2 className="mr-2 h-4 w-4" />
+                  <Trash2 className={styles.buttonIcon} />
                   Delete Account
                 </>
               )}

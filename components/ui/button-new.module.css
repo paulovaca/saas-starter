@@ -1,0 +1,193 @@
+/* Estilos específicos para o componente Button com contraste aprimorado */
+.buttonBase {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s;
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+
+.buttonBase:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+
+.buttonBase:disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.buttonBase svg {
+  pointer-events: none;
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+}
+
+/* Variantes do botão com contraste aprimorado */
+.default {
+  background-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  border: 1px solid hsl(var(--primary));
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+}
+
+.default:hover {
+  background-color: hsl(var(--primary) / 0.9);
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.default:active {
+  transform: scale(0.98);
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+.destructive {
+  background-color: hsl(var(--destructive));
+  color: hsl(var(--destructive-foreground));
+  border: 1px solid hsl(var(--destructive));
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+}
+
+.destructive:hover {
+  background-color: hsl(var(--destructive) / 0.9);
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.destructive:active {
+  transform: scale(0.98);
+}
+
+.secondary {
+  background-color: hsl(var(--secondary));
+  color: hsl(var(--secondary-foreground));
+  border: 1px solid hsl(var(--border));
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+.secondary:hover {
+  background-color: hsl(var(--secondary) / 0.8);
+  box-shadow: 0 2px 4px 0 rgb(0 0 0 / 0.1);
+}
+
+.secondary:active {
+  transform: scale(0.98);
+}
+
+.outline {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  border: 1px solid hsl(var(--border));
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+.outline:hover {
+  background-color: hsl(var(--accent));
+  color: hsl(var(--accent-foreground));
+  border-color: hsl(var(--border));
+  box-shadow: 0 2px 4px 0 rgb(0 0 0 / 0.1);
+}
+
+.outline:active {
+  transform: scale(0.98);
+}
+
+.ghost {
+  background-color: transparent;
+  color: hsl(var(--foreground));
+  border: 1px solid transparent;
+}
+
+.ghost:hover {
+  background-color: hsl(var(--accent));
+  color: hsl(var(--accent-foreground));
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+.ghost:active {
+  transform: scale(0.98);
+}
+
+.link {
+  color: hsl(var(--primary));
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  background-color: transparent;
+  border: 1px solid transparent;
+}
+
+.link:hover {
+  text-decoration: none;
+  color: hsl(var(--primary) / 0.8);
+}
+
+.link:active {
+  transform: scale(0.98);
+}
+
+.success {
+  background-color: hsl(var(--success));
+  color: hsl(var(--success-foreground));
+  border: 1px solid hsl(var(--success));
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+}
+
+.success:hover {
+  background-color: hsl(var(--success) / 0.9);
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.success:active {
+  transform: scale(0.98);
+}
+
+.warning {
+  background-color: hsl(var(--warning));
+  color: hsl(var(--warning-foreground));
+  border: 1px solid hsl(var(--warning));
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+}
+
+.warning:hover {
+  background-color: hsl(var(--warning) / 0.9);
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.warning:active {
+  transform: scale(0.98);
+}
+
+/* Tamanhos */
+.sizeDefault {
+  height: 2.5rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.sizeSm {
+  height: 2.25rem;
+  border-radius: 0.375rem;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+}
+
+.sizeLg {
+  height: 2.75rem;
+  border-radius: 0.375rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+.sizeIcon {
+  height: 2.5rem;
+  width: 2.5rem;
+}

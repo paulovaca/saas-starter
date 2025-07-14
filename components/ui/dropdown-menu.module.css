@@ -1,0 +1,120 @@
+/* Estilos específicos para o componente DropdownMenu com melhor contraste */
+.dropdownMenuContent {
+  background-color: hsl(var(--popover));
+  color: hsl(var(--popover-foreground));
+  z-index: 50;
+  min-width: 8rem;
+  overflow-x: hidden;
+  overflow-y: auto;
+  border-radius: 0.375rem;
+  border: 1px solid hsl(var(--border));
+  padding: 0.25rem;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+.dropdownMenuItem {
+  position: relative;
+  display: flex;
+  cursor: default;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 0.125rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-top: 0.375rem;
+  padding-bottom: 0.375rem;
+  font-size: 0.875rem;
+  outline: none;
+  user-select: none;
+  transition: all 0.2s ease-in-out;
+  color: hsl(var(--popover-foreground));
+}
+
+.dropdownMenuItem:hover,
+.dropdownMenuItem:focus {
+  background-color: hsl(var(--accent));
+  color: hsl(var(--accent-foreground));
+  outline: none;
+}
+
+.dropdownMenuItem:disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.dropdownMenuItem.inset {
+  padding-left: 2rem;
+}
+
+.dropdownMenuItem.destructive {
+  color: hsl(var(--destructive));
+}
+
+.dropdownMenuItem.destructive:hover,
+.dropdownMenuItem.destructive:focus {
+  background-color: hsl(var(--destructive) / 0.1);
+  color: hsl(var(--destructive));
+}
+
+.dark .dropdownMenuItem.destructive:focus {
+  background-color: hsl(var(--destructive) / 0.2);
+}
+
+.dropdownMenuItem svg {
+  pointer-events: none;
+  flex-shrink: 0;
+  width: 1rem;
+  height: 1rem;
+}
+
+.dropdownMenuItem svg:not([class*='text-']) {
+  color: hsl(var(--muted-foreground));
+}
+
+.dropdownMenuItem.destructive svg {
+  color: hsl(var(--destructive)) !important;
+}
+
+.dropdownMenuLabel {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-top: 0.375rem;
+  padding-bottom: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.dropdownMenuLabel.inset {
+  padding-left: 2rem;
+}
+
+.dropdownMenuSeparator {
+  background-color: hsl(var(--border));
+  margin-left: -0.25rem;
+  margin-right: -0.25rem;
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+  height: 1px;
+}
+
+.checkboxIndicator {
+  pointer-events: none;
+  position: absolute;
+  left: 0.5rem;
+  display: flex;
+  width: 0.875rem;
+  height: 0.875rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.radioIndicator {
+  pointer-events: none;
+  position: absolute;
+  left: 0.5rem;
+  display: flex;
+  width: 0.875rem;
+  height: 0.875rem;
+  align-items: center;
+  justify-content: center;
+}

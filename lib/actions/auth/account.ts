@@ -10,15 +10,21 @@ import { withFormAction, withActionWrapper } from '@/lib/services/error-handler/
 import { changePasswordSchema, updateProfileSchema, deleteAccountSchema } from '@/lib/validations/auth.schema';
 import { ActivityLogger } from '@/lib/services/activity-logger';
 import { AuthenticationError, ValidationError } from '@/lib/services/error-handler';
+import { getUser } from '@/lib/db/queries';
 
 export const signOut = withActionWrapper(
   async (context) => {
     if (context.user) {
-      await ActivityLogger.logAuth(
-        context.user.agencyId,
-        context.user.id,
-        'SIGN_OUT'
-      );
+      try {
+        await ActivityLogger.logAuth(
+          context.user.agencyId,
+          context.user.id,
+          'SIGN_OUT'
+        );
+      } catch (error) {
+        // Don't fail logout if logging fails
+        console.error('Failed to log sign-out activity:', error);
+      }
     }
 
     (await cookies()).delete('session');
@@ -28,6 +34,53 @@ export const signOut = withActionWrapper(
     requireAuth: false, // Don't require auth since we're logging out
   }
 );
+
+// Simple signOut function for client-side use
+export async function signOutSimple() {
+  'use server';
+
+  try {
+    // Clear the session cookie immediately with the same config as middleware
+    const cookieStore = await cookies();
+    cookieStore.set('session', '', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      expires: new Date(0), // Expire immediately
+      maxAge: 0
+    });
+    
+    // Also try the delete method as backup
+    cookieStore.delete('session');
+    
+    // Try to log the activity, but don't let it block the logout
+    try {
+      const user = await getUser();
+      if (user) {
+        await ActivityLogger.logAuth(
+          user.agencyId,
+          user.id,
+          'SIGN_OUT'
+        );
+      }
+    } catch (logError) {
+      // Logging failed, but that's ok for logout
+      console.error('Failed to log sign-out activity:', logError);
+    }
+    
+  } catch (error) {
+    // Even if everything fails, try to clear the session
+    console.error('Error during sign out:', error);
+    try {
+      const cookieStore = await cookies();
+      cookieStore.delete('session');
+    } catch (cookieError) {
+      console.error('Failed to clear session cookie:', cookieError);
+    }
+  }
+
+  redirect('/sign-in');
+}
 
 export const updatePassword = withFormAction(
   async (context, data: FormData | any) => {

@@ -1,0 +1,151 @@
+/* Estilos específicos para o layout do Dashboard */
+.layoutContainer {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.header {
+  border-bottom: 1px solid hsl(var(--border));
+}
+
+.headerContent {
+  max-width: 80rem;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+@media (min-width: 640px) {
+  .headerContent {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .headerContent {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+.logoContainer {
+  display: flex;
+  align-items: center;
+}
+
+.logoIcon {
+  height: 1.5rem;
+  width: 1.5rem;
+  color: hsl(var(--primary));
+}
+
+.logoText {
+  margin-left: 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: hsl(var(--foreground));
+}
+
+.navigation {
+  display: none;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .navigation {
+    display: flex;
+  }
+}
+
+.navLink {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: hsl(var(--muted-foreground));
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.navLink:hover {
+  color: hsl(var(--foreground));
+}
+
+.navIcon {
+  margin-right: 0.25rem;
+  height: 1rem;
+  width: 1rem;
+}
+
+.userActions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* User Menu Styles */
+.pricingLink {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--muted-foreground);
+}
+
+.pricingLink:hover {
+  color: var(--foreground);
+}
+
+.signUpButton {
+  border-radius: 9999px;
+}
+
+.avatar {
+  cursor: pointer;
+  width: 2.25rem;
+  height: 2.25rem;
+}
+
+.dropdownContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.dropdownItem {
+  cursor: pointer;
+}
+
+.dropdownLink {
+  display: flex;
+  width: 100%;
+  align-items: center;
+}
+
+.dropdownIcon {
+  margin-right: 0.5rem;
+  height: 1rem;
+  width: 1rem;
+}
+
+.signOutForm {
+  width: 100%;
+}
+
+.signOutButton {
+  display: flex;
+  width: 100%;
+}
+
+.signOutItem {
+  width: 100%;
+  flex: 1;
+  cursor: pointer;
+}

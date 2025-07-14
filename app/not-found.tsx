@@ -1,23 +1,24 @@
 import Link from 'next/link';
 import { CircleIcon } from 'lucide-react';
+import styles from './not-found.module.css';
 
 export default function NotFound() {
   return (
-    <div className="flex items-center justify-center min-h-[100dvh]">
-      <div className="max-w-md space-y-8 p-4 text-center">
-        <div className="flex justify-center">
-          <CircleIcon className="size-12 text-primary" />
+    <div className={styles.notFoundContainer}>
+      <div className={styles.notFoundContent}>
+        <div className={styles.logoContainer}>
+          <CircleIcon className={styles.logo} />
         </div>
-        <h1 className="text-4xl font-bold text-foreground tracking-tight">
+        <h1 className={styles.title}>
           Página Não Encontrada
         </h1>
-        <p className="text-base text-muted-foreground">
+        <p className={styles.description}>
           A página que você está procurando pode ter sido removida, teve seu nome
           alterado ou está temporariamente indisponível.
         </p>
         <Link
           href="/"
-          className="max-w-48 mx-auto flex justify-center py-2 px-4 border border-border rounded-full shadow-sm text-sm font-medium text-foreground bg-background hover:bg-muted focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring"
+          className={styles.homeButton}
         >
           Voltar ao Início
         </Link>

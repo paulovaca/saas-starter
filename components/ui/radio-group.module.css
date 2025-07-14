@@ -1,0 +1,59 @@
+/* Estilos específicos para o componente RadioGroup */
+.radioGroup {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.radioGroupItem {
+  border: 1px solid hsl(var(--input));
+  color: hsl(var(--primary));
+  aspect-ratio: 1;
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  border-radius: 50%;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  transition: color 0.2s, box-shadow 0.2s;
+  outline: none;
+  cursor: pointer;
+}
+
+.radioGroupItem:focus-visible {
+  border-color: hsl(var(--ring));
+  box-shadow: 0 0 0 3px hsl(var(--ring) / 0.5);
+}
+
+.radioGroupItem[aria-invalid="true"] {
+  border-color: hsl(var(--destructive));
+  box-shadow: 0 0 0 3px hsl(var(--destructive) / 0.2);
+}
+
+.dark .radioGroupItem[aria-invalid="true"] {
+  box-shadow: 0 0 0 3px hsl(var(--destructive) / 0.4);
+}
+
+.dark .radioGroupItem {
+  background-color: hsl(var(--input) / 0.3);
+}
+
+.radioGroupItem:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.radioGroupIndicator {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.radioGroupIcon {
+  fill: hsl(var(--primary));
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0.5rem;
+  height: 0.5rem;
+  transform: translate(-50%, -50%);
+}

@@ -2,6 +2,7 @@ import { checkoutAction } from '@/lib/payments/actions';
 import { Check } from 'lucide-react';
 import { getStripePrices, getStripeProducts } from '@/lib/payments/stripe';
 import { SubmitButton } from './submit-button';
+import styles from './page.module.css';
 
 // Prices are fresh for one hour max
 export const revalidate = 3600;
@@ -19,8 +20,8 @@ export default async function PricingPage() {
   const plusPrice = prices.find((price) => price.productId === plusPlan?.id);
 
   return (
-    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div className="grid md:grid-cols-2 gap-8 max-w-xl mx-auto">
+    <main className={styles.container}>
+      <div className={styles.grid}>
         <PricingCard
           name={basePlan?.name || 'Base'}
           price={basePrice?.unitAmount || 800}
@@ -66,26 +67,26 @@ function PricingCard({
   priceId?: string;
 }) {
   return (
-    <div className="pt-6">
-      <h2 className="text-2xl font-medium text-foreground mb-2">{name}</h2>
-      <p className="text-sm text-muted-foreground mb-4">
+    <div className={styles.card}>
+      <h2 className={styles.title}>{name}</h2>
+      <p className={styles.trial}>
         with {trialDays} day free trial
       </p>
-      <p className="text-4xl font-medium text-foreground mb-6">
+      <p className={styles.price}>
         ${price / 100}{' '}
-        <span className="text-xl font-normal text-muted-foreground">
+        <span className={styles.priceUnit}>
           per user / {interval}
         </span>
       </p>
-      <ul className="space-y-4 mb-8">
+      <ul className={styles.featuresList}>
         {features.map((feature, index) => (
-          <li key={index} className="flex items-start">
-            <Check className="h-5 w-5 text-primary mr-2 mt-0.5 flex-shrink-0" />
-            <span className="text-foreground">{feature}</span>
+          <li key={index} className={styles.featureItem}>
+            <Check className={styles.featureIcon} />
+            <span className={styles.featureText}>{feature}</span>
           </li>
         ))}
       </ul>
-      <form action={checkoutAction}>
+      <form action={checkoutAction} className={styles.form}>
         <input type="hidden" name="priceId" value={priceId} />
         <SubmitButton />
       </form>

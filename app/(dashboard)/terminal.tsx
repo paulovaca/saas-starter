@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Copy, Check } from 'lucide-react';
+import styles from './terminal.module.css';
 
 export function Terminal() {
   const [terminalStep, setTerminalStep] = useState(0);
@@ -32,33 +33,33 @@ export function Terminal() {
   };
 
   return (
-    <div className="w-full rounded-lg shadow-lg overflow-hidden bg-card border text-card-foreground font-mono text-sm relative">
-      <div className="p-4">
-        <div className="flex justify-between items-center mb-4">
-          <div className="flex space-x-2">
-            <div className="w-3 h-3 rounded-full bg-red-500"></div>
-            <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-            <div className="w-3 h-3 rounded-full bg-green-500"></div>
+    <div className={styles.terminal}>
+      <div className={styles.content}>
+        <div className={styles.header}>
+          <div className={styles.dots}>
+            <div className={`${styles.dot} ${styles.dotRed}`}></div>
+            <div className={`${styles.dot} ${styles.dotYellow}`}></div>
+            <div className={`${styles.dot} ${styles.dotGreen}`}></div>
           </div>
           <button
             onClick={copyToClipboard}
-            className="text-muted-foreground hover:text-foreground transition-colors"
+            className={styles.copyButton}
             aria-label="Copy to clipboard"
           >
             {copied ? (
-              <Check className="h-5 w-5" />
+              <Check className={styles.icon} />
             ) : (
-              <Copy className="h-5 w-5" />
+              <Copy className={styles.icon} />
             )}
           </button>
         </div>
-        <div className="space-y-2">
+        <div className={styles.steps}>
           {terminalSteps.map((step, index) => (
             <div
               key={index}
-              className={`${index > terminalStep ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
+              className={`${styles.step} ${index > terminalStep ? styles.stepHidden : styles.stepVisible}`}
             >
-              <span className="text-accent">$</span> {step}
+              <span className={styles.prompt}>$</span> {step}
             </div>
           ))}
         </div>

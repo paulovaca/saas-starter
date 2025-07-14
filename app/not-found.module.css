@@ -1,0 +1,69 @@
+/* Estilos específicos para a página 404 */
+.notFoundContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100dvh;
+}
+
+.notFoundContent {
+  max-width: 28rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 1rem;
+  text-align: center;
+}
+
+.logoContainer {
+  display: flex;
+  justify-content: center;
+}
+
+.logo {
+  width: 3rem;
+  height: 3rem;
+  color: hsl(var(--primary));
+}
+
+.title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: hsl(var(--foreground));
+  letter-spacing: -0.025em;
+}
+
+.description {
+  font-size: 1rem;
+  color: hsl(var(--muted-foreground));
+}
+
+.homeButton {
+  max-width: 12rem;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  justify-content: center;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  border: 1px solid hsl(var(--border));
+  border-radius: 9999px;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: hsl(var(--foreground));
+  background-color: hsl(var(--background));
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.homeButton:hover {
+  background-color: hsl(var(--muted));
+}
+
+.homeButton:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px hsl(var(--ring));
+}

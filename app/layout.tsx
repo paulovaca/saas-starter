@@ -4,6 +4,7 @@ import { Manrope } from 'next/font/google';
 import { getUser, getAgencyForUser } from '@/lib/db/queries';
 import { SWRConfig } from 'swr';
 import { ThemeProvider } from '@/providers/theme-provider';
+import styles from './layout.module.css';
 
 export const metadata: Metadata = {
   title: 'CRM Travel - Sistema de Gestão para Agências de Viagem',
@@ -27,7 +28,7 @@ export default function RootLayout({
       className={manrope.className}
       suppressHydrationWarning
     >
-      <body className="min-h-[100dvh] bg-background text-foreground">
+      <body className={styles.rootBody}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
