@@ -1,6 +1,7 @@
+import { eq } from 'drizzle-orm';
 import { stripe } from '../payments/stripe';
 import { db } from './drizzle';
-import { users, teams, teamMembers } from './schema';
+import { users, agencies, agencySettings, salesFunnels, salesFunnelStages } from './schema';
 import { hashPassword } from '@/lib/auth/session';
 
 async function createStripeProducts() {
@@ -40,37 +41,93 @@ async function createStripeProducts() {
 }
 
 async function seed() {
-  const email = 'test@test.com';
-  const password = 'admin123';
-  const passwordHash = await hashPassword(password);
+  console.log('🌱 Seeding database...');
 
-  const [user] = await db
-    .insert(users)
-    .values([
-      {
-        email: email,
-        passwordHash: passwordHash,
-        role: "owner",
-      },
-    ])
-    .returning();
+  try {
+    console.log('Creating first agency...');
+    
+    // Create the first agency
+    const agency = await db.insert(agencies).values({
+      name: 'Demo Travel Agency',
+      email: 'admin@demoagency.com', 
+      country: 'Brasil',
+      isActive: true,
+    }).returning();
 
-  console.log('Initial user created.');
+    const agencyId = agency[0].id;
+    console.log(`✅ Agency created with ID: ${agencyId}`);
 
-  const [team] = await db
-    .insert(teams)
-    .values({
-      name: 'Test Team',
-    })
-    .returning();
+    // Create agency settings
+    await db.insert(agencySettings).values({
+      agencyId: agencyId,
+      theme: 'light',
+      emailNotifications: true,
+      inAppNotifications: true,
+    });
 
-  await db.insert(teamMembers).values({
-    teamId: team.id,
-    userId: user.id,
-    role: 'owner',
-  });
+    console.log('✅ Agency settings created');
 
-  await createStripeProducts();
+    // Create the master user
+    const hashedPassword = await hashPassword('admin123');
+    const masterUser = await db.insert(users).values({
+      email: 'admin@demoagency.com',
+      password: hashedPassword,
+      name: 'Administrador',
+      role: 'MASTER',
+      agencyId: agencyId,
+      isActive: true,
+    }).returning();
+
+    console.log(`✅ Master user created with ID: ${masterUser[0].id}`);
+
+    // Create default sales funnel
+    const defaultFunnel = await db.insert(salesFunnels).values({
+      name: 'Funil Padrão',
+      isDefault: true,
+      agencyId: agencyId,
+    }).returning();
+
+    const funnelId = defaultFunnel[0].id;
+    console.log(`✅ Default funnel created with ID: ${funnelId}`);
+
+    // Create sales funnel stages
+    const stages = [
+      { name: 'Novo Lead', instructions: 'Cliente acabou de entrar em contato', order: 1 },
+      { name: 'Qualificado', instructions: 'Cliente demonstrou interesse real', order: 2 },
+      { name: 'Proposta Enviada', instructions: 'Proposta foi enviada para o cliente', order: 3 },
+      { name: 'Negociação', instructions: 'Cliente está negociando valores/condições', order: 4 },
+      { name: 'Fechado', instructions: 'Venda foi concluída com sucesso', order: 5 },
+    ];
+
+    for (const stage of stages) {
+      await db.insert(salesFunnelStages).values({
+        ...stage,
+        funnelId: funnelId,
+      });
+    }
+
+    console.log('✅ Sales funnel stages created');
+
+    // Update agency settings to point to default funnel
+    await db.update(agencySettings)
+      .set({ defaultFunnelId: funnelId })
+      .where(eq(agencySettings.agencyId, agencyId));
+
+    console.log('✅ Agency settings updated with default funnel');
+
+    // Create Stripe products
+    await createStripeProducts();
+
+    console.log('🎉 Seeding completed successfully!');
+    console.log('');
+    console.log('Login credentials:');
+    console.log('Email: admin@demoagency.com');
+    console.log('Password: admin123');
+    
+  } catch (error) {
+    console.error('❌ Error during seeding:', error);
+    throw error;
+  }
 }
 
 seed()

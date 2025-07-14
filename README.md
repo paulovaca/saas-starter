@@ -8,8 +8,8 @@ This is a starter template for building a SaaS application using **Next.js** wit
 
 - Marketing landing page (`/`) with animated Terminal element
 - Pricing page (`/pricing`) which connects to Stripe Checkout
-- Dashboard pages with CRUD operations on users/teams
-- Basic RBAC with Owner and Member roles
+- Dashboard pages with CRUD operations on users/agencies
+- Basic RBAC with Master and User roles
 - Subscription management with Stripe Customer Portal
 - Email/password authentication with JWTs stored to cookies
 - Global middleware to protect logged-in routes
@@ -46,16 +46,16 @@ Use the included setup script to create your `.env` file:
 pnpm db:setup
 ```
 
-Run the database migrations and seed the database with a default user and team:
+Run the database migrations and seed the database with a default user and agency:
 
 ```bash
 pnpm db:migrate
 pnpm db:seed
 ```
 
-This will create the following user and team:
+This will create the following user and agency:
 
-- User: `test@test.com`
+- User: `admin@demoagency.com`
 - Password: `admin123`
 
 You can also create new users through the `/sign-up` route.

@@ -91,10 +91,6 @@ export async function signIn(state: ActionState, formData: FormData): Promise<Ac
 
     redirect('/dashboard');
   } catch (error) {
-    // Check if it's a redirect (this is normal Next.js behavior)
-    if (error instanceof Error && error.message === 'NEXT_REDIRECT') {
-      throw error; // Re-throw redirect errors
-    }
     console.error('Sign in error:', error);
     return { error: 'An error occurred during sign in' };
   }
@@ -196,10 +192,6 @@ export async function signUp(state: ActionState, formData: FormData): Promise<Ac
 
     redirect('/dashboard');
   } catch (error) {
-    // Check if it's a redirect (this is normal Next.js behavior)
-    if (error instanceof Error && error.message === 'NEXT_REDIRECT') {
-      throw error; // Re-throw redirect errors
-    }
     console.error('Error during sign up:', error);
     return { error: 'Failed to create account' };
   }
@@ -215,112 +207,64 @@ export async function signOut() {
   redirect('/sign-in');
 }
 
-export async function updatePassword(state: any, formData: FormData) {
-  try {
-    const user = await getUser();
-    if (!user) {
-      return { error: 'User not found' };
-    }
-
-    const currentPassword = formData.get('currentPassword') as string;
-    const newPassword = formData.get('newPassword') as string;
-
-    if (!currentPassword || !newPassword) {
-      return { error: 'Both current and new password are required' };
-    }
-
-    const isCurrentPasswordValid = await comparePasswords(currentPassword, user.password);
-    if (!isCurrentPasswordValid) {
-      return { error: 'Current password is incorrect' };
-    }
-
-    const newPasswordHash = await hashPassword(newPassword);
-
-    await db
-      .update(users)
-      .set({ password: newPasswordHash })
-      .where(eq(users.id, user.id));
-
-    await logActivity(user.agencyId, user.id, ActivityType.UPDATE_PASSWORD);
-    
-    return { success: 'Password updated successfully' };
-  } catch (error) {
-    return { error: 'Failed to update password' };
+export async function updatePassword(formData: FormData) {
+  const user = await getUser();
+  if (!user) {
+    throw new Error('User not found');
   }
+
+  const currentPassword = formData.get('currentPassword') as string;
+  const newPassword = formData.get('newPassword') as string;
+
+  if (!currentPassword || !newPassword) {
+    throw new Error('Both current and new password are required');
+  }
+
+  const isCurrentPasswordValid = await comparePasswords(currentPassword, user.password);
+  if (!isCurrentPasswordValid) {
+    throw new Error('Current password is incorrect');
+  }
+
+  const newPasswordHash = await hashPassword(newPassword);
+
+  await db
+    .update(users)
+    .set({ password: newPasswordHash })
+    .where(eq(users.id, user.id));
+
+  await logActivity(user.agencyId, user.id, ActivityType.UPDATE_PASSWORD);
 }
 
-export async function updateAccount(state: any, formData: FormData) {
-  try {
-    const user = await getUser();
-    if (!user) {
-      return { error: 'User not found' };
-    }
-
-    const name = formData.get('name') as string;
-    const email = formData.get('email') as string;
-
-    if (!name || !email) {
-      return { error: 'Name and email are required' };
-    }
-
-    // Check if email is already taken by another user
-    if (email !== user.email) {
-      const existingUser = await db
-        .select()
-        .from(users)
-        .where(eq(users.email, email))
-        .limit(1);
-
-      if (existingUser.length > 0) {
-        return { error: 'Email is already taken' };
-      }
-    }
-
-    await db
-      .update(users)
-      .set({ name, email })
-      .where(eq(users.id, user.id));
-
-    await logActivity(user.agencyId, user.id, ActivityType.UPDATE_ACCOUNT);
-    
-    return { success: 'Account updated successfully' };
-  } catch (error) {
-    return { error: 'Failed to update account' };
+export async function updateAccount(formData: FormData) {
+  const user = await getUser();
+  if (!user) {
+    throw new Error('User not found');
   }
-}
 
-export async function deleteAccount(state: any, formData: FormData) {
-  try {
-    const user = await getUser();
-    if (!user) {
-      return { error: 'User not found' };
-    }
+  const name = formData.get('name') as string;
+  const email = formData.get('email') as string;
 
-    const currentPassword = formData.get('currentPassword') as string;
-
-    if (!currentPassword) {
-      return { error: 'Current password is required to delete account' };
-    }
-
-    const isPasswordValid = await comparePasswords(currentPassword, user.password);
-    if (!isPasswordValid) {
-      return { error: 'Current password is incorrect' };
-    }
-
-    // Log the activity before deleting
-    await logActivity(user.agencyId, user.id, ActivityType.DELETE_ACCOUNT);
-
-    // Delete the user account
-    await db
-      .delete(users)
-      .where(eq(users.id, user.id));
-
-    // Clear the session
-    (await cookies()).delete('session');
-
-    // Redirect to home page
-    redirect('/');
-  } catch (error) {
-    return { error: 'Failed to delete account' };
+  if (!name || !email) {
+    throw new Error('Name and email are required');
   }
+
+  // Check if email is already taken by another user
+  if (email !== user.email) {
+    const existingUser = await db
+      .select()
+      .from(users)
+      .where(eq(users.email, email))
+      .limit(1);
+
+    if (existingUser.length > 0) {
+      throw new Error('Email is already taken');
+    }
+  }
+
+  await db
+    .update(users)
+    .set({ name, email })
+    .where(eq(users.id, user.id));
+
+  await logActivity(user.agencyId, user.id, ActivityType.UPDATE_ACCOUNT);
 }

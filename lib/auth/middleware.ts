@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { TeamDataWithMembers, User } from '@/lib/db/schema';
-import { getTeamForUser, getUser } from '@/lib/db/queries';
+import { Agency, User } from '@/lib/db/schema';
+import { getAgencyForUser, getUser } from '@/lib/db/queries';
 import { redirect } from 'next/navigation';
 
 export type ActionState = {
@@ -53,23 +53,23 @@ export function validatedActionWithUser<S extends z.ZodType<any, any>, T>(
   };
 }
 
-type ActionWithTeamFunction<T> = (
+type ActionWithAgencyFunction<T> = (
   formData: FormData,
-  team: TeamDataWithMembers
+  agency: Agency
 ) => Promise<T>;
 
-export function withTeam<T>(action: ActionWithTeamFunction<T>) {
+export function withAgency<T>(action: ActionWithAgencyFunction<T>) {
   return async (formData: FormData): Promise<T> => {
     const user = await getUser();
     if (!user) {
       redirect('/sign-in');
     }
 
-    const team = await getTeamForUser();
-    if (!team) {
-      throw new Error('Team not found');
+    const agency = await getAgencyForUser();
+    if (!agency) {
+      throw new Error('Agency not found');
     }
 
-    return action(formData, team);
+    return action(formData, agency);
   };
 }
