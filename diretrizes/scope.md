@@ -53,6 +53,8 @@ Vazamento de Informações Pessoais Identificáveis (PII): Exposição de dados 
 O plano será executado em fases modulares, construindo a base da aplicação primeiro e adicionando funcionalidades de forma incremental.
 
 Consultar os arquivos diretrizes\prd-saas.md, diretrizes\schema-prisma.md e diretrizes\flowchar-mermaid.md para ter precisão na execução do plano
+
+
 Fase 1: Fundação, Autenticação e Multi-Tenancy 
 Configuração do Projeto: Inicializar o projeto com o nextjs/saas-starter.
 Integração do Banco de Dados: Configurar a conexão com o PostgreSQL e rodar a primeira migration do schema Prisma para criar as tabelas Agency, User e AgencySettings.
@@ -65,7 +67,9 @@ Implementação do Isolamento de Dados: Garantir que todas as chamadas do Prisma
 RNF07 - Perfil de Usuário: Criar a página de perfil onde o usuário logado pode alterar seu nome, avatar, senha e configurar 2FA.
 
 Consultar os arquivos diretrizes\prd-saas.md, diretrizes\schema-prisma.md e diretrizes\flowchar-mermaid.md para ter precisão na execução do plano
-Fase 2: Módulos de Configuração da Agência (Duração Estimada: 2 semanas)
+
+
+Fase 2: Módulos de Configuração da Agência 
 Etapa 1: Gestão de Usuários (RF26, RF27)
 Criar a UI para Master e Admin gerenciarem outros usuários.
 Desenvolver endpoints da API para criar, editar (inclusive perfil), desativar e resetar senha de Admin e Agent, respeitando as regras de permissão.
@@ -80,6 +84,8 @@ Criar a UI para Master/Admin gerenciar Operator.
 Na edição de uma operadora, desenvolver a interface para associar BaseItem (criando um OperatorItem) e definir as comissões por forma de pagamento (OperatorItemPaymentMethod).
 
 Consultar os arquivos diretrizes\prd-saas.md, diretrizes\schema-prisma.md e diretrizes\flowchar-mermaid.md para ter precisão na execução do plano
+
+
 Fase 3: Core do CRM - Clientes e Propostas (Duração Estimada: 3 semanas)
 Etapa 5: Módulo de Gestão de Clientes (RF01-RF05, RF36)
 Criar o formulário de cadastro de Client (RF01, RF02).
@@ -101,6 +107,8 @@ Gerar PDF com @react-pdf/renderer.
 Gerar texto formatado e copiar para a área de transferência.
 
 Consultar os arquivos diretrizes\prd-saas.md, diretrizes\schema-prisma.md e diretrizes\flowchar-mermaid.md para ter precisão na execução do plano
+
+
 Fase 4: Pós-Venda e Financeiro (Duração Estimada: 2.5 semanas)
 Etapa 7: Módulo de Gestão de Reservas (RF22-RF25)
 Implementar a lógica no backend para, ao marcar uma Proposal como "Paga", criar automaticamente uma Reservation (RF22).
@@ -114,6 +122,8 @@ Para Agentes, criar uma visão simplificada mostrando apenas as comissões de su
 Desenvolver os relatórios de Fluxo de Caixa e DRE simplificado utilizando recharts (RF32).
 
 Consultar os arquivos diretrizes\prd-saas.md, diretrizes\schema-prisma.md e diretrizes\flowchar-mermaid.md para ter precisão na execução do plano
+
+
 Fase 5: Módulos de Suporte e Finalização (Duração Estimada: 2 semanas)
 Etapa 9: Módulo de Log de Auditoria (RF33-RF36)
 Criar um serviço de logging no backend que possa ser chamado em pontos críticos (criação, edição, exclusão de entidades importantes, transferência de clientes).
@@ -130,6 +140,8 @@ Realizar uma rodada de testes de performance e otimizações de query.
 Conduzir uma revisão de segurança e aplicar correções.
 
 Consultar os arquivos diretrizes\prd-saas.md, diretrizes\schema-prisma.md e diretrizes\flowchar-mermaid.md para ter precisão na execução do plano
+
+
 Fase 6: Testes e Implantação (Contínuo)
 Plano de Teste:
 Testes Unitários (Jest/Vitest): Para funções de utilidade, lógicas de cálculo e serviços de backend isolados.
