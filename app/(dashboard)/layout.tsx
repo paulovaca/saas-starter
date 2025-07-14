@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { ThemeToggle } from '@/components/shared/theme-toggle';
 import { signOut } from '@/app/(login)/actions';
 import { useRouter } from 'next/navigation';
 import { User } from '@/lib/db/schema';
@@ -89,34 +90,35 @@ function Header() {
   const { data: user } = useSWR<User>('/api/user', fetcher);
   
   return (
-    <header className="border-b border-gray-200">
+    <header className="border-b border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
         <Link href="/dashboard" className="flex items-center">
-          <CircleIcon className="h-6 w-6 text-orange-500" />
-          <span className="ml-2 text-xl font-semibold text-gray-900">CRM Travel</span>
+          <CircleIcon className="h-6 w-6 text-primary" />
+          <span className="ml-2 text-xl font-semibold text-foreground">CRM Travel</span>
         </Link>
         
         {/* Navigation Menu */}
         <nav className="hidden md:flex items-center space-x-6">
-          <Link href="/dashboard" className="text-sm font-medium text-gray-700 hover:text-gray-900 flex items-center">
+          <Link href="/dashboard" className="text-sm font-medium text-muted-foreground hover:text-foreground flex items-center">
             <Home className="mr-1 h-4 w-4" />
             Dashboard
           </Link>
-          <Link href="/dashboard/clients" className="text-sm font-medium text-gray-700 hover:text-gray-900 flex items-center">
+          <Link href="/dashboard/clients" className="text-sm font-medium text-muted-foreground hover:text-foreground flex items-center">
             <Users className="mr-1 h-4 w-4" />
             Clientes
           </Link>
-          <Link href="/dashboard/proposals" className="text-sm font-medium text-gray-700 hover:text-gray-900 flex items-center">
+          <Link href="/dashboard/proposals" className="text-sm font-medium text-muted-foreground hover:text-foreground flex items-center">
             <FileText className="mr-1 h-4 w-4" />
             Propostas
           </Link>
-          <Link href="/dashboard/reports" className="text-sm font-medium text-gray-700 hover:text-gray-900 flex items-center">
+          <Link href="/dashboard/reports" className="text-sm font-medium text-muted-foreground hover:text-foreground flex items-center">
             <BarChart3 className="mr-1 h-4 w-4" />
             Relatórios
           </Link>
         </nav>
         
         <div className="flex items-center space-x-4">
+          <ThemeToggle />
           <Suspense fallback={<div className="h-9" />}>
             <UserMenu />
           </Suspense>

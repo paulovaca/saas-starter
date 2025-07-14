@@ -35,8 +35,8 @@ function SubscriptionSkeleton() {
       </CardHeader>
       <CardContent>
         <div className="animate-pulse space-y-4">
-          <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-          <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+          <div className="h-4 bg-muted rounded w-3/4"></div>
+          <div className="h-4 bg-muted rounded w-1/2"></div>
         </div>
       </CardContent>
     </Card>
@@ -64,7 +64,7 @@ function Subscription() {
           <CardTitle>Assinatura da Agência</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-red-500">Erro ao carregar dados da agência</p>
+          <p className="text-destructive">Erro ao carregar dados da agência</p>
         </CardContent>
       </Card>
     );
@@ -109,7 +109,7 @@ function Subscription() {
           </Button>
         </form>
         {state?.error && (
-          <p className="text-red-500 text-sm mt-2">{state.error}</p>
+          <p className="text-destructive text-sm mt-2">{state.error}</p>
         )}
       </CardFooter>
     </Card>
@@ -126,7 +126,7 @@ function AgencyInfo() {
           <CardTitle>Informações da Agência</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-red-500">Erro ao carregar dados da agência</p>
+          <p className="text-destructive">Erro ao carregar dados da agência</p>
         </CardContent>
       </Card>
     );
