@@ -16,51 +16,78 @@ import {
 import { agencies } from '../schema/agency';
 import { cookies } from 'next/headers';
 import { verifyToken } from '@/lib/auth/session';
+import { taggedCache } from '@/lib/services/cache/tagged-cache';
+import { CacheKeys, CacheTTL } from '@/lib/services/cache/manager';
 
 /**
  * Get user by email with agency information
+ * Uses cache to improve performance
  */
 export async function getUserByEmail(email: string) {
-  const result = await db
-    .select({
-      user: users,
-      agency: agencies,
-    })
-    .from(users)
-    .leftJoin(agencies, eq(users.agencyId, agencies.id))
-    .where(eq(users.email, email))
-    .limit(1);
+  return taggedCache.remember(
+    CacheKeys.userByEmail(email),
+    async () => {
+      const result = await db
+        .select({
+          user: users,
+          agency: agencies,
+        })
+        .from(users)
+        .leftJoin(agencies, eq(users.agencyId, agencies.id))
+        .where(eq(users.email, email))
+        .limit(1);
 
-  return result[0] || null;
+      return result[0] || null;
+    },
+    {
+      ttl: CacheTTL.MEDIUM,
+      tags: ['users', 'user-by-email']
+    }
+  );
 }
 
 /**
  * Get user by ID with agency information
+ * Uses cache to improve performance
  */
 export async function getUserById(id: string) {
-  const result = await db
-    .select({
-      user: users,
-      agency: agencies,
-    })
-    .from(users)
-    .leftJoin(agencies, eq(users.agencyId, agencies.id))
-    .where(eq(users.id, id))
-    .limit(1);
+  return taggedCache.remember(
+    CacheKeys.user(id),
+    async () => {
+      const result = await db
+        .select({
+          user: users,
+          agency: agencies,
+        })
+        .from(users)
+        .leftJoin(agencies, eq(users.agencyId, agencies.id))
+        .where(eq(users.id, id))
+        .limit(1);
 
-  return result[0] || null;
+      return result[0] || null;
+    },
+    {
+      ttl: CacheTTL.MEDIUM,
+      tags: ['users', `user:${id}`]
+    }
+  );
 }
-
 /**
  * Create a new user
+ * Invalidates user-related cache
  */
 export async function createUser(userData: NewUser): Promise<User> {
   const result = await db.insert(users).values(userData).returning();
+  
+  // Invalida cache relacionado
+  await taggedCache.invalidateTags(['users', 'user-by-email']);
+  
   return result[0];
 }
 
 /**
  * Update user information
+ * Invalidates user-related cache
  */
 export async function updateUser(id: string, updates: Partial<NewUser>) {
   const result = await db
@@ -69,11 +96,15 @@ export async function updateUser(id: string, updates: Partial<NewUser>) {
     .where(eq(users.id, id))
     .returning();
 
+  // Invalida cache do usuário específico e relacionados
+  await taggedCache.invalidateTags(['users', `user:${id}`, 'user-by-email']);
+
   return result[0] || null;
 }
 
 /**
  * Deactivate user account
+ * Invalidates user-related cache
  */
 export async function deactivateUser(id: string) {
   const result = await db
@@ -82,25 +113,42 @@ export async function deactivateUser(id: string) {
     .where(eq(users.id, id))
     .returning();
 
+  // Invalida cache do usuário
+  await taggedCache.invalidateTags(['users', `user:${id}`, 'user-by-email']);
+
   return result[0] || null;
 }
 
 /**
  * Delete user account
+ * Invalidates user-related cache
  */
 export async function deleteUser(id: string) {
   await db.delete(users).where(eq(users.id, id));
+  
+  // Invalida cache do usuário
+  await taggedCache.invalidateTags(['users', `user:${id}`, 'user-by-email']);
 }
 
 /**
  * Get all users for an agency
+ * Uses cache to improve performance
  */
 export async function getUsersByAgency(agencyId: string) {
-  return await db
-    .select()
-    .from(users)
-    .where(and(eq(users.agencyId, agencyId), eq(users.isActive, true)))
-    .orderBy(users.name);
+  return taggedCache.remember(
+    CacheKeys.usersByAgency(agencyId),
+    async () => {
+      return await db
+        .select()
+        .from(users)
+        .where(eq(users.agencyId, agencyId))
+        .orderBy(users.createdAt);
+    },
+    {
+      ttl: CacheTTL.MEDIUM,
+      tags: ['users', `agency:${agencyId}`]
+    }
+  );
 }
 
 // Password Reset Token functions

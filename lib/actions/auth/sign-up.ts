@@ -111,5 +111,10 @@ export const signUp = withFormAction(
     schema: signUpSchema,
     requireAuth: false,
     activityType: 'SIGN_UP' as any,
+    rateLimit: {
+      action: 'sign-up',
+      limit: 3,        // 3 tentativas de registro
+      window: '15m'    // em 15 minutos
+    }
   }
 );

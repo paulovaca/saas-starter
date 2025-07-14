@@ -79,7 +79,17 @@ function isValidCNPJ(cnpj: string): boolean {
  */
 function isValidCEP(cep: string): boolean {
   const cleanCEP = cep.replace(/\D/g, '');
-  return /^\d{8}$/.test(cleanCEP);
+  
+  // Verifica se tem 8 dígitos
+  if (!/^\d{8}$/.test(cleanCEP)) return false;
+  
+  // Rejeita CEPs inválidos conhecidos
+  const invalidCEPs = [
+    '00000000', '11111111', '22222222', '33333333', '44444444',
+    '55555555', '66666666', '77777777', '88888888', '99999999'
+  ];
+  
+  return !invalidCEPs.includes(cleanCEP);
 }
 
 /**
@@ -94,16 +104,17 @@ function isValidBrazilianPhone(phone: string): boolean {
   
   if (cleanPhone.length === 10) {
     // Telefone fixo: DDD + 8 dígitos
-    return /^[1-9]{2}[2-5]\d{7}$/.test(cleanPhone);
+    // DDD válido (11-99) + primeiro dígito do telefone (2-5 ou 9 para alguns casos)
+    return /^[1-9]{2}[2-9]\d{7}$/.test(cleanPhone);
   } else if (cleanPhone.length === 11) {
-    // Celular: DDD + 9 dígitos
-    return /^[1-9]{2}9[6-9]\d{7}$/.test(cleanPhone);
+    // Celular: DDD + 9 dígitos (9xxxx-xxxx)
+    return /^[1-9]{2}9[1-9]\d{7}$/.test(cleanPhone);
   } else if (cleanPhone.length === 12) {
     // Telefone fixo com código do país: 55 + DDD + 8 dígitos
-    return /^55[1-9]{2}[2-5]\d{7}$/.test(cleanPhone);
+    return /^55[1-9]{2}[2-9]\d{7}$/.test(cleanPhone);
   } else if (cleanPhone.length === 13) {
     // Celular com código do país: 55 + DDD + 9 dígitos
-    return /^55[1-9]{2}9[6-9]\d{7}$/.test(cleanPhone);
+    return /^55[1-9]{2}9[1-9]\d{7}$/.test(cleanPhone);
   }
   
   return false;

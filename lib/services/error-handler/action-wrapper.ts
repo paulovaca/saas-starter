@@ -1,7 +1,10 @@
 import { z } from 'zod';
 import { logError, formatErrorForClient, isAppError, AuthenticationError } from './index';
+import { handleDatabaseError, isPostgresError } from './database-errors';
 import { getUser, logActivity } from '@/lib/db/queries';
 import { ActivityType } from '@/lib/db/schema';
+import { rateLimiter } from '@/lib/services/rate-limiter';
+import { headers } from 'next/headers';
 
 export type ActionResult<T = any> = {
   success: boolean;
@@ -20,6 +23,18 @@ export type ActionContext = {
 };
 
 /**
+ * Rate limiting configuration
+ */
+export type RateLimitConfig = {
+  /** Action identifier for rate limiting */
+  action: string;
+  /** Maximum attempts (currently handled by rate limiter) */
+  limit?: number;
+  /** Time window (currently handled by rate limiter) */
+  window?: string;
+};
+
+/**
  * Options for action wrapper
  */
 export type ActionOptions = {
@@ -31,6 +46,8 @@ export type ActionOptions = {
   activityType?: ActivityType;
   /** Custom activity description */
   activityDescription?: string;
+  /** Rate limiting configuration */
+  rateLimit?: RateLimitConfig;
 };
 
 /**
@@ -48,6 +65,19 @@ export function withActionWrapper<T extends any[], R>(
   return async (...args: T): Promise<ActionResult<R>> => {
     try {
       const context: ActionContext = {};
+
+      // Rate limiting check
+      if (options.rateLimit) {
+        const headersList = await headers();
+        const ip = headersList.get('x-forwarded-for') || 
+                  headersList.get('x-real-ip') || 
+                  'anonymous';
+        
+        await rateLimiter.check(ip, options.rateLimit.action || 'general', {
+          limit: options.rateLimit.limit,
+          window: options.rateLimit.window
+        });
+      }
 
       // Authentication check
       if (options.requireAuth) {
@@ -124,6 +154,31 @@ export function withActionWrapper<T extends any[], R>(
       if (error instanceof Error && error.message === 'NEXT_REDIRECT') {
         // Re-throw the redirect to let Next.js handle it
         throw error;
+      }
+      
+      // Handle database errors with friendly messages
+      if (isPostgresError(error)) {
+        const dbError = handleDatabaseError(error);
+        
+        // Log the original database error for debugging
+        logError(error, {
+          action: action.name,
+          args: args.map(arg => {
+            // Don't log sensitive FormData contents
+            if (arg instanceof FormData) {
+              return { type: 'FormData', keys: Array.from(arg.keys()) };
+            }
+            return arg;
+          }),
+          options,
+          dbErrorHandled: true,
+          originalDbCode: (error as any).code,
+        });
+
+        return {
+          success: false,
+          error: formatErrorForClient(dbError),
+        };
       }
       
       // Log the error

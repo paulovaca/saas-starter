@@ -87,5 +87,10 @@ export const signIn = withFormAction(
     // schema: signInSchema, // Temporary disabled for debugging
     requireAuth: false,
     activityType: 'SIGN_IN' as any,
+    rateLimit: {
+      action: 'sign-in',
+      limit: 5,        // 5 tentativas
+      window: '10m'    // em 10 minutos
+    }
   }
 );

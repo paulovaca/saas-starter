@@ -4,9 +4,24 @@ import { users, agencies } from '@/lib/db/schema';
 import { setSession } from '@/lib/auth/session';
 import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@/lib/payments/stripe';
+import { rateLimiter } from '@/lib/services/rate-limiter';
 import Stripe from 'stripe';
 
 export async function GET(request: NextRequest) {
+  try {
+    // Rate limiting para evitar abuso da API
+    const ip = request.headers.get('x-forwarded-for') || 
+              request.headers.get('x-real-ip') || 
+              'anonymous';
+    
+    await rateLimiter.check(ip, 'stripe-checkout');
+  } catch (error) {
+    return NextResponse.json(
+      { error: 'Too many requests. Please try again later.' },
+      { status: 429 }
+    );
+  }
+
   const searchParams = request.nextUrl.searchParams;
   const sessionId = searchParams.get('session_id');
 

@@ -40,6 +40,12 @@ export class AuthorizationError extends AppError {
   }
 }
 
+export class RateLimitError extends AppError {
+  constructor(message: string = 'Too many requests') {
+    super(message, 'RATE_LIMIT_ERROR', 429);
+  }
+}
+
 export class NotFoundError extends AppError {
   constructor(resource: string = 'Resource') {
     super(`${resource} not found`, 'NOT_FOUND_ERROR', 404);
@@ -70,12 +76,6 @@ export class ExternalServiceError extends AppError {
   
   public service: string;
   public originalError?: Error;
-}
-
-export class RateLimitError extends AppError {
-  constructor(message: string = 'Too many requests') {
-    super(message, 'RATE_LIMIT_ERROR', 429);
-  }
 }
 
 /**
