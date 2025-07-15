@@ -191,12 +191,15 @@
   overflow: hidden;
   text-overflow: ellipsis;
   width: 100%;
+  text-align: left;
 }
 
 .userRole {
   font-size: 0.75rem;
   color: var(--muted-foreground);
   text-transform: capitalize;
+  width: 100%;
+  text-align: left;
 }
 
 /* Dropdown Menu */

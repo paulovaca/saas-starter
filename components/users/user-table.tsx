@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Edit, Trash2, Shield, User, Mail, Phone, Calendar, MoreHorizontal, Eye, UserX, UserCheck } from 'lucide-react';
+import { Edit, Trash2, Shield, User, Mail, Phone, Calendar, MoreHorizontal, Key, UserX, UserCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { UserFormModal } from './user-form-modal';
+import { ResetPasswordModal } from './reset-password-modal';
 import { toggleUserStatus } from '@/lib/actions/users/toggle-user-status';
 import { deleteUser } from '@/lib/actions/users/delete-user';
 import type { UserListItem } from '@/lib/db/schema/users';
@@ -25,6 +26,7 @@ type UserTableProps = {
 export function UserTable({ users, pagination, currentPage, currentUserRole }: UserTableProps) {
   const [loadingUserId, setLoadingUserId] = useState<string | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
+  const [showResetModal, setShowResetModal] = useState<{ user: UserListItem } | null>(null);
 
   // Permitir fechar o modal de confirmação com a tecla ESC
   useEffect(() => {
@@ -45,6 +47,17 @@ export function UserTable({ users, pagination, currentPage, currentUserRole }: U
       document.body.style.overflow = 'unset';
     };
   }, [showDeleteConfirm]);
+
+  // Verificar se o usuário atual pode resetar a senha do usuário alvo
+  const canResetPassword = (targetUserRole: string) => {
+    if (currentUserRole === 'MASTER') {
+      return ['ADMIN', 'AGENT'].includes(targetUserRole);
+    }
+    if (currentUserRole === 'ADMIN') {
+      return targetUserRole === 'AGENT';
+    }
+    return false;
+  };
 
   const getRoleBadge = (role: string) => {
     const roleConfig = {
@@ -207,9 +220,16 @@ export function UserTable({ users, pagination, currentPage, currentUserRole }: U
                 
                 <td className={styles.cell}>
                   <div className={styles.actions}>
-                    <Link href={`/users/${user.id}`} className={styles.actionButton}>
-                      <Eye className={styles.actionIcon} />
-                    </Link>
+                    {canResetPassword(user.role) && (
+                      <button
+                        onClick={() => setShowResetModal({ user })}
+                        className={styles.actionButton}
+                        type="button"
+                        title="Resetar senha"
+                      >
+                        <Key className={styles.actionIcon} />
+                      </button>
+                    )}
                     
                     <UserFormModal user={user} currentUserRole={currentUserRole}>
                       <button className={styles.actionButton} type="button">
@@ -301,6 +321,19 @@ export function UserTable({ users, pagination, currentPage, currentUserRole }: U
             </div>
           </div>
         </div>
+      )}
+
+      {/* Modal de reset de senha */}
+      {showResetModal && (
+        <ResetPasswordModal
+          isOpen={true}
+          onClose={() => setShowResetModal(null)}
+          user={{
+            id: showResetModal.user.id,
+            name: showResetModal.user.name,
+            role: showResetModal.user.role
+          }}
+        />
       )}
     </div>
   );

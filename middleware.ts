@@ -30,7 +30,7 @@ export async function middleware(request: NextRequest) {
       const parsed = await verifyToken(sessionCookie.value);
       
       // Check if session is still valid
-      if (new Date(parsed.expires) > new Date()) {
+      if (parsed && new Date(parsed.expires) > new Date()) {
         const expiresInOneDay = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
         res.cookies.set({

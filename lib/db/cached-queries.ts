@@ -14,7 +14,7 @@ export const cachedAuthQueries = {
   async getUserByEmail(email: string) {
     const cacheKey = CacheKeys.userByEmail(email);
     
-    return await cacheManager.getOrSet(
+    return await cacheManager.remember(
       cacheKey,
       () => authQueries.getUserByEmail(email),
       CacheTTL.MEDIUM
@@ -27,7 +27,7 @@ export const cachedAuthQueries = {
   async getUserById(id: string) {
     const cacheKey = CacheKeys.user(id);
     
-    return await cacheManager.getOrSet(
+    return await cacheManager.remember(
       cacheKey,
       () => authQueries.getUserById(id),
       CacheTTL.MEDIUM
@@ -40,7 +40,7 @@ export const cachedAuthQueries = {
   async getUsersByAgency(agencyId: string) {
     const cacheKey = CacheKeys.usersByAgency(agencyId);
     
-    return await cacheManager.getOrSet(
+    return await cacheManager.remember(
       cacheKey,
       () => authQueries.getUsersByAgency(agencyId),
       CacheTTL.MEDIUM
@@ -86,7 +86,7 @@ export const cachedAgencyQueries = {
   async getAgencyById(id: string) {
     const cacheKey = CacheKeys.agency(id);
     
-    return await cacheManager.getOrSet(
+    return await cacheManager.remember(
       cacheKey,
       () => agencyQueries.getAgencyById(id),
       CacheTTL.LONG
@@ -99,7 +99,7 @@ export const cachedAgencyQueries = {
   async getAgencySettings(agencyId: string) {
     const cacheKey = CacheKeys.agencySettings(agencyId);
     
-    return await cacheManager.getOrSet(
+    return await cacheManager.remember(
       cacheKey,
       () => agencyQueries.getAgencySettings(agencyId),
       CacheTTL.LONG
@@ -112,7 +112,7 @@ export const cachedAgencyQueries = {
   async getSalesFunnelsByAgency(agencyId: string) {
     const cacheKey = CacheKeys.salesFunnels(agencyId);
     
-    return await cacheManager.getOrSet(
+    return await cacheManager.remember(
       cacheKey,
       () => agencyQueries.getSalesFunnelsByAgency(agencyId),
       CacheTTL.MEDIUM
@@ -125,7 +125,7 @@ export const cachedAgencyQueries = {
   async getSalesFunnelStages(funnelId: string) {
     const cacheKey = CacheKeys.funnelStages(funnelId);
     
-    return await cacheManager.getOrSet(
+    return await cacheManager.remember(
       cacheKey,
       () => agencyQueries.getSalesFunnelStages(funnelId),
       CacheTTL.MEDIUM
@@ -138,7 +138,7 @@ export const cachedAgencyQueries = {
   async getBaseItemsByAgency(agencyId: string) {
     const cacheKey = CacheKeys.baseItems(agencyId);
     
-    return await cacheManager.getOrSet(
+    return await cacheManager.remember(
       cacheKey,
       () => agencyQueries.getBaseItemsByAgency(agencyId),
       CacheTTL.MEDIUM
@@ -151,7 +151,7 @@ export const cachedAgencyQueries = {
   async getOperatorsByAgency(agencyId: string) {
     const cacheKey = CacheKeys.operators(agencyId);
     
-    return await cacheManager.getOrSet(
+    return await cacheManager.remember(
       cacheKey,
       () => agencyQueries.getOperatorsByAgency(agencyId),
       CacheTTL.MEDIUM
@@ -165,7 +165,7 @@ export const cachedAgencyQueries = {
     const page = Math.floor(offset / limit) + 1;
     const cacheKey = CacheKeys.clients(agencyId, page);
     
-    return await cacheManager.getOrSet(
+    return await cacheManager.remember(
       cacheKey,
       () => agencyQueries.getClientsByAgency(agencyId, limit, offset),
       CacheTTL.SHORT // Shorter TTL for frequently changing data
@@ -178,7 +178,7 @@ export const cachedAgencyQueries = {
   async searchClients(agencyId: string, searchTerm: string) {
     const cacheKey = CacheKeys.clientSearch(agencyId, searchTerm);
     
-    return await cacheManager.getOrSet(
+    return await cacheManager.remember(
       cacheKey,
       () => agencyQueries.searchClients(agencyId, searchTerm),
       CacheTTL.SHORT
@@ -279,7 +279,7 @@ export const cachedActivityQueries = {
   async getRecentActivities(agencyId: string, limit = 10) {
     const cacheKey = CacheKeys.recentActivities(agencyId);
     
-    return await cacheManager.getOrSet(
+    return await cacheManager.remember(
       cacheKey,
       () => activityQueries.getRecentActivities(agencyId, limit),
       CacheTTL.SHORT // Very short TTL for recent activities
@@ -292,7 +292,7 @@ export const cachedActivityQueries = {
   async getNotificationsByUser(userId: string, agencyId?: string, unreadOnly = false, limit = 20) {
     const cacheKey = CacheKeys.notifications(userId);
     
-    return await cacheManager.getOrSet(
+    return await cacheManager.remember(
       cacheKey,
       () => activityQueries.getNotificationsByUser(userId, agencyId, unreadOnly, limit),
       CacheTTL.SHORT
@@ -359,6 +359,17 @@ export const CacheOperations = {
    */
   getCacheHealth() {
     const stats = CacheUtils.getStats();
+    
+    if (!stats) {
+      return {
+        health: 'unknown',
+        expiredRatio: 0,
+        totalEntries: 0,
+        hitRate: 0,
+        memoryUsage: 0,
+      };
+    }
+    
     const expiredRatio = stats.expiredEntries / stats.totalEntries;
     
     return {

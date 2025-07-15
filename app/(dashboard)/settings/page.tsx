@@ -1,5 +1,5 @@
-import { Metadata } from 'next/types';
-import { auth } from '@/lib/auth/auth';
+import { Metadata } from 'next';
+import { getUser } from '@/lib/db/queries/auth';
 import { redirect } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { 
@@ -12,6 +12,8 @@ import {
   Users
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { getAgencyForUser } from '@/lib/db/queries/agency';
+import { EditAgencyModal } from './edit-agency-modal';
 import styles from './settings.module.css';
 
 export const metadata: Metadata = {
@@ -49,44 +51,98 @@ function SubscriptionCard() {
   );
 }
 
-function AgencySettingsCard() {
+function NotificationCard() {
   return (
     <Card>
       <CardHeader>
         <CardTitle className={styles.cardTitle}>
-          <Building className={styles.cardIcon} />
-          Configurações da Agência
+          <Bell className={styles.cardIcon} />
+          Notificações
         </CardTitle>
       </CardHeader>
       <CardContent>
         <div className={styles.infoSection}>
           <div className={styles.infoGroup}>
-            <p className={styles.label}>Nome da Agência:</p>
-            <p className={styles.value}>Minha Agência</p>
+            <p className={styles.label}>Email:</p>
+            <p className={styles.value}>Ativado</p>
           </div>
           <div className={styles.infoGroup}>
-            <p className={styles.label}>Email:</p>
-            <p className={styles.value}>contato@minhaagencia.com</p>
+            <p className={styles.label}>Sistema:</p>
+            <p className={styles.value}>Ativado</p>
           </div>
         </div>
       </CardContent>
       <CardFooter>
         <Button variant="outline">
-          Editar Informações
+          Configurar
         </Button>
       </CardFooter>
     </Card>
   );
 }
 
-export default async function SettingsPage() {
-  const session = await auth();
+function AgencyInfoCard({ agency }: { agency?: any }) {
+  if (!agency) {
+    return null;
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className={styles.cardTitle}>
+          <Building className={styles.cardIcon} />
+          Informações da Agência
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className={styles.infoSection}>
+          <div className={styles.infoGroup}>
+            <p className={styles.label}>Nome:</p>
+            <p className={styles.value}>{agency.name}</p>
+          </div>
+          <div className={styles.infoGroup}>
+            <p className={styles.label}>CNPJ:</p>
+            <p className={styles.value}>{agency.cnpj || 'Não informado'}</p>
+          </div>
+          <div className={styles.infoGroup}>
+            <p className={styles.label}>Email:</p>
+            <p className={styles.value}>{agency.email}</p>
+          </div>
+          <div className={styles.infoGroup}>
+            <p className={styles.label}>Telefone:</p>
+            <p className={styles.value}>{agency.phone || 'Não informado'}</p>
+          </div>
+        </div>
+      </CardContent>
+      <CardFooter>
+        <Button asChild>
+          <a href="?modal=edit-agency">
+            Editar Informações
+          </a>
+        </Button>
+      </CardFooter>
+    </Card>
+  );
+}
+
+export default async function SettingsPage({ searchParams }: { 
+  searchParams: Promise<{ modal?: string }> 
+}) {
+  const resolvedSearchParams = await searchParams;
+  const user = await getUser();
   
-  if (!session) {
+  if (!user) {
     redirect('/sign-in');
   }
 
-  const canManageAgency = ['DEVELOPER', 'MASTER', 'ADMIN'].includes(session.user.role);
+  const canManageAgency = ['DEVELOPER', 'MASTER', 'ADMIN'].includes(user.role);
+  const isMaster = user.role === 'MASTER';
+  
+  // Buscar dados da agência se o usuário pode gerenciá-la
+  let agencyData = null;
+  if (canManageAgency && user.id) {
+    agencyData = await getAgencyForUser(user.id);
+  }
 
   return (
     <div className={styles.settingsContainer}>
@@ -97,41 +153,18 @@ export default async function SettingsPage() {
         </p>
       </div>
 
-      {/* Configurações da Agência (apenas para MASTER, ADMIN, DEVELOPER) */}
-      {canManageAgency && (
-        <>
-          <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>Configurações da Agência</h2>
-          </div>
-          
-          <div className={styles.agencyGrid}>
-            <SubscriptionCard />
-            <AgencySettingsCard />
-          </div>
-        </>
-      )}
-
-      {/* Configurações do Sistema */}
-      <div className={styles.sectionHeader}>
-        <h2 className={styles.sectionTitle}>Configurações do Sistema</h2>
-      </div>
-
       <div className={styles.settingsGrid}>
-        <Card className={styles.settingCard}>
-          <CardHeader>
-            <CardTitle className={styles.cardTitle}>
-              <Bell className={styles.cardIcon} />
-              Notificações
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className={styles.cardDescription}>
-              Configure suas preferências de notificação
-            </p>
-          </CardContent>
-        </Card>
+        {/* Card de Notificações - Disponível para todos */}
+        <NotificationCard />
 
-        <Card className={styles.settingCard}>
+        {/* Card de Informações da Agência - Apenas para roles específicos */}
+        {canManageAgency && <AgencyInfoCard agency={agencyData} />}
+
+        {/* Card de Assinatura - Apenas para MASTER */}
+        {isMaster && <SubscriptionCard />}
+
+        {/* Card de Segurança */}
+        <Card>
           <CardHeader>
             <CardTitle className={styles.cardTitle}>
               <Shield className={styles.cardIcon} />
@@ -139,13 +172,26 @@ export default async function SettingsPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className={styles.cardDescription}>
-              Configurações de segurança e autenticação
-            </p>
+            <div className={styles.infoSection}>
+              <div className={styles.infoGroup}>
+                <p className={styles.label}>Autenticação de 2 fatores:</p>
+                <p className={styles.value}>Desativado</p>
+              </div>
+              <div className={styles.infoGroup}>
+                <p className={styles.label}>Última alteração de senha:</p>
+                <p className={styles.value}>Há 30 dias</p>
+              </div>
+            </div>
           </CardContent>
+          <CardFooter>
+            <Button variant="outline">
+              Configurar Segurança
+            </Button>
+          </CardFooter>
         </Card>
 
-        <Card className={styles.settingCard}>
+        {/* Card de Aparência */}
+        <Card>
           <CardHeader>
             <CardTitle className={styles.cardTitle}>
               <Palette className={styles.cardIcon} />
@@ -153,28 +199,56 @@ export default async function SettingsPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className={styles.cardDescription}>
-              Personalize a aparência da interface
-            </p>
+            <div className={styles.infoSection}>
+              <div className={styles.infoGroup}>
+                <p className={styles.label}>Tema:</p>
+                <p className={styles.value}>Claro</p>
+              </div>
+              <div className={styles.infoGroup}>
+                <p className={styles.label}>Idioma:</p>
+                <p className={styles.value}>Português (BR)</p>
+              </div>
+            </div>
           </CardContent>
+          <CardFooter>
+            <Button variant="outline">
+              Personalizar
+            </Button>
+          </CardFooter>
         </Card>
 
-        <Card className={styles.settingCard}>
-          <CardHeader>
-            <CardTitle className={styles.cardTitle}>
-              <Globe className={styles.cardIcon} />
-              Idioma e Região
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className={styles.cardDescription}>
-              Configure idioma e configurações regionais
-            </p>
-          </CardContent>
-        </Card>
-
+        {/* Card de Sistema - Apenas para roles específicos */}
         {canManageAgency && (
-          <Card className={styles.settingCard}>
+          <Card>
+            <CardHeader>
+              <CardTitle className={styles.cardTitle}>
+                <Globe className={styles.cardIcon} />
+                Sistema
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className={styles.infoSection}>
+                <div className={styles.infoGroup}>
+                  <p className={styles.label}>Versão:</p>
+                  <p className={styles.value}>v1.0.0</p>
+                </div>
+                <div className={styles.infoGroup}>
+                  <p className={styles.label}>Última atualização:</p>
+                  <p className={styles.value}>15/07/2025</p>
+                </div>
+              </div>
+            </CardContent>
+            <CardFooter>
+              <Button variant="outline">
+                Verificar Atualizações
+              </Button>
+            </CardFooter>
+          </Card>
+        )}
+
+        {/* Card de Usuários - Apenas para MASTER e ADMIN */}
+        {(user.role === 'MASTER' || user.role === 'ADMIN') && (
+          <Card>
             <CardHeader>
               <CardTitle className={styles.cardTitle}>
                 <Users className={styles.cardIcon} />
@@ -182,13 +256,27 @@ export default async function SettingsPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className={styles.cardDescription}>
-                Gerencie usuários e permissões da agência
-              </p>
+              <div className={styles.infoSection}>
+                <p className={styles.description}>
+                  Gerencie usuários, permissões e acessos da agência
+                </p>
+              </div>
             </CardContent>
+            <CardFooter>
+              <Button asChild>
+                <a href="/users">
+                  Gerenciar Usuários
+                </a>
+              </Button>
+            </CardFooter>
           </Card>
         )}
       </div>
+
+      {/* Modal de Edição da Agência */}
+      {canManageAgency && agencyData && resolvedSearchParams.modal === 'edit-agency' && (
+        <EditAgencyModal agency={agencyData} />
+      )}
     </div>
   );
 }

@@ -99,7 +99,7 @@ async function UserTableWrapper({
     page,
     search,
     role: role as any,
-    status: status === 'active' ? true : status === 'inactive' ? false : undefined,
+    isActive: status === 'active' ? true : status === 'inactive' ? false : undefined,
     limit: 10,
   });
 
@@ -113,8 +113,8 @@ async function UserTableWrapper({
 
   return (
     <UserTable 
-      users={result.users}
-      pagination={result.pagination}
+      users={result.users || []}
+      pagination={result.pagination || { page: 1, limit: 10, total: 0, totalPages: 0 }}
       currentPage={page}
       currentUserRole={currentUserRole}
     />
