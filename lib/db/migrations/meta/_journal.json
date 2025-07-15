@@ -43,6 +43,20 @@
       "when": 1752603748051,
       "tag": "0005_add_guidelines_to_stages",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1752607464632,
+      "tag": "0006_familiar_boom_boom",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1752611743558,
+      "tag": "0007_daffy_radioactive_man",
+      "breakpoints": true
     }
   ]
 }

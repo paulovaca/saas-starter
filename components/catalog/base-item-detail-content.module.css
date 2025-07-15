@@ -1,0 +1,222 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.header {
+  margin-bottom: 2rem;
+}
+
+.breadcrumb {
+  margin-bottom: 1rem;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--muted-foreground);
+  text-decoration: none;
+  font-size: 0.875rem;
+  transition: color 0.2s;
+}
+
+.backLink:hover {
+  color: var(--foreground);
+}
+
+.backIcon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.titleSection {
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1rem;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
+  color: var(--foreground);
+}
+
+.description {
+  font-size: 1rem;
+  color: var(--muted-foreground);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.content {
+  margin-top: 2rem;
+}
+
+.fieldsSection {
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+}
+
+.fieldsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.fieldsTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--foreground);
+}
+
+.addButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.addIcon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.fieldsList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.fieldCard {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 0.375rem;
+  padding: 1rem;
+  transition: all 0.2s;
+}
+
+.fieldCard:hover {
+  border-color: var(--primary);
+}
+
+.fieldHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+}
+
+.fieldInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+}
+
+.fieldName {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--foreground);
+}
+
+.fieldType {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  background: var(--muted);
+  padding: 0.125rem 0.5rem;
+  border-radius: 0.25rem;
+  align-self: flex-start;
+}
+
+.requiredBadge {
+  font-size: 0.75rem;
+  color: var(--destructive-foreground);
+  background: var(--destructive);
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  align-self: flex-start;
+}
+
+.fieldActions {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.actionButton {
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border-radius: 0.25rem;
+}
+
+.actionIcon {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+.fieldDetail {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  margin: 0.5rem 0;
+  line-height: 1.4;
+}
+
+.fieldOptions {
+  margin-top: 0.75rem;
+  font-size: 0.875rem;
+}
+
+.optionsList {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.optionItem {
+  background: var(--muted);
+  color: var(--foreground);
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+}
+
+.emptyState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  text-align: center;
+}
+
+.emptyContent {
+  max-width: 400px;
+}
+
+.emptyTitle {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+  color: var(--foreground);
+}
+
+.emptyDescription {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  margin: 0 0 1rem 0;
+  line-height: 1.5;
+}
+
+.emptyAction {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}

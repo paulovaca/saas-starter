@@ -4,19 +4,22 @@ export * from './agency';
 export * from './activity';
 export * from './users';
 export * from './funnels';
+export * from './catalog';
 
 // Import tables for relations
 import { users, passwordResetTokens, emailVerificationTokens, userInvitations, userSessions } from './auth';
 import { 
   agencies, 
   agencySettings, 
-  baseItems, 
-  baseItemFields, 
   operators, 
   operatorItems, 
   operatorItemPaymentMethods, 
   clients 
 } from './agency';
+import {
+  baseItems,
+  baseItemFields,
+} from './catalog';
 import { salesFunnels, salesFunnelStages, stageTransitions } from './funnels';
 import { activityLog, systemNotifications } from './activity';
 import { userRelations } from './users';
@@ -88,7 +91,7 @@ export const baseItemsRelations = relations(baseItems, ({ one, many }) => ({
     fields: [baseItems.agencyId],
     references: [agencies.id],
   }),
-  fields: many(baseItemFields),
+  customFields: many(baseItemFields),
   operatorItems: many(operatorItems),
 }));
 

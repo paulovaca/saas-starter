@@ -1,35 +1,41 @@
 import { Metadata } from 'next/types';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Package } from 'lucide-react';
+import { Suspense } from 'react';
+import { redirect } from 'next/navigation';
+import { auth } from '@/lib/auth/auth';
+import { BaseItemsPageContent } from '@/components/catalog/base-items-page-content';
+import { CatalogPageSkeleton } from '@/components/catalog/catalog-page-skeleton';
+import styles from './catalog.module.css';
 
 export const metadata: Metadata = {
-  title: 'Catálogo',
-  description: 'Gerencie o catálogo de produtos e serviços',
+  title: 'Itens Base',
+  description: 'Gerencie os itens base para criação de propostas',
 };
 
-export default function CatalogPage() {
+export default async function BaseItemsPage() {
+  // Verificar autenticação e permissões
+  const session = await auth();
+  
+  if (!session?.user) {
+    redirect('/sign-in');
+  }
+
+  // Apenas Master e Admin podem acessar itens base
+  if (!['MASTER', 'ADMIN'].includes(session.user.role)) {
+    redirect('/dashboard'); // ou página de acesso negado
+  }
+
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0' }}>
-      <div style={{ marginBottom: '2rem' }}>
-        <h1 style={{ fontSize: '2rem', fontWeight: '700', margin: '0 0 0.5rem 0' }}>
-          Catálogo
-        </h1>
-        <p style={{ color: 'var(--muted-foreground)', fontSize: '1rem', margin: '0' }}>
-          Configure produtos e serviços oferecidos pela sua agência
+    <div className={styles.catalogPage}>
+      <div className={styles.header}>
+        <h1 className={styles.title}>Itens Base</h1>
+        <p className={styles.description}>
+          Gerencie os itens base utilizados na criação de propostas
         </p>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <Package style={{ width: '1.25rem', height: '1.25rem', color: 'var(--primary)' }} />
-            Em Desenvolvimento
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p>Esta funcionalidade será implementada na Fase 2 do projeto.</p>
-        </CardContent>
-      </Card>
+      <Suspense fallback={<CatalogPageSkeleton />}>
+        <BaseItemsPageContent />
+      </Suspense>
     </div>
   );
 }

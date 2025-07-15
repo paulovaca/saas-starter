@@ -64,8 +64,9 @@ const navigationItems: NavigationItem[] = [
   },
   {
     href: '/catalog',
-    label: 'Catálogo',
+    label: 'Itens Base',
     icon: Package,
+    requiredPermission: 'canManageBaseItems',
   },
   {
     href: '/operators',
