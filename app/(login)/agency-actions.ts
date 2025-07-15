@@ -89,7 +89,7 @@ export async function signIn(state: ActionState, formData: FormData): Promise<Ac
     await setSession(foundUser);
     await logActivity(foundUser.agencyId, foundUser.id, ActivityType.SIGN_IN);
 
-    redirect('/dashboard');
+    redirect('/');
   } catch (error) {
     console.error('Sign in error:', error);
     return { error: 'An error occurred during sign in' };
@@ -190,7 +190,7 @@ export async function signUp(state: ActionState, formData: FormData): Promise<Ac
     await setSession(createdUser[0]);
     await logActivity(agencyId, createdUser[0].id, ActivityType.SIGN_UP);
 
-    redirect('/dashboard');
+    redirect('/');
   } catch (error) {
     console.error('Error during sign up:', error);
     return { error: 'Failed to create account' };

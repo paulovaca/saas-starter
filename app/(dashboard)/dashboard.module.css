@@ -3,16 +3,24 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 2rem;
   padding: 2rem;
   padding-top: 1.5rem;
 }
 
 .header {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  gap: 0.5rem;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 767px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
 
 .title {
@@ -21,6 +29,53 @@
   letter-spacing: -0.025em;
 }
 
+.subtitle {
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+}
+
+.headerActions {
+  display: flex;
+  gap: 1rem;
+}
+
+/* Botão de Demonstração */
+.demoButton {
+  padding: 0.5rem 1rem;
+  background: var(--primary);
+  border: none;
+  border-radius: 0.5rem;
+  color: var(--primary-foreground);
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.demoButton:hover {
+  background: var(--primary);
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* Seções */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.sectionTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Métricas Grid */
 .metricsGrid {
   display: grid;
   gap: 1rem;
@@ -54,104 +109,162 @@
 }
 
 .metricIcon {
-  height: 1rem;
-  width: 1rem;
-  color: hsl(var(--muted-foreground));
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--muted-foreground);
 }
 
 .metricValue {
-  font-size: 1.5rem;
+  font-size: 2rem;
   font-weight: 700;
+  line-height: 1;
+  margin-bottom: 0.5rem;
 }
 
 .metricDescription {
   font-size: 0.75rem;
-  color: hsl(var(--muted-foreground));
+  color: var(--muted-foreground);
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin: 0;
 }
 
-.contentGrid {
+.trendIcon {
+  width: 0.875rem;
+  height: 0.875rem;
+  color: var(--green-600);
+}
+
+/* Atividades */
+.activityCard {
+  padding: 2rem;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1rem;
+}
+
+.emptyIcon {
+  width: 3rem;
+  height: 3rem;
+  color: var(--muted-foreground);
+}
+
+.emptyTitle {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.emptyDescription {
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+/* Performance Grid */
+.performanceGrid {
   display: grid;
   gap: 1rem;
   grid-template-columns: repeat(1, minmax(0, 1fr));
 }
 
 @media (min-width: 768px) {
-  .contentGrid {
+  .performanceGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.performanceTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.performanceIcon {
+  width: 1rem;
+  height: 1rem;
+  color: var(--muted-foreground);
+}
+
+.performanceValue {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.performanceDescription {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+  margin: 0;
+}
+
+/* Ações Grid */
+.actionsGrid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+@media (min-width: 768px) {
+  .actionsGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (min-width: 1024px) {
-  .contentGrid {
-    grid-template-columns: repeat(7, minmax(0, 1fr));
+  .actionsGrid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 
-.welcomeCard {
-  grid-column: span 4;
+.actionLink {
+  text-decoration: none;
+  color: inherit;
 }
 
-.activityCard {
-  grid-column: span 3;
+.actionCard {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
 }
 
-.welcomeContent {
-  padding-left: 0.5rem;
+.actionCard:hover {
+  border-color: var(--primary);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
 }
 
-.welcomeDescription {
+.actionCardContent {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-}
-
-.welcomeText {
-  font-size: 0.875rem;
-  color: hsl(var(--muted-foreground));
-}
-
-.featureList {
-  font-size: 0.875rem;
-  color: hsl(var(--muted-foreground));
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.activityList {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.activityItem {
-  display: flex;
   align-items: center;
+  text-align: center;
+  padding: 1.5rem;
   gap: 1rem;
 }
 
-.activityIcon {
-  background-color: rgb(254 215 170); /* orange-100 */
-  border-radius: 9999px;
-  padding: 0.5rem;
+.actionIcon {
+  width: 2rem;
+  height: 2rem;
+  color: var(--primary);
 }
 
-.activityIconInner {
-  height: 1rem;
-  width: 1rem;
-  color: rgb(234 88 12); /* orange-600 */
+.actionTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
 }
 
-.activityDetails {
-  flex: 1;
-}
-
-.activityTitle {
+.actionDescription {
   font-size: 0.875rem;
-  font-weight: 500;
-}
-
-.activityDescription {
-  font-size: 0.75rem;
-  color: hsl(var(--muted-foreground));
+  color: var(--muted-foreground);
+  margin: 0;
 }

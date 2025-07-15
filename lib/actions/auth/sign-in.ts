@@ -66,6 +66,17 @@ export const signIn = withFormAction(
 
     const foundAgency = agency[0];
 
+    // Update lastLogin timestamp
+    try {
+      await db
+        .update(users)
+        .set({ lastLogin: new Date() })
+        .where(eq(users.id, foundUser.id));
+    } catch (updateError) {
+      // Don't fail authentication if lastLogin update fails
+      console.error('Failed to update lastLogin:', updateError);
+    }
+
     // Set session with validated user - only need the user object from DB
     await setSession(foundUser);
 
@@ -81,7 +92,7 @@ export const signIn = withFormAction(
       console.error('Failed to log sign-in activity:', logError);
     }
 
-    redirect('/dashboard');
+    redirect('/');
   },
   {
     // schema: signInSchema, // Temporary disabled for debugging

@@ -12,6 +12,8 @@ Antes de começar, confirme que você tem:
 - [ ] Itens no catálogo cadastrados
 - [ ] Pelo menos uma operadora com itens associados
 - [ ] Sistema rodando sem erros
+- [x] Implantação de claro e escuro. 
+- [x] Criação de arquivos individuais css. Nao aceitar estilos inline. 
 
 ## 🚀 PASSO A PASSO DETALHADO
 

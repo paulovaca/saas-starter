@@ -105,7 +105,7 @@ export const signUp = withFormAction(
       'SIGN_UP'
     );
 
-    redirect('/dashboard');
+    redirect('/');
   },
   {
     schema: signUpSchema,

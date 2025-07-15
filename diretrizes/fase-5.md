@@ -11,6 +11,8 @@ Antes de começar, confirme que você tem:
 - [ ] Sistema em produção ou pré-produção
 - [ ] Dados reais ou de teste em volume
 - [ ] Feedback dos primeiros usuários
+- [x] Implantação de claro e escuro. 
+- [x] Criação de arquivos individuais css. Nao aceitar estilos inline. 
 
 ## 🚀 PASSO A PASSO DETALHADO
 

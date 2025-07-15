@@ -2,22 +2,23 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { signToken, verifyToken } from '@/lib/auth/session';
 
-const protectedRoutes = '/dashboard';
-const publicRoutes = ['/sign-in', '/sign-up', '/pricing', '/'];
+const protectedRoutes = ['/users', '/funnels', '/catalog', '/operators', '/clients', '/proposals', '/reports', '/profile', '/settings'];
+const publicRoutes = ['/sign-in', '/sign-up', '/pricing'];
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const sessionCookie = request.cookies.get('session');
-  const isProtectedRoute = pathname.startsWith(protectedRoutes);
+  const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route));
   const isPublicRoute = publicRoutes.some(route => pathname.startsWith(route));
+  const isDashboardRoot = pathname === '/';
 
   // Redirect authenticated users away from auth pages
   if (sessionCookie && (pathname.startsWith('/sign-in') || pathname.startsWith('/sign-up'))) {
-    return NextResponse.redirect(new URL('/dashboard', request.url));
+    return NextResponse.redirect(new URL('/', request.url));
   }
 
-  // Redirect unauthenticated users from protected routes
-  if (isProtectedRoute && !sessionCookie) {
+  // Redirect unauthenticated users from protected routes and dashboard root
+  if ((isProtectedRoute || isDashboardRoot) && !sessionCookie) {
     return NextResponse.redirect(new URL('/sign-in', request.url));
   }
 
@@ -46,14 +47,14 @@ export async function middleware(request: NextRequest) {
       } else {
         // Session expired
         res.cookies.delete('session');
-        if (isProtectedRoute) {
+        if (isProtectedRoute || isDashboardRoot) {
           return NextResponse.redirect(new URL('/sign-in', request.url));
         }
       }
     } catch (error) {
       console.error('Error updating session:', error);
       res.cookies.delete('session');
-      if (isProtectedRoute) {
+      if (isProtectedRoute || isDashboardRoot) {
         return NextResponse.redirect(new URL('/sign-in', request.url));
       }
     }

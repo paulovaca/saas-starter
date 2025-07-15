@@ -15,6 +15,13 @@
       "when": 1752512579456,
       "tag": "0001_lyrical_dark_phoenix",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1752537561605,
+      "tag": "0002_perfect_killer_shrike",
+      "breakpoints": true
     }
   ]
 }

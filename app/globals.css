@@ -9,7 +9,7 @@
     --foreground: 240 10% 3.9%;
     
     /* Cards e superfícies - Sutil mas perceptível */
-    --card: 0 0% 100%;
+    --card: 0 0% 98%;
     --card-foreground: 240 10% 3.9%;
     
     /* Popovers */
@@ -25,7 +25,7 @@
     --secondary-foreground: 222.2 84% 4.9%;
     
     /* Cores neutras - Melhor hierarquia visual */
-    --muted: 210 40% 96%;
+    --muted: 210 40% 94%;
     --muted-foreground: 215.4 16.3% 46.9%;
     
     /* Cor de acento - Verde azulado para variação */
@@ -43,8 +43,8 @@
     --destructive-foreground: 210 40% 98%;
     
     /* Bordas e inputs - Mais definidos */
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
+    --border: 214.3 31.8% 88%;
+    --input: 214.3 31.8% 88%;
     --ring: 221 83% 53%;
     
     /* Orange colors para variação */
@@ -70,7 +70,7 @@
     --foreground: 210 40% 98%;
     
     /* Cards e superfícies - Mais claro para diferenciação */
-    --card: 222.2 84% 7%;
+    --card: 222.2 84% 10%;
     --card-foreground: 210 40% 98%;
     
     /* Popovers */
@@ -86,7 +86,7 @@
     --secondary-foreground: 210 40% 98%;
     
     /* Cores neutras - Hierarquia muito mais clara */
-    --muted: 217.2 32.6% 25%;
+    --muted: 217.2 32.6% 28%;
     --muted-foreground: 215 20.2% 75%;
     
     /* Cor de acento - Diferenciação clara */
@@ -230,5 +230,44 @@
   
   ::-webkit-scrollbar-thumb:hover {
     background: hsl(var(--muted-foreground) / 0.4);
+  }
+}
+
+/* Regras específicas para modais - Garantir fundos sólidos */
+@layer utilities {
+  /* Overlay de modal sempre com fundo sólido escuro */
+  .modal-overlay {
+    background-color: rgba(0, 0, 0, 0.9) !important;
+    backdrop-filter: none !important;
+  }
+  
+  /* Modal sempre com fundo sólido da cor do card */
+  .modal-content {
+    background-color: hsl(var(--card)) !important;
+    border: 2px solid hsl(var(--border)) !important;
+    opacity: 1 !important;
+  }
+  
+  /* Cabeçalho do modal com fundo diferenciado */
+  .modal-header {
+    background-color: hsl(var(--muted)) !important;
+    border-bottom: 1px solid hsl(var(--border)) !important;
+  }
+  
+  /* Rodapé do modal com fundo diferenciado */
+  .modal-footer {
+    background-color: hsl(var(--muted)) !important;
+    border-top: 1px solid hsl(var(--border)) !important;
+  }
+  
+  /* Formulários dentro de modais sempre com fundo sólido */
+  .modal-form {
+    background-color: hsl(var(--card)) !important;
+  }
+  
+  /* Inputs dentro de modais sempre com fundo sólido */
+  .modal-input {
+    background-color: hsl(var(--background)) !important;
+    border: 1px solid hsl(var(--border)) !important;
   }
 }

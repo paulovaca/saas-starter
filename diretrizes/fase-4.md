@@ -11,6 +11,8 @@ Antes de começar, confirme que você tem:
 - [ ] Pelo menos uma proposta aceita no sistema
 - [ ] Sistema de logs funcionando
 - [ ] Permissões configuradas corretamente
+- [x] Implantação de claro e escuro. 
+- [x] Criação de arquivos individuais css. Nao aceitar estilos inline. 
 
 ## 🚀 PASSO A PASSO DETALHADO
 

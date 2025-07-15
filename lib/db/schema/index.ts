@@ -2,6 +2,7 @@
 export * from './auth';
 export * from './agency';
 export * from './activity';
+export * from './users';
 
 // Import tables for relations
 import { users, passwordResetTokens, emailVerificationTokens, userInvitations, userSessions } from './auth';
@@ -18,6 +19,7 @@ import {
   clients 
 } from './agency';
 import { activityLog, systemNotifications } from './activity';
+import { userRelations } from './users';
 import { relations } from 'drizzle-orm';
 
 // Define relations between schemas

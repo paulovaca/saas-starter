@@ -12,6 +12,8 @@ Antes de começar, confirme que você tem:
 - [x] Docker Desktop aberto com PostgreSQL rodando
 - [x] VS Code com o projeto aberto
 - [x] Autenticação funcionando com roles (master, admin, agent)
+- [x] Implantação de claro e escuro. 
+- [x] Criação de arquivos individuais css. Nao aceitar estilos inline. 
 
 ## 🚀 PASSO A PASSO DETALHADO
 
