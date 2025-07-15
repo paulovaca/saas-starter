@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { removeBaseItemField } from '@/lib/actions/catalog';
 import { AddFieldModal } from './add-field-modal';
+import { EditFieldModal } from './edit-field-modal';
 import styles from './base-item-detail-content.module.css';
 
 interface BaseItemDetailContentProps {
@@ -17,6 +18,7 @@ interface BaseItemDetailContentProps {
 export function BaseItemDetailContent({ item }: BaseItemDetailContentProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [showAddField, setShowAddField] = useState(false);
+  const [editingField, setEditingField] = useState<BaseItemField | null>(null);
 
   const handleDeleteField = async (fieldId: string) => {
     if (!confirm('Tem certeza que deseja remover este campo? Esta ação não pode ser desfeita.')) {
@@ -36,6 +38,16 @@ export function BaseItemDetailContent({ item }: BaseItemDetailContentProps) {
   };
 
   const handleFieldAdded = () => {
+    // O router atualizará automaticamente a página
+    window.location.reload();
+  };
+
+  const handleEditField = (field: BaseItemField) => {
+    setEditingField(field);
+  };
+
+  const handleFieldUpdated = () => {
+    setEditingField(null);
     // O router atualizará automaticamente a página
     window.location.reload();
   };
@@ -99,7 +111,9 @@ export function BaseItemDetailContent({ item }: BaseItemDetailContentProps) {
                         variant="ghost"
                         size="sm"
                         className={styles.actionButton}
+                        onClick={() => handleEditField(field)}
                         disabled={isLoading}
+                        title="Editar campo"
                       >
                         <Edit3 className={styles.actionIcon} />
                       </Button>
@@ -109,6 +123,7 @@ export function BaseItemDetailContent({ item }: BaseItemDetailContentProps) {
                         className={styles.actionButton}
                         onClick={() => handleDeleteField(field.id)}
                         disabled={isLoading}
+                        title="Remover campo"
                       >
                         <Trash2 className={styles.actionIcon} />
                       </Button>
@@ -157,6 +172,16 @@ export function BaseItemDetailContent({ item }: BaseItemDetailContentProps) {
         onClose={() => setShowAddField(false)}
         onSuccess={handleFieldAdded}
       />
+
+      {/* Modal para editar campo */}
+      {editingField && (
+        <EditFieldModal
+          field={editingField}
+          isOpen={!!editingField}
+          onClose={() => setEditingField(null)}
+          onSuccess={handleFieldUpdated}
+        />
+      )}
     </div>
   );
 }

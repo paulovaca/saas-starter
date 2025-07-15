@@ -45,68 +45,76 @@ export function BaseItemCard({ item }: BaseItemCardProps) {
               {item.name}
             </Link>
           </h3>
+          {item.description && (
+            <p className={styles.description}>{item.description}</p>
+          )}
         </div>
         
         <div className={styles.actions}>
-          <Link href={`/catalog/${item.id}`}>
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className={styles.actionButton}
-              disabled={isLoading}
-            >
-              <Edit3 className={styles.actionIcon} />
-            </Button>
-          </Link>
-          
           <Button 
             variant="ghost" 
             size="sm" 
             className={styles.actionButton}
             onClick={handleDelete}
             disabled={isLoading}
+            title="Excluir item base"
           >
             <Trash2 className={styles.actionIcon} />
           </Button>
         </div>
       </div>
 
-      {item.description && (
-        <p className={styles.description}>{item.description}</p>
-      )}
-
-      <div className={styles.fieldsSection}>
-        <h4 className={styles.fieldsTitle}>
-          Campos ({item.customFields.length})
-        </h4>
-        
-        {item.customFields.length > 0 ? (
-          <div className={styles.fields}>
-            {item.customFields.slice(0, 3).map((field) => (
-              <div key={field.id} className={styles.field}>
-                <span className={styles.fieldName}>{field.name}</span>
-                <span className={styles.fieldType}>
-                  {getFieldTypeLabel(field.type)}
-                </span>
-              </div>
-            ))}
-            {item.customFields.length > 3 && (
-              <div className={styles.moreFields}>
-                +{item.customFields.length - 3} campo(s)
-              </div>
-            )}
+      <div className={styles.content}>
+        <div className={styles.fieldsSection}>
+          <div className={styles.fieldsHeader}>
+            <div className={styles.fieldsInfo}>
+              <span className={styles.fieldsCount}>
+                {item.customFields.length} campo{item.customFields.length !== 1 ? 's' : ''}
+              </span>
+              {item.customFields.length > 0 && (
+                <span className={styles.fieldsSeparator}>•</span>
+              )}
+              <span className={styles.fieldsStatus}>
+                {item.customFields.length > 0 ? 'Configurado' : 'Sem campos'}
+              </span>
+            </div>
           </div>
-        ) : (
-          <p className={styles.noFields}>Nenhum campo adicionado</p>
-        )}
+          
+          {item.customFields.length > 0 ? (
+            <div className={styles.fieldsList}>
+              {item.customFields.slice(0, 4).map((field) => (
+                <div key={field.id} className={styles.fieldTag}>
+                  <span className={styles.fieldName}>{field.name}</span>
+                  <span className={styles.fieldType}>
+                    {getFieldTypeLabel(field.type)}
+                  </span>
+                  {field.isRequired && (
+                    <span className={styles.requiredIndicator}>*</span>
+                  )}
+                </div>
+              ))}
+              {item.customFields.length > 4 && (
+                <div className={styles.moreFields}>
+                  +{item.customFields.length - 4} campos
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className={styles.emptyFields}>
+              <span className={styles.emptyFieldsText}>
+                Este item base ainda não possui campos customizados
+              </span>
+            </div>
+          )}
+        </div>
       </div>
 
       <div className={styles.footer}>
         <span className={styles.date}>
-          Criado em {new Date(item.createdAt).toLocaleDateString('pt-BR')}
+          {new Date(item.createdAt).toLocaleDateString('pt-BR')}
         </span>
         <Link href={`/catalog/${item.id}`}>
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" className={styles.manageButton}>
             Gerenciar Campos
           </Button>
         </Link>
