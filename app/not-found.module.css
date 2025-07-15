@@ -23,19 +23,19 @@
 .logo {
   width: 3rem;
   height: 3rem;
-  color: hsl(var(--primary));
+  color: var(--primary);
 }
 
 .title {
   font-size: 2.25rem;
   font-weight: 700;
-  color: hsl(var(--foreground));
+  color: var(--foreground);
   letter-spacing: -0.025em;
 }
 
 .description {
   font-size: 1rem;
-  color: hsl(var(--muted-foreground));
+  color: var(--muted-foreground);
 }
 
 .homeButton {
@@ -48,22 +48,22 @@
   padding-bottom: 0.5rem;
   padding-left: 1rem;
   padding-right: 1rem;
-  border: 1px solid hsl(var(--border));
+  border: 1px solid var(--border);
   border-radius: 9999px;
   box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   font-size: 0.875rem;
   font-weight: 500;
-  color: hsl(var(--foreground));
-  background-color: hsl(var(--background));
+  color: var(--foreground);
+  background-color: var(--background);
   text-decoration: none;
   transition: all 0.2s;
 }
 
 .homeButton:hover {
-  background-color: hsl(var(--muted));
+  background-color: var(--muted);
 }
 
 .homeButton:focus {
   outline: none;
-  box-shadow: 0 0 0 2px hsl(var(--ring));
+  box-shadow: 0 0 0 2px var(--ring);
 }

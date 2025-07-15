@@ -27,7 +27,7 @@ export function ThemeToggle() {
         <Sun 
           className={styles.themeIcon} 
           style={{
-            color: 'hsl(var(--foreground))',
+            color: 'var(--foreground)',
             fill: 'currentColor',
             stroke: 'currentColor',
             opacity: 1
@@ -39,7 +39,7 @@ export function ThemeToggle() {
 
   const getThemeIcon = () => {
     const iconStyle = {
-      color: 'hsl(var(--foreground))',
+      color: 'var(--foreground)',
       fill: 'currentColor',
       stroke: 'currentColor',
       opacity: 1

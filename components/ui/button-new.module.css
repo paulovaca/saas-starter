@@ -15,7 +15,7 @@
 }
 
 .buttonBase:focus-visible {
-  outline: 2px solid hsl(var(--ring));
+  outline: 2px solid var();
   outline-offset: 2px;
 }
 
@@ -33,14 +33,14 @@
 
 /* Variantes do botão com contraste aprimorado */
 .default {
-  background-color: hsl(var(--primary));
-  color: hsl(var(--primary-foreground));
-  border: 1px solid hsl(var(--primary));
+  background-color: var();
+  color: var();
+  border: 1px solid var();
   box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
 }
 
 .default:hover {
-  background-color: hsl(var(--primary) / 0.9);
+  background-color: rgb(from var() r g b / );
   box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 }
 
@@ -50,14 +50,14 @@
 }
 
 .destructive {
-  background-color: hsl(var(--destructive));
-  color: hsl(var(--destructive-foreground));
-  border: 1px solid hsl(var(--destructive));
+  background-color: var();
+  color: var();
+  border: 1px solid var();
   box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
 }
 
 .destructive:hover {
-  background-color: hsl(var(--destructive) / 0.9);
+  background-color: rgb(from var() r g b / );
   box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 }
 
@@ -66,14 +66,14 @@
 }
 
 .secondary {
-  background-color: hsl(var(--secondary));
-  color: hsl(var(--secondary-foreground));
-  border: 1px solid hsl(var(--border));
+  background-color: var();
+  color: var();
+  border: 1px solid var();
   box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
 }
 
 .secondary:hover {
-  background-color: hsl(var(--secondary) / 0.8);
+  background-color: rgb(from var() r g b / );
   box-shadow: 0 2px 4px 0 rgb(0 0 0 / 0.1);
 }
 
@@ -82,16 +82,16 @@
 }
 
 .outline {
-  background-color: hsl(var(--background));
-  color: hsl(var(--foreground));
-  border: 1px solid hsl(var(--border));
+  background-color: var();
+  color: var();
+  border: 1px solid var();
   box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
 }
 
 .outline:hover {
-  background-color: hsl(var(--accent));
-  color: hsl(var(--accent-foreground));
-  border-color: hsl(var(--border));
+  background-color: var();
+  color: var();
+  border-color: var();
   box-shadow: 0 2px 4px 0 rgb(0 0 0 / 0.1);
 }
 
@@ -101,13 +101,13 @@
 
 .ghost {
   background-color: transparent;
-  color: hsl(var(--foreground));
+  color: var();
   border: 1px solid transparent;
 }
 
 .ghost:hover {
-  background-color: hsl(var(--accent));
-  color: hsl(var(--accent-foreground));
+  background-color: var();
+  color: var();
   box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
 }
 
@@ -116,7 +116,7 @@
 }
 
 .link {
-  color: hsl(var(--primary));
+  color: var();
   text-decoration: underline;
   text-underline-offset: 4px;
   background-color: transparent;
@@ -125,7 +125,7 @@
 
 .link:hover {
   text-decoration: none;
-  color: hsl(var(--primary) / 0.8);
+  color: rgb(from var() r g b / );
 }
 
 .link:active {
@@ -133,14 +133,14 @@
 }
 
 .success {
-  background-color: hsl(var(--success));
-  color: hsl(var(--success-foreground));
-  border: 1px solid hsl(var(--success));
+  background-color: var();
+  color: var();
+  border: 1px solid var();
   box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
 }
 
 .success:hover {
-  background-color: hsl(var(--success) / 0.9);
+  background-color: rgb(from var() r g b / );
   box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 }
 
@@ -149,14 +149,14 @@
 }
 
 .warning {
-  background-color: hsl(var(--warning));
-  color: hsl(var(--warning-foreground));
-  border: 1px solid hsl(var(--warning));
+  background-color: var();
+  color: var();
+  border: 1px solid var();
   box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
 }
 
 .warning:hover {
-  background-color: hsl(var(--warning) / 0.9);
+  background-color: rgb(from var() r g b / );
   box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 }
 

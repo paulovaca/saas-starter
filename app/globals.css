@@ -5,60 +5,60 @@
 @layer base {
   :root {
     /* Tema Claro - Base neutra */
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
+    --background: rgb(255 255 255);
+    --foreground: rgb(9 9 11);
     
     /* Cards e superfícies - Sutil mas perceptível */
-    --card: 0 0% 98%;
-    --card-foreground: 240 10% 3.9%;
+    --card: rgb(250 250 250);
+    --card-foreground: rgb(9 9 11);
     
     /* Popovers */
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
+    --popover: rgb(255 255 255);
+    --popover-foreground: rgb(9 9 11);
     
     /* Cor primária - Azul forte e distintivo */
-    --primary: 221 83% 53%;
-    --primary-foreground: 210 40% 98%;
+    --primary: rgb(37 99 235);
+    --primary-foreground: rgb(248 250 252);
     
     /* Cor secundária - Cinza azulado com boa diferenciação */
-    --secondary: 210 40% 95%;
-    --secondary-foreground: 222.2 84% 4.9%;
+    --secondary: rgb(241 245 249);
+    --secondary-foreground: rgb(15 23 42);
     
     /* Cores neutras - Melhor hierarquia visual */
-    --muted: 210 40% 94%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: rgb(239 243 248);
+    --muted-foreground: rgb(100 116 139);
     
     /* Cor de acento - Verde azulado para variação */
-    --accent: 210 40% 90%;
-    --accent-foreground: 222.2 84% 4.9%;
+    --accent: rgb(226 232 240);
+    --accent-foreground: rgb(15 23 42);
     
     /* Estados de cor - Alta visibilidade e distintivos */
-    --success: 142 76% 36%;
-    --success-foreground: 355.7 100% 97.3%;
+    --success: rgb(22 163 74);
+    --success-foreground: rgb(254 242 242);
     
-    --warning: 32 95% 44%;
-    --warning-foreground: 210 40% 98%;
+    --warning: rgb(234 179 8);
+    --warning-foreground: rgb(248 250 252);
     
-    --destructive: 0 84.2% 56%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: rgb(239 68 68);
+    --destructive-foreground: rgb(248 250 252);
     
     /* Bordas e inputs - Mais definidos */
-    --border: 214.3 31.8% 88%;
-    --input: 214.3 31.8% 88%;
-    --ring: 221 83% 53%;
+    --border: rgb(203 213 225);
+    --input: rgb(203 213 225);
+    --ring: rgb(37 99 235);
     
     /* Orange colors para variação */
-    --orange-50: 33 100% 96%;
-    --orange-100: 34 100% 92%;
-    --orange-500: 25 95% 53%;
-    --orange-600: 20.5 90.2% 48.2%;
+    --orange-50: rgb(255 251 235);
+    --orange-100: rgb(254 243 199);
+    --orange-500: rgb(249 115 22);
+    --orange-600: rgb(234 88 12);
     
     /* Charts - Paleta rica e distinta */
-    --chart-1: 221 83% 53%;
-    --chart-2: 142 76% 36%;
-    --chart-3: 32 95% 44%;
-    --chart-4: 280 100% 70%;
-    --chart-5: 340 82% 52%;
+    --chart-1: rgb(37 99 235);
+    --chart-2: rgb(22 163 74);
+    --chart-3: rgb(234 179 8);
+    --chart-4: rgb(168 85 247);
+    --chart-5: rgb(236 72 153);
     
     /* Configuração do raio */
     --radius: 0.5rem;
@@ -66,60 +66,60 @@
 
   .dark {
     /* Tema Escuro - Base profunda com melhor contraste */
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: rgb(9 9 11);
+    --foreground: rgb(248 250 252);
     
     /* Cards e superfícies - Mais claro para diferenciação */
-    --card: 222.2 84% 10%;
-    --card-foreground: 210 40% 98%;
+    --card: rgb(24 24 27);
+    --card-foreground: rgb(248 250 252);
     
     /* Popovers */
-    --popover: 222.2 84% 7%;
-    --popover-foreground: 210 40% 98%;
+    --popover: rgb(17 17 19);
+    --popover-foreground: rgb(248 250 252);
     
     /* Cor primária - Azul vibrante para contraste */
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 84% 4.9%;
+    --primary: rgb(59 130 246);
+    --primary-foreground: rgb(9 9 11);
     
     /* Cor secundária - Muito mais claro */
-    --secondary: 217.2 32.6% 25%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: rgb(39 39 42);
+    --secondary-foreground: rgb(248 250 252);
     
     /* Cores neutras - Hierarquia muito mais clara */
-    --muted: 217.2 32.6% 28%;
-    --muted-foreground: 215 20.2% 75%;
+    --muted: rgb(63 63 70);
+    --muted-foreground: rgb(161 161 170);
     
     /* Cor de acento - Diferenciação clara */
-    --accent: 217.2 32.6% 30%;
-    --accent-foreground: 210 40% 98%;
+    --accent: rgb(68 68 75);
+    --accent-foreground: rgb(248 250 252);
     
     /* Estados de cor - Alta visibilidade no escuro */
-    --success: 142 70% 50%;
-    --success-foreground: 355.7 100% 97.3%;
+    --success: rgb(34 197 94);
+    --success-foreground: rgb(254 242 242);
     
-    --warning: 32 95% 65%;
-    --warning-foreground: 20.5 90.2% 10%;
+    --warning: rgb(250 204 21);
+    --warning-foreground: rgb(20 14 23);
     
-    --destructive: 0 72.2% 60%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: rgb(248 113 113);
+    --destructive-foreground: rgb(248 250 252);
     
     /* Bordas e inputs - Muito mais visíveis */
-    --border: 217.2 32.6% 30%;
-    --input: 217.2 32.6% 30%;
-    --ring: 212.7 26.8% 83.9%;
+    --border: rgb(68 68 75);
+    --input: rgb(68 68 75);
+    --ring: rgb(147 197 253);
     
     /* Orange colors para tema escuro */
-    --orange-50: 222.2 84% 4.9%;
-    --orange-100: 217.2 32.6% 17.5%;
-    --orange-500: 32 95% 60%;
-    --orange-600: 25 95% 53%;
+    --orange-50: rgb(9 9 11);
+    --orange-100: rgb(30 41 59);
+    --orange-500: rgb(251 146 60);
+    --orange-600: rgb(249 115 22);
     
     /* Charts - Cores vibrantes para tema escuro */
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    --chart-1: rgb(96 165 250);
+    --chart-2: rgb(52 211 153);
+    --chart-3: rgb(251 191 36);
+    --chart-4: rgb(196 181 253);
+    --chart-5: rgb(244 114 182);
   }
 }
 
@@ -133,13 +133,13 @@
 /* Aplicação das cores base */
 @layer base {
   * {
-    border-color: hsl(var(--border));
-    outline-color: hsl(var(--ring) / 0.5);
+    border-color: var(--border);
+    outline-color: rgb(from var(--ring) r g b / 0.5);
   }
   
   body {
-    background-color: hsl(var(--background));
-    color: hsl(var(--foreground));
+    background-color: var(--background);
+    color: var(--foreground);
     font-feature-settings: "rlig" 1, "calt" 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -154,60 +154,60 @@
   }
   
   .button-primary-enhanced {
-    background-color: hsl(var(--primary));
-    color: hsl(var(--primary-foreground));
-    border: 1px solid hsl(var(--primary));
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+    border: 1px solid var(--primary);
     box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
   }
   
   .button-primary-enhanced:hover {
-    background-color: hsl(var(--primary) / 0.9);
+    background-color: rgb(from var(--primary) r g b / 0.9);
     box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   }
   
   .button-secondary-enhanced {
-    background-color: hsl(var(--secondary));
-    color: hsl(var(--secondary-foreground));
-    border: 1px solid hsl(var(--border));
+    background-color: var(--secondary);
+    color: var(--secondary-foreground);
+    border: 1px solid var(--border);
     box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   }
   
   .button-secondary-enhanced:hover {
-    background-color: hsl(var(--secondary) / 0.8);
-    border-color: hsl(var(--border));
+    background-color: rgb(from var(--secondary) r g b / 0.8);
+    border-color: var(--border);
   }
   
   .button-outline-enhanced {
     background-color: transparent;
-    color: hsl(var(--foreground));
-    border: 1px solid hsl(var(--border));
+    color: var(--foreground);
+    border: 1px solid var(--border);
   }
   
   .button-outline-enhanced:hover {
-    background-color: hsl(var(--accent));
-    color: hsl(var(--accent-foreground));
+    background-color: var(--accent);
+    color: var(--accent-foreground);
   }
   
   .button-ghost-enhanced {
     background-color: transparent;
-    color: hsl(var(--foreground));
+    color: var(--foreground);
     border: 1px solid transparent;
   }
   
   .button-ghost-enhanced:hover {
-    background-color: hsl(var(--accent));
-    color: hsl(var(--accent-foreground));
+    background-color: var(--accent);
+    color: var(--accent-foreground);
   }
   
   .button-destructive-enhanced {
-    background-color: hsl(var(--destructive));
-    color: hsl(var(--destructive-foreground));
-    border: 1px solid hsl(var(--destructive));
+    background-color: var(--destructive);
+    color: var(--destructive-foreground);
+    border: 1px solid var(--destructive);
     box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
   }
   
   .button-destructive-enhanced:hover {
-    background-color: hsl(var(--destructive) / 0.9);
+    background-color: rgb(from var(--destructive) r g b / 0.9);
   }
 }
 
@@ -220,16 +220,16 @@
   }
   
   ::-webkit-scrollbar-track {
-    background: hsl(var(--muted));
+    background: var(--muted);
   }
   
   ::-webkit-scrollbar-thumb {
-    background: hsl(var(--border));
+    background: var(--border);
     border-radius: 3px;
   }
   
   ::-webkit-scrollbar-thumb:hover {
-    background: hsl(var(--muted-foreground) / 0.4);
+    background: rgb(from var(--muted-foreground) r g b / 0.4);
   }
 }
 
@@ -243,31 +243,31 @@
   
   /* Modal sempre com fundo sólido da cor do card */
   .modal-content {
-    background-color: hsl(var(--card)) !important;
-    border: 2px solid hsl(var(--border)) !important;
+    background-color: var(--card) !important;
+    border: 2px solid var(--border) !important;
     opacity: 1 !important;
   }
   
   /* Cabeçalho do modal com fundo diferenciado */
   .modal-header {
-    background-color: hsl(var(--muted)) !important;
-    border-bottom: 1px solid hsl(var(--border)) !important;
+    background-color: var(--muted) !important;
+    border-bottom: 1px solid var(--border) !important;
   }
   
   /* Rodapé do modal com fundo diferenciado */
   .modal-footer {
-    background-color: hsl(var(--muted)) !important;
-    border-top: 1px solid hsl(var(--border)) !important;
+    background-color: var(--muted) !important;
+    border-top: 1px solid var(--border) !important;
   }
   
   /* Formulários dentro de modais sempre com fundo sólido */
   .modal-form {
-    background-color: hsl(var(--card)) !important;
+    background-color: var(--card) !important;
   }
   
   /* Inputs dentro de modais sempre com fundo sólido */
   .modal-input {
-    background-color: hsl(var(--background)) !important;
-    border: 1px solid hsl(var(--border)) !important;
+    background-color: var(--background) !important;
+    border: 1px solid var(--border) !important;
   }
 }

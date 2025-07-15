@@ -5,8 +5,8 @@
 }
 
 .radioGroupItem {
-  border: 1px solid hsl(var(--input));
-  color: hsl(var(--primary));
+  border: 1px solid var(--input);
+  color: var(--primary);
   aspect-ratio: 1;
   width: 1rem;
   height: 1rem;
@@ -19,21 +19,21 @@
 }
 
 .radioGroupItem:focus-visible {
-  border-color: hsl(var(--ring));
-  box-shadow: 0 0 0 3px hsl(var(--ring) / 0.5);
+  border-color: var(--ring);
+  box-shadow: 0 0 0 3px rgb(from var(--ring) r g b / 0.5);
 }
 
 .radioGroupItem[aria-invalid="true"] {
-  border-color: hsl(var(--destructive));
-  box-shadow: 0 0 0 3px hsl(var(--destructive) / 0.2);
+  border-color: var(--destructive);
+  box-shadow: 0 0 0 3px rgb(from var(--destructive) r g b / 0.2);
 }
 
 .dark .radioGroupItem[aria-invalid="true"] {
-  box-shadow: 0 0 0 3px hsl(var(--destructive) / 0.4);
+  box-shadow: 0 0 0 3px rgb(from var(--destructive) r g b / 0.4);
 }
 
 .dark .radioGroupItem {
-  background-color: hsl(var(--input) / 0.3);
+  background-color: rgb(from var(--input) r g b / 0.3);
 }
 
 .radioGroupItem:disabled {
@@ -49,7 +49,7 @@
 }
 
 .radioGroupIcon {
-  fill: hsl(var(--primary));
+  fill: var(--primary);
   position: absolute;
   top: 50%;
   left: 50%;
