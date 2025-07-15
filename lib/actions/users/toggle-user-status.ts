@@ -25,11 +25,6 @@ export async function toggleUserStatus(userId: string): Promise<ToggleUserStatus
       return { error: 'Não autorizado' };
     }
 
-    // Apenas MASTER e ADMIN podem alterar status de usuários
-    if (!['MASTER', 'ADMIN'].includes(session.user.role)) {
-      return { error: 'Sem permissão para alterar status de usuários' };
-    }
-
     // Buscar usuário existente
     const existingUser = await db
       .select({
@@ -52,14 +47,24 @@ export async function toggleUserStatus(userId: string): Promise<ToggleUserStatus
       return { error: 'Usuário não encontrado' };
     }
 
-    // Não permitir desativar o próprio usuário
-    if (existingUser.id === session.user.id) {
-      return { error: 'Você não pode desativar sua própria conta' };
-    }
+    // Verificar permissões baseadas no role
+    const canToggleStatus = (() => {
+      // MASTER pode alterar status de ADMIN e AGENT, mas não outros MASTER
+      if (session.user.role === 'MASTER') {
+        return ['ADMIN', 'AGENT'].includes(existingUser.role);
+      }
 
-    // Não permitir que ADMIN desative MASTER
-    if (session.user.role === 'ADMIN' && existingUser.role === 'MASTER') {
-      return { error: 'Administrador não pode alterar status de Master' };
+      // ADMIN pode alterar status apenas de AGENT
+      if (session.user.role === 'ADMIN') {
+        return existingUser.role === 'AGENT';
+      }
+
+      // AGENT não pode alterar status de ninguém
+      return false;
+    })();
+
+    if (!canToggleStatus) {
+      return { error: 'Sem permissão para alterar status deste usuário' };
     }
 
     // Calcular novo status

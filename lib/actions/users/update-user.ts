@@ -31,20 +31,7 @@ export async function updateUser(userId: string, data: UpdateUserData): Promise<
       return { error: 'Não autorizado' };
     }
 
-    // Verificar permissões
-    const canEdit = 
-      session.user.role === 'MASTER' || 
-      (session.user.role === 'ADMIN' && session.user.id !== userId) ||
-      session.user.id === userId; // Usuário pode editar próprio perfil
-
-    if (!canEdit) {
-      return { error: 'Sem permissão para editar este usuário' };
-    }
-
-    // Validar dados de entrada
-    const validatedData = updateUserSchema.parse(data);
-
-    // Buscar usuário existente
+    // Buscar usuário existente para verificar permissões
     const existingUser = await db
       .select()
       .from(users)
@@ -60,11 +47,58 @@ export async function updateUser(userId: string, data: UpdateUserData): Promise<
       return { error: 'Usuário não encontrado' };
     }
 
+    // Verificar permissões baseadas no role
+    const canEdit = (() => {
+      // Usuário pode editar próprio perfil (exceto role)
+      if (session.user.id === userId) {
+        return true;
+      }
+
+      // MASTER pode editar ADMIN e AGENT, mas não outros MASTER
+      if (session.user.role === 'MASTER') {
+        return ['ADMIN', 'AGENT'].includes(existingUser.role);
+      }
+
+      // ADMIN pode editar apenas AGENT
+      if (session.user.role === 'ADMIN') {
+        return existingUser.role === 'AGENT';
+      }
+
+      // AGENT não pode editar ninguém
+      return false;
+    })();
+
+    if (!canEdit) {
+      return { error: 'Sem permissão para editar este usuário' };
+    }
+
+    // Validar dados de entrada
+    const validatedData = updateUserSchema.parse(data);
+
     // Verificar se é mudança de role e validar hierarquia
     if (validatedData.role !== existingUser.role) {
-      // Apenas MASTER pode alterar roles
-      if (session.user.role !== 'MASTER') {
-        return { error: 'Sem permissão para alterar roles' };
+      // Usuário não pode alterar próprio role
+      if (session.user.id === userId) {
+        return { error: 'Você não pode alterar seu próprio nível de acesso' };
+      }
+
+      // Verificar permissões para alterar role
+      const canChangeRole = (() => {
+        // MASTER pode alterar role de ADMIN e AGENT
+        if (session.user.role === 'MASTER') {
+          return ['ADMIN', 'AGENT'].includes(existingUser.role);
+        }
+
+        // ADMIN pode alterar role apenas de AGENT
+        if (session.user.role === 'ADMIN') {
+          return existingUser.role === 'AGENT';
+        }
+
+        return false;
+      })();
+
+      if (!canChangeRole) {
+        return { error: 'Sem permissão para alterar o nível de acesso deste usuário' };
       }
 
       // Validar hierarquia de roles

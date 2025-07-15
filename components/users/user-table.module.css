@@ -213,6 +213,13 @@
   gap: 0.5rem;
 }
 
+.noActions {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+  font-style: italic;
+  padding: 0.25rem 0.5rem;
+}
+
 .actionButton {
   display: flex;
   align-items: center;

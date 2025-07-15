@@ -23,11 +23,6 @@ export async function deleteUser(userId: string): Promise<DeleteUserResponse> {
       return { error: 'Não autorizado' };
     }
 
-    // Apenas MASTER pode deletar usuários
-    if (session.user.role !== 'MASTER') {
-      return { error: 'Apenas Master pode deletar usuários' };
-    }
-
     // Buscar usuário existente
     const existingUser = await db
       .select({
@@ -48,6 +43,26 @@ export async function deleteUser(userId: string): Promise<DeleteUserResponse> {
 
     if (!existingUser) {
       return { error: 'Usuário não encontrado' };
+    }
+
+    // Verificar permissões baseadas no role
+    const canDelete = (() => {
+      // MASTER pode deletar ADMIN e AGENT, mas não outros MASTER
+      if (session.user.role === 'MASTER') {
+        return ['ADMIN', 'AGENT'].includes(existingUser.role);
+      }
+
+      // ADMIN pode deletar apenas AGENT
+      if (session.user.role === 'ADMIN') {
+        return existingUser.role === 'AGENT';
+      }
+
+      // AGENT não pode deletar ninguém
+      return false;
+    })();
+
+    if (!canDelete) {
+      return { error: 'Sem permissão para deletar este usuário' };
     }
 
     // Não permitir deletar o próprio usuário

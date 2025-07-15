@@ -59,6 +59,36 @@ export function UserTable({ users, pagination, currentPage, currentUserRole }: U
     return false;
   };
 
+  // Verificar se o usuário atual pode editar o usuário alvo
+  const canEditUser = (targetUser: UserListItem) => {
+    // Não pode editar usuário MASTER se não for MASTER
+    if (targetUser.role === 'MASTER' && currentUserRole !== 'MASTER') {
+      return false;
+    }
+
+    // MASTER pode editar ADMIN e AGENT
+    if (currentUserRole === 'MASTER') {
+      return ['ADMIN', 'AGENT'].includes(targetUser.role);
+    }
+
+    // ADMIN pode editar apenas AGENT
+    if (currentUserRole === 'ADMIN') {
+      return targetUser.role === 'AGENT';
+    }
+
+    return false;
+  };
+
+  // Verificar se o usuário atual pode alterar status do usuário alvo
+  const canToggleStatus = (targetUser: UserListItem) => {
+    return canEditUser(targetUser);
+  };
+
+  // Verificar se o usuário atual pode deletar o usuário alvo
+  const canDeleteUser = (targetUser: UserListItem) => {
+    return canEditUser(targetUser);
+  };
+
   const getRoleBadge = (role: string) => {
     const roleConfig = {
       MASTER: { label: 'Master', color: 'purple' },
@@ -231,34 +261,49 @@ export function UserTable({ users, pagination, currentPage, currentUserRole }: U
                       </button>
                     )}
                     
-                    <UserFormModal user={user} currentUserRole={currentUserRole}>
-                      <button className={styles.actionButton} type="button">
-                        <Edit className={styles.actionIcon} />
+                    {canEditUser(user) && (
+                      <UserFormModal user={user} currentUserRole={currentUserRole}>
+                        <button className={styles.actionButton} type="button" title="Editar usuário">
+                          <Edit className={styles.actionIcon} />
+                        </button>
+                      </UserFormModal>
+                    )}
+                    
+                    {canToggleStatus(user) && (
+                      <button
+                        onClick={() => handleToggleStatus(user.id, user.isActive)}
+                        disabled={loadingUserId === user.id}
+                        className={`${styles.actionButton} ${user.isActive ? styles.deactivateButton : styles.activateButton}`}
+                        type="button"
+                        title={user.isActive ? 'Desativar usuário' : 'Ativar usuário'}
+                      >
+                        {loadingUserId === user.id ? (
+                          <div className={styles.spinner} />
+                        ) : user.isActive ? (
+                          <UserX className={styles.actionIcon} />
+                        ) : (
+                          <UserCheck className={styles.actionIcon} />
+                        )}
                       </button>
-                    </UserFormModal>
+                    )}
                     
-                    <button
-                      onClick={() => handleToggleStatus(user.id, user.isActive)}
-                      disabled={loadingUserId === user.id}
-                      className={`${styles.actionButton} ${user.isActive ? styles.deactivateButton : styles.activateButton}`}
-                      type="button"
-                    >
-                      {loadingUserId === user.id ? (
-                        <div className={styles.spinner} />
-                      ) : user.isActive ? (
-                        <UserX className={styles.actionIcon} />
-                      ) : (
-                        <UserCheck className={styles.actionIcon} />
-                      )}
-                    </button>
-                    
-                    <button
-                      onClick={() => setShowDeleteConfirm(user.id)}
-                      className={`${styles.actionButton} ${styles.deleteButton}`}
-                      type="button"
-                    >
-                      <Trash2 className={styles.actionIcon} />
-                    </button>
+                    {canDeleteUser(user) && (
+                      <button
+                        onClick={() => setShowDeleteConfirm(user.id)}
+                        className={`${styles.actionButton} ${styles.deleteButton}`}
+                        type="button"
+                        title="Deletar usuário"
+                      >
+                        <Trash2 className={styles.actionIcon} />
+                      </button>
+                    )}
+
+                    {/* Se o usuário não pode fazer nenhuma ação */}
+                    {!canEditUser(user) && !canResetPassword(user.role) && !canToggleStatus(user) && !canDeleteUser(user) && (
+                      <span className={styles.noActions}>
+                        Sem permissões
+                      </span>
+                    )}
                   </div>
                 </td>
               </tr>
