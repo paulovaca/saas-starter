@@ -60,6 +60,7 @@ const navigationItems: NavigationItem[] = [
     href: '/funnels',
     label: 'Funis de Venda',
     icon: Target,
+    requiredPermission: 'canManageFunnels',
   },
   {
     href: '/catalog',

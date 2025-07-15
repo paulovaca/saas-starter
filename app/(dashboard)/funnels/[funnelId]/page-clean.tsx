@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft, Plus, Save, Eye, Settings } from 'lucide-react';
+import { ArrowLeft, Plus, Save, Eye, Settings, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -10,6 +10,7 @@ import StageCard from '@/components/funnels/stage-card-new';
 import { getFunnelById, updateFunnel, createStage, reorderStages } from '@/lib/actions/funnels';
 import { updateStage } from '@/lib/actions/funnels/update-stage';
 import { deleteStage } from '@/lib/actions/funnels/delete-stage';
+import { usePermissions } from '@/hooks/use-permissions';
 import styles from './page.module.css';
 
 interface Stage {
@@ -32,6 +33,7 @@ interface Funnel {
 }
 
 export default function FunnelEditor() {
+  const { canManageFunnels, user } = usePermissions();
   const params = useParams();
   const router = useRouter();
   const funnelId = params.funnelId as string;
@@ -214,6 +216,29 @@ export default function FunnelEditor() {
       setHasChanges(nameChanged || descChanged);
     }
   }, [funnel, funnelName, funnelDescription]);
+
+  // Verificar permissões
+  if (!canManageFunnels()) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.accessDenied}>
+          <Lock size={64} className={styles.lockIcon} />
+          <h2>Acesso Restrito</h2>
+          <p>
+            Você não tem permissão para editar funis de venda.
+            <br />
+            Entre em contato com o administrador da sua agência para solicitar acesso.
+          </p>
+          <div className={styles.userInfo}>
+            <strong>Usuário:</strong> {user?.name} ({user?.role})
+          </div>
+          <Button onClick={() => router.push('/')} className={styles.backToHome}>
+            Voltar ao Dashboard
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (

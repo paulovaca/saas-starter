@@ -1,11 +1,13 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Plus, Search, Star, Users, Settings, Copy, Trash2 } from 'lucide-react';
 import { getFunnels, setDefaultFunnel, duplicateFunnel, deleteFunnel } from '@/lib/actions/funnels';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import CreateFunnelModal from '@/components/funnels/create-funnel-modal';
+import { usePermissions } from '@/hooks/use-permissions';
 import styles from './page.module.css';
 
 interface Funnel {
@@ -19,6 +21,8 @@ interface Funnel {
 }
 
 export default function FunnelsPage() {
+  const { canManageFunnels, user } = usePermissions();
+  const router = useRouter();
   const [funnels, setFunnels] = useState<Funnel[]>([]);
   const [filteredFunnels, setFilteredFunnels] = useState<Funnel[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -169,6 +173,12 @@ export default function FunnelsPage() {
     }).format(new Date(date));
   };
 
+  // Verificar permissões - redirecionar se não tiver acesso
+  if (!canManageFunnels()) {
+    router.push('/');
+    return null;
+  }
+
   if (isLoading) {
     return (
       <div className={styles.container}>
@@ -189,10 +199,12 @@ export default function FunnelsPage() {
             Gerencie os funis de venda da sua agência
           </p>
         </div>
-        <Button onClick={() => setShowCreateModal(true)}>
-          <Plus size={20} />
-          Criar Funil
-        </Button>
+        {canManageFunnels() && (
+          <Button onClick={() => setShowCreateModal(true)}>
+            <Plus size={20} />
+            Criar Funil
+          </Button>
+        )}
       </div>
 
       {error && (
@@ -256,7 +268,7 @@ export default function FunnelsPage() {
                 : 'Comece criando seu primeiro funil de vendas.'
               }
             </p>
-            {!searchTerm && (
+            {!searchTerm && canManageFunnels() && (
               <Button onClick={() => setShowCreateModal(true)}>
                 <Plus size={20} />
                 Criar Primeiro Funil
@@ -279,32 +291,36 @@ export default function FunnelsPage() {
                   </div>
                   
                   <div className={styles.cardActions}>
-                    <button
-                      className={styles.actionButton}
-                      onClick={() => handleDuplicate(funnel.id)}
-                      disabled={loadingActions.has(funnel.id)}
-                      title="Duplicar funil"
-                    >
-                      <Copy size={16} />
-                    </button>
-                    
-                    <button
-                      className={styles.actionButton}
-                      onClick={() => window.location.href = `/funnels/${funnel.id}`}
-                      title="Editar funil"
-                    >
-                      <Settings size={16} />
-                    </button>
+                    {canManageFunnels() && (
+                      <>
+                        <button
+                          className={styles.actionButton}
+                          onClick={() => handleDuplicate(funnel.id)}
+                          disabled={loadingActions.has(funnel.id)}
+                          title="Duplicar funil"
+                        >
+                          <Copy size={16} />
+                        </button>
+                        
+                        <button
+                          className={styles.actionButton}
+                          onClick={() => window.location.href = `/funnels/${funnel.id}`}
+                          title="Editar funil"
+                        >
+                          <Settings size={16} />
+                        </button>
 
-                    {!funnel.isDefault && (
-                      <button
-                        className={`${styles.actionButton} ${styles.deleteButton}`}
-                        onClick={() => handleDelete(funnel.id)}
-                        disabled={loadingActions.has(funnel.id)}
-                        title="Excluir funil"
-                      >
-                        <Trash2 size={16} />
-                      </button>
+                        {!funnel.isDefault && (
+                          <button
+                            className={`${styles.actionButton} ${styles.deleteButton}`}
+                            onClick={() => handleDelete(funnel.id)}
+                            disabled={loadingActions.has(funnel.id)}
+                            title="Excluir funil"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        )}
+                      </>
                     )}
                   </div>
                 </div>
@@ -325,7 +341,7 @@ export default function FunnelsPage() {
                 </div>
 
                 <div className={styles.cardFooter}>
-                  {!funnel.isDefault && (
+                  {!funnel.isDefault && canManageFunnels() && (
                     <Button
                       variant="outline"
                       size="sm"
@@ -337,12 +353,14 @@ export default function FunnelsPage() {
                     </Button>
                   )}
                   
-                  <Button
-                    size="sm"
-                    onClick={() => window.location.href = `/funnels/${funnel.id}`}
-                  >
-                    Gerenciar
-                  </Button>
+                  {canManageFunnels() && (
+                    <Button
+                      size="sm"
+                      onClick={() => window.location.href = `/funnels/${funnel.id}`}
+                    >
+                      Gerenciar
+                    </Button>
+                  )}
                 </div>
               </div>
             ))}

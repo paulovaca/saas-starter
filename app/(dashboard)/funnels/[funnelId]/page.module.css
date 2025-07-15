@@ -9,6 +9,53 @@
   gap: 24px;
 }
 
+/* Access Denied Styles */
+.accessDenied {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  text-align: center;
+  padding: 2rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  margin: 2rem auto;
+  max-width: 500px;
+  gap: 1rem;
+}
+
+.lockIcon {
+  color: var(--muted-foreground);
+  margin-bottom: 1rem;
+}
+
+.accessDenied h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--foreground);
+  margin: 0;
+}
+
+.accessDenied p {
+  color: var(--muted-foreground);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.userInfo {
+  background: var(--muted);
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+}
+
+.backToHome {
+  margin-top: 1rem;
+}
+
 /* Header */
 .header {
   display: flex;
