@@ -56,6 +56,37 @@ export function UserFormModal({ children, user, currentUserRole, onSuccess }: Us
 
   const availableRoles = getAvailableRoles();
   
+  // Função para formatar telefone
+  const formatPhone = (value: string) => {
+    // Remove tudo que não é número
+    const numbers = value.replace(/\D/g, '');
+    
+    // Não formatar se não tiver números
+    if (!numbers) return '';
+    
+    // Limitar a 11 dígitos
+    const limitedNumbers = numbers.slice(0, 11);
+    
+    // Formatar com base na quantidade de dígitos
+    if (limitedNumbers.length <= 2) {
+      return `(${limitedNumbers}`;
+    } else if (limitedNumbers.length <= 6) {
+      return limitedNumbers.replace(/(\d{2})(\d+)/, '($1) $2');
+    } else if (limitedNumbers.length <= 10) {
+      // Formato: (11) 9999-9999
+      return limitedNumbers.replace(/(\d{2})(\d{4})(\d+)/, '($1) $2-$3');
+    } else {
+      // Formato: (11) 99999-9999
+      return limitedNumbers.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+    }
+  };
+
+  // Estado para valor do telefone formatado
+  const [phoneValue, setPhoneValue] = useState(() => {
+    const initialPhone = isEditing ? (user.phone || '') : '';
+    return formatPhone(initialPhone);
+  });
+  
   // Usar formulário sem tipagem estrita para evitar conflitos
   const {
     register,
@@ -63,6 +94,7 @@ export function UserFormModal({ children, user, currentUserRole, onSuccess }: Us
     formState: { errors },
     reset,
     watch,
+    setValue,
   } = useForm({
     defaultValues: isEditing ? {
       name: user.name,
@@ -80,6 +112,30 @@ export function UserFormModal({ children, user, currentUserRole, onSuccess }: Us
       isActive: true,
     },
   });
+
+  // Atualizar valor do telefone quando o usuário mudar (para edição)
+  useEffect(() => {
+    if (isEditing && user?.phone) {
+      const formatted = formatPhone(user.phone);
+      setPhoneValue(formatted);
+      setValue('phone', user.phone);
+    }
+  }, [isEditing, user?.phone, setValue]);
+
+  // Registrar campo phone manualmente para funcionar com formatação
+  useEffect(() => {
+    register('phone');
+  }, [register]);
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = e.target.value;
+    const formatted = formatPhone(inputValue);
+    
+    setPhoneValue(formatted);
+    
+    // Extrair apenas os números para salvar no formulário (limitado a 11 dígitos)
+    const numbersOnly = inputValue.replace(/\D/g, '').slice(0, 11);
+    setValue('phone', numbersOnly);
+  };
 
   const password = watch('password') as string;
 
@@ -264,9 +320,12 @@ export function UserFormModal({ children, user, currentUserRole, onSuccess }: Us
                 </Label>
                 <Input
                   id="phone"
-                  {...register('phone')}
+                  type="tel"
+                  value={phoneValue}
+                  onChange={handlePhoneChange}
                   placeholder="(11) 99999-9999"
                   className={errors.phone ? styles.inputError : styles.input}
+                  maxLength={15}
                 />
                 {errors.phone && (
                   <span className={styles.fieldError}>{errors.phone.message}</span>

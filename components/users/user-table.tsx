@@ -6,8 +6,8 @@ import { Edit, Trash2, Shield, User, Mail, Phone, Calendar, MoreHorizontal, Key,
 import { Button } from '@/components/ui/button';
 import { UserFormModal } from './user-form-modal';
 import { ResetPasswordModal } from './reset-password-modal';
+import { DeleteUserModal } from './delete-user-modal';
 import { toggleUserStatus } from '@/lib/actions/users/toggle-user-status';
-import { deleteUser } from '@/lib/actions/users/delete-user';
 import type { UserListItem } from '@/lib/db/schema/users';
 import styles from './user-table.module.css';
 
@@ -25,18 +25,34 @@ type UserTableProps = {
 
 export function UserTable({ users, pagination, currentPage, currentUserRole }: UserTableProps) {
   const [loadingUserId, setLoadingUserId] = useState<string | null>(null);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState<{ user: UserListItem } | null>(null);
   const [showResetModal, setShowResetModal] = useState<{ user: UserListItem } | null>(null);
+
+  // Função para formatar telefone para exibição
+  const formatPhoneDisplay = (phone: string | null) => {
+    if (!phone) return '';
+    
+    // Remove tudo que não é número
+    const numbers = phone.replace(/\D/g, '');
+    
+    if (numbers.length <= 10) {
+      // Formato: (11) 9999-9999
+      return numbers.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
+    } else {
+      // Formato: (11) 99999-9999
+      return numbers.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+    }
+  };
 
   // Permitir fechar o modal de confirmação com a tecla ESC
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && showDeleteConfirm) {
-        setShowDeleteConfirm(null);
+      if (event.key === 'Escape' && showDeleteModal) {
+        setShowDeleteModal(null);
       }
     };
 
-    if (showDeleteConfirm) {
+    if (showDeleteModal) {
       document.addEventListener('keydown', handleKeyDown);
       // Prevenir scroll da página quando o modal estiver aberto
       document.body.style.overflow = 'hidden';
@@ -46,7 +62,7 @@ export function UserTable({ users, pagination, currentPage, currentUserRole }: U
       document.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'unset';
     };
-  }, [showDeleteConfirm]);
+  }, [showDeleteModal]);
 
   // Verificar se o usuário atual pode resetar a senha do usuário alvo
   const canResetPassword = (targetUserRole: string) => {
@@ -143,24 +159,6 @@ export function UserTable({ users, pagination, currentPage, currentUserRole }: U
     }
   };
 
-  const handleDeleteUser = async (userId: string) => {
-    setLoadingUserId(userId);
-    try {
-      const result = await deleteUser(userId);
-      if (result.error) {
-        alert(result.error);
-      } else {
-        setShowDeleteConfirm(null);
-        // A página será revalidada automaticamente pelo server action
-        window.location.reload();
-      }
-    } catch (error) {
-      alert('Erro ao deletar usuário');
-    } finally {
-      setLoadingUserId(null);
-    }
-  };
-
   if (users.length === 0) {
     return (
       <div className={styles.emptyState}>
@@ -216,7 +214,7 @@ export function UserTable({ users, pagination, currentPage, currentUserRole }: U
                     {user.phone && (
                       <div className={styles.contactItem}>
                         <Phone className={styles.contactIcon} />
-                        <span className={styles.contactText}>{user.phone}</span>
+                        <span className={styles.contactText}>{formatPhoneDisplay(user.phone)}</span>
                       </div>
                     )}
                   </div>
@@ -289,7 +287,7 @@ export function UserTable({ users, pagination, currentPage, currentUserRole }: U
                     
                     {canDeleteUser(user) && (
                       <button
-                        onClick={() => setShowDeleteConfirm(user.id)}
+                        onClick={() => setShowDeleteModal({ user })}
                         className={`${styles.actionButton} ${styles.deleteButton}`}
                         type="button"
                         title="Deletar usuário"
@@ -333,39 +331,18 @@ export function UserTable({ users, pagination, currentPage, currentUserRole }: U
         </div>
       )}
 
-      {/* Modal de confirmação de exclusão */}
-      {showDeleteConfirm && (
-        <div className={styles.deleteModal}>
-          <div className={styles.deleteModalContent}>
-            <h3 className={styles.deleteModalTitle}>Confirmar Exclusão</h3>
-            <p className={styles.deleteModalText}>
-              Tem certeza que deseja deletar este usuário? Esta ação não pode ser desfeita.
-            </p>
-            <div className={styles.deleteModalActions}>
-              <Button
-                variant="outline"
-                onClick={() => setShowDeleteConfirm(null)}
-                disabled={loadingUserId === showDeleteConfirm}
-              >
-                Cancelar
-              </Button>
-              <Button
-                variant="destructive"
-                onClick={() => handleDeleteUser(showDeleteConfirm)}
-                disabled={loadingUserId === showDeleteConfirm}
-              >
-                {loadingUserId === showDeleteConfirm ? (
-                  <>
-                    <div className={styles.spinner} />
-                    Deletando...
-                  </>
-                ) : (
-                  'Deletar'
-                )}
-              </Button>
-            </div>
-          </div>
-        </div>
+      {/* Modal de delete */}
+      {showDeleteModal && (
+        <DeleteUserModal
+          isOpen={true}
+          onClose={() => setShowDeleteModal(null)}
+          user={{
+            id: showDeleteModal.user.id,
+            name: showDeleteModal.user.name,
+            role: showDeleteModal.user.role,
+            email: showDeleteModal.user.email
+          }}
+        />
       )}
 
       {/* Modal de reset de senha */}

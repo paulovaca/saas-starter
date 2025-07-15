@@ -70,17 +70,9 @@ export async function deleteUser(userId: string): Promise<DeleteUserResponse> {
       return { error: 'Você não pode deletar sua própria conta' };
     }
 
-    // TODO: Verificar se usuário tem dados relacionados (propostas, clientes, etc.)
-    // Por enquanto, vamos fazer um soft delete apenas desativando o usuário
-    
-    // Realizar soft delete (desativar usuário)
+    // Realizar hard delete (remoção completa do banco de dados)
     await db
-      .update(users)
-      .set({
-        isActive: false,
-        email: `deleted_${Date.now()}_${existingUser.email}`, // Evitar conflito de email
-        updatedAt: new Date(),
-      })
+      .delete(users)
       .where(eq(users.id, userId));
 
     // Log da atividade
@@ -88,14 +80,14 @@ export async function deleteUser(userId: string): Promise<DeleteUserResponse> {
       userId: session.user.id,
       agencyId: session.user.agencyId,
       type: 'DELETE_ACCOUNT' as any,
-      description: `Deletou usuário ${existingUser.name}`,
+      description: `Deletou permanentemente usuário ${existingUser.name}`,
       entityType: 'USER',
       entityId: userId,
       metadata: {
         targetUserName: existingUser.name,
         targetUserEmail: existingUser.email,
         targetUserRole: existingUser.role,
-        deletionType: 'soft_delete',
+        deletionType: 'hard_delete',
       },
       ipAddress: null,
     });

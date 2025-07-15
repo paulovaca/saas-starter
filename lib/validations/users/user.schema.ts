@@ -20,10 +20,10 @@ export const createUserSchema = z.object({
     .optional()
     .refine((phone) => {
       if (!phone || phone.trim() === '') return true;
-      // Regex para formato brasileiro: (XX) XXXXX-XXXX ou (XX) XXXX-XXXX
-      const phoneRegex = /^\(\d{2}\)\s\d{4,5}-\d{4}$/;
+      // Aceitar apenas números, 10 ou 11 dígitos
+      const phoneRegex = /^\d{10,11}$/;
       return phoneRegex.test(phone);
-    }, 'Formato de telefone inválido. Use: (11) 99999-9999'),
+    }, 'Telefone deve ter 10 ou 11 dígitos numéricos'),
   
   password: z
     .string()
@@ -67,9 +67,10 @@ export const updateUserSchema = z.object({
     .optional()
     .refine((phone) => {
       if (!phone || phone.trim() === '') return true;
-      const phoneRegex = /^\(\d{2}\)\s\d{4,5}-\d{4}$/;
+      // Aceitar apenas números, 10 ou 11 dígitos
+      const phoneRegex = /^\d{10,11}$/;
       return phoneRegex.test(phone);
-    }, 'Formato de telefone inválido. Use: (11) 99999-9999'),
+    }, 'Telefone deve ter 10 ou 11 dígitos numéricos'),
   
   role: z.enum(['DEVELOPER', 'MASTER', 'ADMIN', 'AGENT'], {
     errorMap: () => ({ message: 'Role inválido' })

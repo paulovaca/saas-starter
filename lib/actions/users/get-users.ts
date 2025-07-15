@@ -62,6 +62,7 @@ export async function getUsersWithPagination(
     if (typeof isActive === 'boolean') {
       conditions.push(eq(users.isActive, isActive));
     }
+    // Por padrão, mostrar todos os usuários (ativos e inativos)
 
     const whereCondition = and(...conditions);
 
