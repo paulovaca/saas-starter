@@ -19,6 +19,7 @@ import { Suspense } from 'react';
 import Link from 'next/link';
 import styles from './profile.module.css';
 
+
 export const metadata: Metadata = {
   title: 'Meu Perfil',
   description: 'Visualize e edite as informações do seu perfil',
