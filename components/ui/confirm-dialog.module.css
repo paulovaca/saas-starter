@@ -1,0 +1,141 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.dialog {
+  background: var(--background);
+  border-radius: var(--radius);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  max-width: 400px;
+  max-height: 90vh;
+  overflow: hidden;
+  animation: dialogSlideIn 0.2s ease-out;
+}
+
+@keyframes dialogSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem 1.5rem 1rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  margin: 0 auto;
+}
+
+.icon.warning {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.icon.danger {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.icon.info {
+  background: #dbeafe;
+  color: #2563eb;
+}
+
+.closeButton {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  color: var(--muted-foreground);
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  transition: all 0.2s ease;
+}
+
+.closeButton:hover {
+  background: var(--accent);
+  color: var(--foreground);
+}
+
+.content {
+  padding: 1rem 1.5rem 1.5rem 1.5rem;
+  text-align: center;
+}
+
+.title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--foreground);
+  margin: 0 0 0.75rem 0;
+  line-height: 1.4;
+}
+
+.message {
+  color: var(--muted-foreground);
+  margin: 0;
+  line-height: 1.5;
+  white-space: pre-line;
+}
+
+.actions {
+  display: flex;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem 1.5rem 1.5rem;
+  justify-content: flex-end;
+}
+
+.cancelButton {
+  flex: 1;
+}
+
+.confirmButton {
+  flex: 1;
+}
+
+/* Responsividade */
+@media (max-width: 640px) {
+  .overlay {
+    padding: 0.5rem;
+  }
+  
+  .dialog {
+    max-width: 100%;
+  }
+  
+  .actions {
+    flex-direction: column-reverse;
+  }
+  
+  .cancelButton,
+  .confirmButton {
+    width: 100%;
+  }
+}

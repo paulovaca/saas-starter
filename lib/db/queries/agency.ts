@@ -3,8 +3,6 @@ import { db } from '../drizzle';
 import { 
   agencies,
   agencySettings,
-  salesFunnels,
-  salesFunnelStages,
   baseItems,
   baseItemFields,
   operators,
@@ -15,10 +13,6 @@ import {
   type NewAgency,
   type AgencySettings,
   type NewAgencySettings,
-  type SalesFunnel,
-  type NewSalesFunnel,
-  type SalesFunnelStage,
-  type NewSalesFunnelStage,
   type BaseItem,
   type NewBaseItem,
   type Operator,
@@ -26,6 +20,14 @@ import {
   type Client,
   type NewClient
 } from '../schema/agency';
+import { 
+  salesFunnels,
+  salesFunnelStages,
+  type SalesFunnel,
+  type NewSalesFunnel,
+  type SalesFunnelStage,
+  type NewSalesFunnelStage
+} from '../schema/funnels';
 import { users } from '../schema/auth';
 
 // Agency functions

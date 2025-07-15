@@ -162,6 +162,7 @@ export async function signUp(state: ActionState, formData: FormData): Promise<Ac
       name: 'Funil Padrão',
       isDefault: true,
       agencyId: agencyId,
+      createdBy: createdUser[0].id,
     }).returning();
 
     const funnelId = defaultFunnel[0].id;
@@ -179,6 +180,7 @@ export async function signUp(state: ActionState, formData: FormData): Promise<Ac
       await db.insert(salesFunnelStages).values({
         ...stage,
         funnelId: funnelId,
+        createdBy: createdUser[0].id,
       });
     }
 

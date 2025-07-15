@@ -1,0 +1,297 @@
+/* Container principal */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+  min-height: calc(100vh - 60px);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.backButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--foreground);
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: background-color 0.2s;
+}
+
+.backButton:hover {
+  background-color: var(--accent);
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.title h1 {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+  color: var(--foreground);
+}
+
+.defaultBadge {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.headerActions {
+  display: flex;
+  gap: 12px;
+}
+
+.previewButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.saveButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Informações do funil */
+.funnelInfo {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.row {
+  display: flex;
+  gap: 24px;
+}
+
+.field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.input {
+  width: 100%;
+}
+
+/* Seção de etapas */
+.stagesSection {
+  flex: 1;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.stagesHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.stagesHeader h2 {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0;
+  color: var(--foreground);
+}
+
+.addStageButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stagesEditor {
+  min-height: 400px;
+}
+
+/* Layout vertical das etapas */
+.stagesFlow {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: stretch;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Zona de drop para drag and drop */
+.dropZone {
+  border: 2px dashed var(--primary);
+  border-radius: 8px;
+  background-color: var(--primary);
+  transition: all 0.2s ease;
+}
+
+/* Estados de drag */
+.dragging {
+  opacity: 0.5;
+  transform: rotate(5deg);
+  transition: all 0.2s ease;
+}
+
+/* Conectores entre etapas (setas verticais) */
+.stageConnector {
+  display: flex;
+  justify-content: center;
+  margin: 8px 0;
+}
+
+.arrow {
+  width: 2px;
+  height: 24px;
+  background: var(--border);
+  position: relative;
+}
+
+.arrow::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 8px solid var(--border);
+}
+
+/* Estado vazio */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--muted-foreground);
+}
+
+.emptyState svg {
+  color: var(--muted-foreground);
+  margin-bottom: 16px;
+}
+
+.emptyState h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 16px 0 8px 0;
+  color: var(--foreground);
+}
+
+.emptyState p {
+  margin: 0 0 24px 0;
+  max-width: 400px;
+}
+
+/* Footer */
+.footer {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px 24px;
+}
+
+.stats {
+  display: flex;
+  gap: 32px;
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.statLabel {
+  color: var(--muted-foreground);
+  font-size: 14px;
+}
+
+.statValue {
+  color: var(--foreground);
+  font-weight: 600;
+  font-size: 16px;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+  }
+
+  .headerLeft {
+    justify-content: space-between;
+  }
+
+  .headerActions {
+    justify-content: center;
+  }
+
+  .row {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .stagesFlow {
+    max-width: 100%;
+  }
+
+  .stats {
+    flex-direction: column;
+    gap: 16px;
+  }
+}
+
+/* Animações */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.stagesFlow > * {
+  animation: fadeIn 0.3s ease-out;
+}

@@ -3,14 +3,13 @@ export * from './auth';
 export * from './agency';
 export * from './activity';
 export * from './users';
+export * from './funnels';
 
 // Import tables for relations
 import { users, passwordResetTokens, emailVerificationTokens, userInvitations, userSessions } from './auth';
 import { 
   agencies, 
   agencySettings, 
-  salesFunnels, 
-  salesFunnelStages, 
   baseItems, 
   baseItemFields, 
   operators, 
@@ -18,6 +17,7 @@ import {
   operatorItemPaymentMethods, 
   clients 
 } from './agency';
+import { salesFunnels, salesFunnelStages, stageTransitions } from './funnels';
 import { activityLog, systemNotifications } from './activity';
 import { userRelations } from './users';
 import { relations } from 'drizzle-orm';

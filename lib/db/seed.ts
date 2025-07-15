@@ -1,7 +1,8 @@
 import { eq } from 'drizzle-orm';
 import { stripe } from '../payments/stripe';
 import { db } from './drizzle';
-import { users, agencies, agencySettings, salesFunnels, salesFunnelStages } from './schema';
+import { users, agencies, agencySettings } from './schema';
+import { salesFunnels, salesFunnelStages } from './schema/funnels';
 import { hashPassword } from '@/lib/auth/session';
 
 async function createStripeProducts() {
@@ -85,6 +86,7 @@ async function seed() {
       name: 'Funil Padrão',
       isDefault: true,
       agencyId: agencyId,
+      createdBy: masterUser[0].id,
     }).returning();
 
     const funnelId = defaultFunnel[0].id;
@@ -103,6 +105,7 @@ async function seed() {
       await db.insert(salesFunnelStages).values({
         ...stage,
         funnelId: funnelId,
+        createdBy: masterUser[0].id,
       });
     }
 

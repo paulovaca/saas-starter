@@ -1,0 +1,283 @@
+.card {
+  display: flex;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  transition: all 0.2s ease;
+  position: relative;
+  min-height: 120px;
+}
+
+.card:hover {
+  border-color: var(--primary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Badge com ordem */
+.badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  color: white;
+  font-weight: 600;
+  font-size: 0.875rem;
+  flex-shrink: 0;
+}
+
+/* Cores do badge */
+.colorBlue { background-color: #3b82f6; }
+.colorGreen { background-color: #10b981; }
+.colorYellow { background-color: #f59e0b; }
+.colorRed { background-color: #ef4444; }
+.colorPurple { background-color: #8b5cf6; }
+.colorGray { background-color: #6b7280; }
+.colorOrange { background-color: #f97316; }
+.colorPink { background-color: #ec4899; }
+
+/* Controles de ordenação */
+.orderControls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex-shrink: 0;
+}
+
+.orderButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid var(--border);
+  background: var(--background);
+  border-radius: 0.375rem;
+  color: var(--foreground);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.orderButton:hover:not(.disabled) {
+  background: var(--accent);
+  border-color: var(--primary);
+}
+
+.orderButton.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Conteúdo */
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Modo visualização */
+.viewMode {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.name {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--foreground);
+  line-height: 1.4;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.sectionTitle {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--muted-foreground);
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.description {
+  font-size: 0.875rem;
+  color: var(--foreground);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.guidelines {
+  font-size: 0.875rem;
+  color: var(--foreground);
+  margin: 0;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.stats {
+  margin-top: auto;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.clientsCount {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+  font-weight: 500;
+}
+
+/* Modo edição */
+.editForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--foreground);
+}
+
+.input {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 0.375rem;
+  background: var(--background);
+  color: var(--foreground);
+  font-size: 0.875rem;
+  transition: border-color 0.2s ease;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.textarea {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 0.375rem;
+  background: var(--background);
+  color: var(--foreground);
+  font-size: 0.875rem;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 3rem;
+  transition: border-color 0.2s ease;
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.editActions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+/* Ações */
+.actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+  align-self: flex-start;
+}
+
+.actionButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border);
+  background: var(--background);
+  border-radius: 0.375rem;
+  color: var(--foreground);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.actionButton:hover {
+  background: var(--accent);
+  border-color: var(--primary);
+}
+
+.saveButton {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-color: var(--primary);
+}
+
+.saveButton:hover {
+  background: var(--primary);
+  opacity: 0.9;
+}
+
+.cancelButton {
+  background: var(--muted);
+  color: var(--muted-foreground);
+}
+
+.cancelButton:hover {
+  background: var(--muted);
+  color: var(--foreground);
+}
+
+.deleteButton {
+  color: #dc2626;
+  border-color: #dc2626;
+}
+
+.deleteButton:hover {
+  background: #dc2626;
+  color: white;
+}
+
+/* Responsividade */
+@media (max-width: 640px) {
+  .card {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+  }
+  
+  .badge {
+    align-self: flex-start;
+  }
+  
+  .orderControls {
+    flex-direction: row;
+    align-self: flex-start;
+  }
+  
+  .actions {
+    align-self: stretch;
+  }
+  
+  .editActions {
+    flex-direction: column;
+  }
+}

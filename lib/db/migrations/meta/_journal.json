@@ -22,6 +22,27 @@
       "when": 1752537561605,
       "tag": "0002_perfect_killer_shrike",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1752600221991,
+      "tag": "0003_eager_black_bolt",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1752600569211,
+      "tag": "0004_mixed_tyger_tiger",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1752603748051,
+      "tag": "0005_add_guidelines_to_stages",
+      "breakpoints": true
     }
   ]
 }

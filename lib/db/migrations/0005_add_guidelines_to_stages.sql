@@ -1,0 +1,1 @@
+ALTER TABLE "sales_funnel_stages" ADD COLUMN "guidelines" text;

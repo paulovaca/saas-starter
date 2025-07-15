@@ -3,7 +3,8 @@
 import { redirect } from 'next/navigation';
 import { eq } from 'drizzle-orm';
 import { db } from '@/lib/db/drizzle';
-import { users, agencies, agencySettings, salesFunnels, salesFunnelStages } from '@/lib/db/schema';
+import { users, agencies, agencySettings } from '@/lib/db/schema';
+import { salesFunnels, salesFunnelStages } from '@/lib/db/schema/funnels';
 import { hashPassword, setSession } from '@/lib/auth/session';
 import { withFormAction } from '@/lib/services/error-handler/action-wrapper';
 import { signUpSchema } from '@/lib/validations/auth.schema';
@@ -64,6 +65,7 @@ export const signUp = withFormAction(
       name: 'Funil Padrão',
       isDefault: true,
       agencyId: agencyId,
+      createdBy: createdUser[0].id,
     }).returning();
 
     const funnelId = defaultFunnel[0].id;
@@ -81,6 +83,7 @@ export const signUp = withFormAction(
       await db.insert(salesFunnelStages).values({
         ...stage,
         funnelId: funnelId,
+        createdBy: createdUser[0].id,
       });
     }
 
