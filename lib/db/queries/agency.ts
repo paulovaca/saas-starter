@@ -3,8 +3,6 @@ import { db } from '../drizzle';
 import { 
   agencies,
   agencySettings,
-  baseItems,
-  baseItemFields,
   operators,
   operatorItems,
   operatorItemPaymentMethods,
@@ -13,8 +11,6 @@ import {
   type NewAgency,
   type AgencySettings,
   type NewAgencySettings,
-  type BaseItem,
-  type NewBaseItem,
   type Operator,
   type NewOperator,
   type Client,
@@ -229,71 +225,6 @@ export async function updateSalesFunnelStage(id: string, updates: Partial<NewSal
  */
 export async function deleteSalesFunnelStage(id: string) {
   await db.delete(salesFunnelStages).where(eq(salesFunnelStages.id, id));
-}
-
-// Base Items functions
-
-/**
- * Get all base items for an agency
- */
-export async function getBaseItemsByAgency(agencyId: string) {
-  return await db
-    .select()
-    .from(baseItems)
-    .where(eq(baseItems.agencyId, agencyId))
-    .orderBy(asc(baseItems.name));
-}
-
-/**
- * Get base item by ID with fields
- */
-export async function getBaseItemWithFields(id: string) {
-  const item = await db
-    .select()
-    .from(baseItems)
-    .where(eq(baseItems.id, id))
-    .limit(1);
-
-  if (!item[0]) return null;
-
-  const fields = await db
-    .select()
-    .from(baseItemFields)
-    .where(eq(baseItemFields.baseItemId, id))
-    .orderBy(asc(baseItemFields.name));
-
-  return {
-    ...item[0],
-    fields,
-  };
-}
-
-/**
- * Create a new base item
- */
-export async function createBaseItem(itemData: NewBaseItem) {
-  const result = await db.insert(baseItems).values(itemData).returning();
-  return result[0];
-}
-
-/**
- * Update base item
- */
-export async function updateBaseItem(id: string, updates: Partial<NewBaseItem>) {
-  const result = await db
-    .update(baseItems)
-    .set({ ...updates, updatedAt: new Date() })
-    .where(eq(baseItems.id, id))
-    .returning();
-
-  return result[0] || null;
-}
-
-/**
- * Delete base item
- */
-export async function deleteBaseItem(id: string) {
-  await db.delete(baseItems).where(eq(baseItems.id, id));
 }
 
 // Operators functions

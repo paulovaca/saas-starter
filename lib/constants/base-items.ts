@@ -31,12 +31,15 @@ export const BASE_ITEMS_LABELS = {
   },
 } as const;
 
+// Tipos de roles permitidos
+type AllowedRole = 'MASTER' | 'ADMIN';
+
 // Função para verificar se o usuário tem permissão para acessar itens base
 export function canAccessBaseItems(userRole: string): boolean {
-  return BASE_ITEMS_LABELS.PERMISSIONS.REQUIRED_ROLES.includes(userRole);
+  return BASE_ITEMS_LABELS.PERMISSIONS.REQUIRED_ROLES.includes(userRole as AllowedRole);
 }
 
 // Função para verificar se o usuário pode gerenciar itens base (criar, editar, excluir)
 export function canManageBaseItems(userRole: string): boolean {
-  return BASE_ITEMS_LABELS.PERMISSIONS.REQUIRED_ROLES.includes(userRole);
+  return BASE_ITEMS_LABELS.PERMISSIONS.REQUIRED_ROLES.includes(userRole as AllowedRole);
 }

@@ -45,28 +45,6 @@ export const agencySettings = pgTable('agency_settings', {
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });
 
-// Base Items (Catalog)
-export const baseItems = pgTable('base_items', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  name: varchar('name', { length: 255 }).notNull(),
-  description: text('description'),
-  agencyId: uuid('agency_id').notNull().references(() => agencies.id),
-  createdAt: timestamp('created_at').notNull().defaultNow(),
-  updatedAt: timestamp('updated_at').notNull().defaultNow(),
-});
-
-// Base Item Fields (Custom Fields)
-export const baseItemFields = pgTable('base_item_fields', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  name: varchar('name', { length: 255 }).notNull(),
-  type: varchar('type', { length: 50 }).notNull(), // 'text', 'number', 'date', 'boolean', 'select'
-  options: json('options').$type<string[]>(), // For select fields
-  isRequired: boolean('is_required').notNull().default(false),
-  baseItemId: uuid('base_item_id').notNull().references(() => baseItems.id),
-  createdAt: timestamp('created_at').notNull().defaultNow(),
-  updatedAt: timestamp('updated_at').notNull().defaultNow(),
-});
-
 // Operators
 export const operators = pgTable('operators', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -83,7 +61,7 @@ export const operators = pgTable('operators', {
 export const operatorItems = pgTable('operator_items', {
   id: uuid('id').primaryKey().defaultRandom(),
   operatorId: uuid('operator_id').notNull().references(() => operators.id),
-  baseItemId: uuid('base_item_id').notNull().references(() => baseItems.id),
+  baseItemId: uuid('base_item_id').notNull(),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });
@@ -126,10 +104,6 @@ export type Agency = typeof agencies.$inferSelect;
 export type NewAgency = typeof agencies.$inferInsert;
 export type AgencySettings = typeof agencySettings.$inferSelect;
 export type NewAgencySettings = typeof agencySettings.$inferInsert;
-export type BaseItem = typeof baseItems.$inferSelect;
-export type NewBaseItem = typeof baseItems.$inferInsert;
-export type BaseItemField = typeof baseItemFields.$inferSelect;
-export type NewBaseItemField = typeof baseItemFields.$inferInsert;
 export type Operator = typeof operators.$inferSelect;
 export type NewOperator = typeof operators.$inferInsert;
 export type OperatorItem = typeof operatorItems.$inferSelect;

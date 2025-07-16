@@ -133,19 +133,6 @@ export const cachedAgencyQueries = {
   },
 
   /**
-   * Get base items with caching
-   */
-  async getBaseItemsByAgency(agencyId: string) {
-    const cacheKey = CacheKeys.baseItems(agencyId);
-    
-    return await cacheManager.remember(
-      cacheKey,
-      () => agencyQueries.getBaseItemsByAgency(agencyId),
-      CacheTTL.MEDIUM
-    );
-  },
-
-  /**
    * Get operators with caching
    */
   async getOperatorsByAgency(agencyId: string) {
