@@ -15,6 +15,7 @@ export const baseItems = pgTable('base_items', {
   id: uuid('id').primaryKey().defaultRandom(),
   name: varchar('name', { length: 255 }).notNull(),
   description: text('description'),
+  isActive: boolean('is_active').notNull().default(true),
   agencyId: uuid('agency_id').notNull(),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),

@@ -248,6 +248,35 @@
     opacity: 1 !important;
   }
   
+  /* Garantir que componentes Select funcionem no tema escuro */
+  .select-content {
+    background-color: var(--popover) !important;
+    border: 1px solid var(--border) !important;
+    color: var(--popover-foreground) !important;
+  }
+  
+  .select-item {
+    background-color: transparent !important;
+    color: var(--popover-foreground) !important;
+  }
+  
+  .select-item:hover,
+  .select-item[data-highlighted] {
+    background-color: var(--accent) !important;
+    color: var(--accent-foreground) !important;
+  }
+  
+  .select-trigger {
+    background-color: var(--background) !important;
+    border: 1px solid var(--border) !important;
+    color: var(--foreground) !important;
+  }
+  
+  .select-trigger:focus {
+    border-color: var(--ring) !important;
+    box-shadow: 0 0 0 2px rgb(from var(--ring) r g b / 0.2) !important;
+  }
+  
   /* Cabeçalho do modal com fundo diferenciado */
   .modal-header {
     background-color: var(--muted) !important;
@@ -269,5 +298,22 @@
   .modal-input {
     background-color: var(--background) !important;
     border: 1px solid var(--border) !important;
+  }
+  
+  /* Dialog Content específico para tema escuro */
+  [data-radix-dialog-content] {
+    background-color: var(--background) !important;
+    border: 1px solid var(--border) !important;
+    color: var(--foreground) !important;
+  }
+  
+  /* Dialog Header */
+  [data-radix-dialog-title] {
+    color: var(--foreground) !important;
+  }
+  
+  /* Dialog overlay específico */
+  [data-radix-dialog-overlay] {
+    background-color: rgba(0, 0, 0, 0.5) !important;
   }
 }

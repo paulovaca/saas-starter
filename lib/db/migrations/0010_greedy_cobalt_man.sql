@@ -1,0 +1,1 @@
+ALTER TABLE "base_items" ADD COLUMN "is_active" boolean DEFAULT true NOT NULL;

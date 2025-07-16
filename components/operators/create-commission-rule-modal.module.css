@@ -1,0 +1,271 @@
+/* Modal Nova Regra de Comissão - Theme Support */
+
+.modal {
+  background-color: var(--background);
+  border: 1px solid var(--border);
+  color: var(--foreground);
+}
+
+.modalHeader {
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1rem;
+}
+
+.modalTitle {
+  color: var(--foreground);
+  font-weight: 600;
+}
+
+.formContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.formField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.label {
+  color: var(--foreground);
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.input {
+  background-color: var(--background);
+  border: 1px solid var(--border);
+  color: var(--foreground);
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--ring);
+  box-shadow: 0 0 0 2px var(--ring);
+}
+
+.input::placeholder {
+  color: var(--muted-foreground);
+}
+
+.textarea {
+  background-color: var(--background);
+  border: 1px solid var(--border);
+  color: var(--foreground);
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  min-height: 4rem;
+  resize: vertical;
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: var(--ring);
+  box-shadow: 0 0 0 2px var(--ring);
+}
+
+.textarea::placeholder {
+  color: var(--muted-foreground);
+}
+
+.selectTrigger {
+  background-color: var(--background);
+  border: 1px solid var(--border);
+  color: var(--foreground);
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.selectTrigger:focus {
+  outline: none;
+  border-color: var(--ring);
+  box-shadow: 0 0 0 2px var(--ring);
+}
+
+.selectContent {
+  background-color: var(--popover);
+  border: 1px solid var(--border);
+  border-radius: 0.375rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.selectItem {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  color: var(--foreground);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.selectItem:hover {
+  background-color: var(--muted);
+}
+
+.selectItem:focus {
+  background-color: var(--muted);
+  outline: none;
+}
+
+.gridContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.tiersSection {
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  background-color: var(--muted);
+}
+
+.tiersHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.tiersTitle {
+  color: var(--foreground);
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.addTierButton {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  border: none;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.addTierButton:hover {
+  background-color: var(--primary);
+  opacity: 0.9;
+}
+
+.tiersList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.tierItem {
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 0.375rem;
+  padding: 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tierInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.tierRange {
+  color: var(--foreground);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.tierValue {
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+}
+
+.removeTierButton {
+  background-color: transparent;
+  border: 1px solid var(--destructive);
+  color: var(--destructive);
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+}
+
+.removeTierButton:hover {
+  background-color: var(--destructive);
+  color: var(--destructive-foreground);
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.cancelButton {
+  background-color: transparent;
+  border: 1px solid var(--border);
+  color: var(--foreground);
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cancelButton:hover {
+  background-color: var(--muted);
+}
+
+.submitButton {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.submitButton:hover {
+  background-color: var(--primary);
+  opacity: 0.9;
+}
+
+.submitButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.helpText {
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+.errorText {
+  color: var(--destructive);
+  font-size: 0.75rem;
+}

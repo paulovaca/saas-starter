@@ -1,0 +1,68 @@
+/* Tabs Styles */
+.tabs {
+  width: 100%;
+}
+
+.tabsList {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background-color: #f3f4f6;
+  padding: 4px;
+  color: #6b7280;
+}
+
+.tabsTrigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: none;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.tabsTrigger:hover {
+  background-color: #e5e7eb;
+  color: #374151;
+}
+
+.tabsTrigger.active {
+  background-color: white;
+  color: #111827;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.tabsTrigger:disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.tabsContent {
+  margin-top: 16px;
+  outline: none;
+}
+
+/* Dark mode */
+[data-theme="dark"] .tabsList {
+  background-color: #374151;
+  color: #9ca3af;
+}
+
+[data-theme="dark"] .tabsTrigger:hover {
+  background-color: #4b5563;
+  color: #d1d5db;
+}
+
+[data-theme="dark"] .tabsTrigger.active {
+  background-color: #1f2937;
+  color: #f9fafb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}

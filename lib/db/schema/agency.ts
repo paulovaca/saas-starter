@@ -45,37 +45,6 @@ export const agencySettings = pgTable('agency_settings', {
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });
 
-// Operators
-export const operators = pgTable('operators', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  name: varchar('name', { length: 255 }).notNull(),
-  contactEmail: varchar('contact_email', { length: 255 }),
-  contactPhone: varchar('contact_phone', { length: 20 }),
-  website: text('website'),
-  agencyId: uuid('agency_id').notNull().references(() => agencies.id),
-  createdAt: timestamp('created_at').notNull().defaultNow(),
-  updatedAt: timestamp('updated_at').notNull().defaultNow(),
-});
-
-// Operator Items (Association between Operators and Base Items)
-export const operatorItems = pgTable('operator_items', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  operatorId: uuid('operator_id').notNull().references(() => operators.id),
-  baseItemId: uuid('base_item_id').notNull(),
-  createdAt: timestamp('created_at').notNull().defaultNow(),
-  updatedAt: timestamp('updated_at').notNull().defaultNow(),
-});
-
-// Operator Item Payment Methods
-export const operatorItemPaymentMethods = pgTable('operator_item_payment_methods', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  name: varchar('name', { length: 255 }).notNull(),
-  commissionRate: real('commission_rate').notNull(),
-  operatorItemId: uuid('operator_item_id').notNull().references(() => operatorItems.id),
-  createdAt: timestamp('created_at').notNull().defaultNow(),
-  updatedAt: timestamp('updated_at').notNull().defaultNow(),
-});
-
 // Clients
 export const clients = pgTable('clients', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -104,11 +73,5 @@ export type Agency = typeof agencies.$inferSelect;
 export type NewAgency = typeof agencies.$inferInsert;
 export type AgencySettings = typeof agencySettings.$inferSelect;
 export type NewAgencySettings = typeof agencySettings.$inferInsert;
-export type Operator = typeof operators.$inferSelect;
-export type NewOperator = typeof operators.$inferInsert;
-export type OperatorItem = typeof operatorItems.$inferSelect;
-export type NewOperatorItem = typeof operatorItems.$inferInsert;
-export type OperatorItemPaymentMethod = typeof operatorItemPaymentMethods.$inferSelect;
-export type NewOperatorItemPaymentMethod = typeof operatorItemPaymentMethods.$inferInsert;
 export type Client = typeof clients.$inferSelect;
 export type NewClient = typeof clients.$inferInsert;

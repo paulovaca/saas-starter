@@ -1,0 +1,211 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { toast } from 'sonner';
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle 
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Plus, Edit, Trash2, Loader2 } from 'lucide-react';
+import { CreateCommissionRuleModal } from './create-commission-rule-modal';
+import { EditCommissionRuleModal } from './edit-commission-rule-modal';
+import { deleteCommissionRule } from '@/lib/actions/operators/create-commission-rule';
+import styles from './commission-modal.module.css';
+
+interface CommissionModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  item: any;
+  onSuccess: () => void;
+}
+
+export function CommissionModal({ isOpen, onClose, item: initialItem, onSuccess }: CommissionModalProps) {
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingRule, setEditingRule] = useState<any>(null);
+  const [item, setItem] = useState(initialItem);
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  // Update local item when initialItem changes or when refreshKey changes
+  useEffect(() => {
+    if (initialItem) {
+      // Encontra o item atualizado no array do operator (se disponível)
+      setItem(initialItem);
+    }
+  }, [initialItem, refreshKey, isOpen]);
+
+  const handleAddRule = () => {
+    setIsCreateModalOpen(true);
+  };
+
+  const handleEditRule = (rule: any) => {
+    setEditingRule(rule);
+    setIsEditModalOpen(true);
+  };
+
+  const handleDeleteRule = async (rule: any) => {
+    if (confirm('Tem certeza que deseja excluir esta regra de comissão?')) {
+      try {
+        const result = await deleteCommissionRule({ id: rule.id });
+        
+        if (result.success) {
+          toast.success(result.message);
+          onSuccess(); // Refresh parent data
+          setTimeout(() => {
+            setRefreshKey(prev => prev + 1); // Force local refresh after delay
+          }, 100);
+          // Fecha o modal principal automaticamente após excluir regra
+          setTimeout(() => {
+            onClose();
+          }, 200);
+        } else {
+          toast.error(result.error);
+        }
+      } catch (error) {
+        console.error('Error deleting commission rule:', error);
+        toast.error('Erro ao excluir regra de comissão');
+      }
+    }
+  };
+
+  const handleSuccess = () => {
+    // Primeiro chama o onSuccess do pai para atualizar os dados
+    onSuccess();
+    // Fecha os sub-modais
+    setIsCreateModalOpen(false);
+    setIsEditModalOpen(false);
+    setEditingRule(null);
+    // Force refresh local data após um pequeno delay para permitir que o router.refresh() termine
+    setTimeout(() => {
+      setRefreshKey(prev => prev + 1);
+    }, 100);
+    // Fecha o modal principal automaticamente após adicionar/editar regra
+    setTimeout(() => {
+      onClose();
+    }, 200);
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={() => {}}>
+      <DialogContent className={`sm:max-w-[600px] max-h-[80vh] overflow-y-auto ${styles.modal}`}>
+        <DialogHeader>
+          <DialogTitle>Gerenciar Comissões</DialogTitle>
+          <p className="text-sm text-muted-foreground">
+            {item?.customName || `Item ${item?.catalogItemId?.slice(-8)}`}
+          </p>
+        </DialogHeader>
+        
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-medium">Regras de Comissão</h3>
+              <p className="text-sm text-muted-foreground">
+                Configure as regras de comissionamento para este item
+              </p>
+            </div>
+            <Button onClick={handleAddRule}>
+              <Plus className="mr-2 h-4 w-4" />
+              Nova Regra
+            </Button>
+          </div>
+
+          {item?.commissionRules?.length === 0 ? (
+            <Card>
+              <CardContent className="flex flex-col items-center justify-center py-12">
+                <div className="text-center">
+                  <h3 className="text-lg font-medium mb-2">Nenhuma regra configurada</h3>
+                  <p className="text-muted-foreground mb-4">
+                    Este item ainda não possui regras de comissão configuradas.
+                    Use o botão "Nova Regra" acima para adicionar a primeira regra.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="space-y-3">
+              {item?.commissionRules?.map((rule: any) => (
+                <Card key={rule.id}>
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-base">
+                        Regra {rule.ruleType}
+                      </CardTitle>
+                      <div className="flex items-center space-x-2">
+                        <Badge variant="outline">
+                          {rule.percentage && `${rule.percentage}%`}
+                          {rule.fixedValue && `R$ ${rule.fixedValue.toFixed(2)}`}
+                        </Badge>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleEditRule(rule)}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDeleteRule(rule)}
+                          className="text-destructive hover:text-destructive"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2 text-sm">
+                      {rule.minValue && rule.maxValue && (
+                        <p className="text-muted-foreground">
+                          Faixa: R$ {rule.minValue.toFixed(2)} - R$ {rule.maxValue.toFixed(2)}
+                        </p>
+                      )}
+                      {rule.conditions && Object.keys(rule.conditions).length > 0 && (
+                        <div>
+                          <p className="font-medium">Condições:</p>
+                          <ul className="list-disc list-inside text-muted-foreground">
+                            {Object.entries(rule.conditions).map(([key, value]) => (
+                              <li key={key}>
+                                {key}: {String(value)}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+
+          <div className="flex justify-end space-x-2 pt-4 border-t">
+            <Button variant="outline" onClick={onClose}>
+              Fechar
+            </Button>
+          </div>
+        </div>
+
+        {/* Sub-modals */}
+        <CreateCommissionRuleModal
+          isOpen={isCreateModalOpen}
+          onClose={() => setIsCreateModalOpen(false)}
+          operatorItemId={item?.id || ''}
+          onSuccess={handleSuccess}
+        />
+
+        <EditCommissionRuleModal
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          rule={editingRule}
+          onSuccess={handleSuccess}
+        />
+      </DialogContent>
+    </Dialog>
+  );
+}

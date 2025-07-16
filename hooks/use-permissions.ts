@@ -40,6 +40,10 @@ export function usePermissions() {
     return ['MASTER', 'ADMIN'].includes(user?.role || '');
   };
 
+  const canDeleteOperators = () => {
+    return user?.role === 'MASTER';
+  };
+
   const canViewReports = () => {
     return ['MASTER', 'ADMIN'].includes(user?.role || '');
   };
@@ -66,6 +70,7 @@ export function usePermissions() {
     canManageCatalog,
     canManageBaseItems,
     canManageOperators,
+    canDeleteOperators,
     canViewReports,
     canAccessFinancial,
     hasRole,

@@ -1,35 +1,48 @@
-import { Metadata } from 'next/types';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Building2 } from 'lucide-react';
+import { getOperators } from '@/lib/actions/operators/get-operators';
+import { OperatorsPageContent } from '@/components/operators/operators-page-content';
+import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Operadoras',
-  description: 'Gerencie as operadoras parceiras',
+  title: 'Operadoras de Turismo',
+  description: 'Gerencie suas operadoras de turismo parceiras',
 };
 
-export default function OperatorsPage() {
+interface OperatorsPageProps {
+  searchParams: {
+    search?: string;
+    isActive?: string;
+    hasProducts?: string;
+    page?: string;
+  };
+}
+
+export default async function OperatorsPage({ searchParams }: OperatorsPageProps) {
+  const params = await searchParams;
+  const filters = {
+    search: params.search,
+    isActive: params.isActive === 'true' ? true : params.isActive === 'false' ? false : undefined,
+    hasProducts: params.hasProducts === 'true' ? true : params.hasProducts === 'false' ? false : undefined,
+    page: parseInt(params.page || '1'),
+  };
+
+  const { data: operators, pagination } = await getOperators(filters);
+
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0' }}>
-      <div style={{ marginBottom: '2rem' }}>
-        <h1 style={{ fontSize: '2rem', fontWeight: '700', margin: '0 0 0.5rem 0' }}>
-          Operadoras
-        </h1>
-        <p style={{ color: 'var(--muted-foreground)', fontSize: '1rem', margin: '0' }}>
-          Gerencie parcerias e comissões com operadoras
-        </p>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold text-foreground">Operadoras de Turismo</h1>
+          <p className="text-muted-foreground">
+            Gerencie suas operadoras de turismo parceiras e seus produtos/serviços
+          </p>
+        </div>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <Building2 style={{ width: '1.25rem', height: '1.25rem', color: 'var(--primary)' }} />
-            Em Desenvolvimento
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p>Esta funcionalidade será implementada na Fase 2 do projeto.</p>
-        </CardContent>
-      </Card>
+      <OperatorsPageContent 
+        operators={operators}
+        pagination={pagination}
+        filters={filters}
+      />
     </div>
   );
 }

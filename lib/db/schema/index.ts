@@ -5,15 +5,13 @@ export * from './activity';
 export * from './users';
 export * from './funnels';
 export * from './catalog';
+export * from './operators';
 
 // Import tables for relations
 import { users, passwordResetTokens, emailVerificationTokens, userInvitations, userSessions } from './auth';
 import { 
   agencies, 
   agencySettings, 
-  operators, 
-  operatorItems, 
-  operatorItemPaymentMethods, 
   clients 
 } from './agency';
 import {
@@ -23,6 +21,12 @@ import {
 import { salesFunnels, salesFunnelStages, stageTransitions } from './funnels';
 import { activityLog, systemNotifications } from './activity';
 import { userRelations } from './users';
+import { 
+  operators, 
+  operatorItems, 
+  commissionRules, 
+  operatorDocuments 
+} from './operators';
 import { relations } from 'drizzle-orm';
 
 // Define relations between schemas
@@ -109,6 +113,7 @@ export const operatorsRelations = relations(operators, ({ one, many }) => ({
     references: [agencies.id],
   }),
   items: many(operatorItems),
+  documents: many(operatorDocuments),
 }));
 
 export const operatorItemsRelations = relations(operatorItems, ({ one, many }) => ({
@@ -116,17 +121,24 @@ export const operatorItemsRelations = relations(operatorItems, ({ one, many }) =
     fields: [operatorItems.operatorId],
     references: [operators.id],
   }),
-  baseItem: one(baseItems, {
-    fields: [operatorItems.baseItemId],
+  catalogItem: one(baseItems, {
+    fields: [operatorItems.catalogItemId],
     references: [baseItems.id],
   }),
-  paymentMethods: many(operatorItemPaymentMethods),
+  commissionRules: many(commissionRules),
 }));
 
-export const operatorItemPaymentMethodsRelations = relations(operatorItemPaymentMethods, ({ one }) => ({
+export const commissionRulesRelations = relations(commissionRules, ({ one }) => ({
   operatorItem: one(operatorItems, {
-    fields: [operatorItemPaymentMethods.operatorItemId],
+    fields: [commissionRules.operatorItemId],
     references: [operatorItems.id],
+  }),
+}));
+
+export const operatorDocumentsRelations = relations(operatorDocuments, ({ one }) => ({
+  operator: one(operators, {
+    fields: [operatorDocuments.operatorId],
+    references: [operators.id],
   }),
 }));
 

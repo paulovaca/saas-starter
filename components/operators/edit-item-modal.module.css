@@ -1,0 +1,92 @@
+/* Modal Editar Item da Operadora - Theme Support */
+
+.modal {
+  background-color: var(--background);
+  border: 1px solid var(--border);
+  color: var(--foreground);
+}
+
+.modalHeader {
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1rem;
+}
+
+.modalTitle {
+  color: var(--foreground);
+  font-weight: 600;
+}
+
+.formField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.label {
+  color: var(--foreground);
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.input {
+  background-color: var(--background);
+  border: 1px solid var(--border);
+  color: var(--foreground);
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--ring);
+  box-shadow: 0 0 0 2px var(--ring);
+}
+
+.input::placeholder {
+  color: var(--muted-foreground);
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.cancelButton {
+  background-color: transparent;
+  border: 1px solid var(--border);
+  color: var(--foreground);
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cancelButton:hover {
+  background-color: var(--muted);
+}
+
+.submitButton {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.submitButton:hover {
+  background-color: var(--primary);
+  opacity: 0.9;
+}
+
+.submitButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

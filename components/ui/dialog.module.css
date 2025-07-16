@@ -1,0 +1,76 @@
+/* Dialog Styles */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.content {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow: hidden;
+  animation: dialogAppear 0.2s ease-out;
+}
+
+.dialogContent {
+  padding: 24px;
+  width: 100%;
+}
+
+.header {
+  margin-bottom: 16px;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.description {
+  margin: 8px 0 0 0;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.footer {
+  margin-top: 24px;
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+@keyframes dialogAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Dark mode */
+[data-theme="dark"] .content {
+  background: #1f2937;
+}
+
+[data-theme="dark"] .title {
+  color: #f9fafb;
+}
+
+[data-theme="dark"] .description {
+  color: #9ca3af;
+}

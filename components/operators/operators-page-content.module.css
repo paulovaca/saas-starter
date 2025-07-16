@@ -1,0 +1,266 @@
+/* Operators Page Content Styles */
+.operatorsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.filtersSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.operatorLogoIcon {
+  height: 1.5rem;
+  width: 1.5rem;
+  color: var(--muted-foreground);
+}
+
+.operatorDetails {
+  flex: 1;
+}
+
+.operatorName {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.operatorCnpj {
+  margin-top: 0.25rem;
+  color: var(--muted-foreground);
+}
+
+.operatorContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+@media (min-width: 1024px) {
+  .filtersSection {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.searchContainer {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 0.5rem;
+  max-width: 100%;
+}
+
+@media (min-width: 640px) {
+  .searchContainer {
+    max-width: 600px;
+  }
+}
+
+.searchInputWrapper {
+  position: relative;
+  flex: 1;
+  max-width: 320px;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 1rem;
+  width: 1rem;
+  color: var(--muted-foreground);
+}
+
+.searchInput {
+  padding-left: 2.25rem;
+}
+
+.filterSelect {
+  width: 140px;
+}
+
+.productsFilterSelect {
+  width: 160px;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+}
+
+.emptyStateIcon {
+  height: 3rem;
+  width: 3rem;
+  color: var(--muted-foreground);
+  margin-bottom: 1rem;
+}
+
+.emptyStateTitle {
+  font-size: 1.125rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.emptyStateDescription {
+  color: var(--muted-foreground);
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.operatorsGrid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .operatorsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .operatorsGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.operatorCard {
+  transition: box-shadow 0.2s ease-in-out;
+}
+
+.operatorCard:hover {
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.operatorHeader {
+  padding-bottom: 0.75rem;
+}
+
+.operatorHeaderContent {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.operatorInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.operatorLogo {
+  position: relative;
+  height: 3rem;
+  width: 3rem;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background-color: var(--muted);
+}
+
+.operatorLogoPlaceholder {
+  height: 3rem;
+  width: 3rem;
+  border-radius: 0.5rem;
+  background-color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.operatorLogoIcon {
+  height: 1.5rem;
+  width: 1.5rem;
+  color: rgb(var(--muted-foreground));
+}
+
+.operatorDetails {
+  flex: 1;
+}
+
+.operatorName {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.operatorStats {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.operatorItemsCount {
+  display: flex;
+  align-items: center;
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+}
+
+.operatorItemsIcon {
+  margin-right: 0.25rem;
+  height: 1rem;
+  width: 1rem;
+}
+
+.operatorContactInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.operatorContactItem {
+  display: flex;
+  align-items: center;
+  font-size: 0.875rem;
+}
+
+.operatorContactIcon {
+  margin-right: 0.5rem;
+  height: 1rem;
+  width: 1rem;
+  color: var(--muted-foreground);
+}
+
+.operatorContactText {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.operatorActions {
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.operatorActionsButton {
+  width: 100%;
+}
+
+.operatorActionsIcon {
+  margin-right: 0.5rem;
+  height: 1rem;
+  width: 1rem;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.paginationInfo {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+}

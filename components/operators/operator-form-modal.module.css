@@ -1,0 +1,201 @@
+/* Operator Form Modal Styles */
+.modalContent {
+  max-width: 42rem;
+  max-height: 90vh;
+  overflow-y: auto;
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.formContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.tabsList {
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(3, 1fr);
+  background-color: var(--muted);
+  border-radius: var(--radius);
+}
+
+.tabContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.formField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.formLabel {
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: var(--foreground);
+}
+
+.formInput {
+  width: 100%;
+  border-radius: var(--radius);
+  border: 1px solid var(--input);
+  background-color: var(--background);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  transition: border-color 0.2s;
+  color: var(--foreground);
+}
+
+.formInput:focus {
+  outline: none;
+  border-color: var(--ring);
+  box-shadow: 0 0 0 2px rgb(from var(--ring) r g b / 0.2);
+}
+
+.formInput:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.formTextarea {
+  min-height: 5rem;
+  resize: vertical;
+  width: 100%;
+  border-radius: var(--radius);
+  border: 1px solid var(--input);
+  background-color: var(--background);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  transition: border-color 0.2s;
+  color: var(--foreground);
+  font-family: inherit;
+}
+
+.formTextarea:focus {
+  outline: none;
+  border-color: var(--ring);
+  box-shadow: 0 0 0 2px rgb(from var(--ring) r g b / 0.2);
+}
+
+.formTextareaLarge {
+  min-height: 7.5rem;
+}
+
+.formDescription {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+}
+
+.formMessage {
+  font-size: 0.75rem;
+  color: var(--destructive);
+}
+
+.actionsContainer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  background-color: var(--card);
+}
+
+.loadingIcon {
+  margin-right: 0.5rem;
+  height: 1rem;
+  width: 1rem;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Button styles */
+.cancelButton {
+  background-color: var(--secondary);
+  color: var(--secondary-foreground);
+  border: 1px solid var(--border);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cancelButton:hover {
+  background-color: rgb(from var(--secondary) r g b / 0.8);
+}
+
+.submitButton {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  border: 1px solid var(--primary);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.submitButton:hover {
+  background-color: rgb(from var(--primary) r g b / 0.9);
+}
+
+.submitButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Field group styling */
+.fieldGroup {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.fieldGroupThree {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 1rem;
+}
+
+.fieldGroupFull {
+  grid-column: 1 / -1;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .modalContent {
+    max-width: 95vw;
+    margin: 0.5rem;
+  }
+  
+  .tabsList {
+    font-size: 0.875rem;
+  }
+  
+  .actionsContainer {
+    flex-direction: column;
+  }
+  
+  .actionsContainer button {
+    width: 100%;
+  }
+  
+  .fieldGroup,
+  .fieldGroupThree {
+    grid-template-columns: 1fr;
+  }
+}

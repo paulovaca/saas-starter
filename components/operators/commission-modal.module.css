@@ -1,0 +1,196 @@
+/* Modal Gerenciar Comissões - Theme Support */
+
+.modal {
+  background-color: var(--background);
+  border: 1px solid var(--border);
+  color: var(--foreground);
+}
+
+.modalHeader {
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1rem;
+}
+
+.modalTitle {
+  color: var(--foreground);
+  font-weight: 600;
+}
+
+.itemHeader {
+  background-color: var(--muted);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.itemName {
+  color: var(--foreground);
+  font-weight: 600;
+  font-size: 1.125rem;
+}
+
+.itemId {
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+}
+
+.addButton {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.addButton:hover {
+  background-color: var(--primary);
+  opacity: 0.9;
+}
+
+.rulesContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.ruleCard {
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.ruleHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+}
+
+.ruleType {
+  color: var(--foreground);
+  font-weight: 600;
+}
+
+.ruleActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.actionButton {
+  background-color: transparent;
+  border: 1px solid var(--border);
+  color: var(--foreground);
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.actionButton:hover {
+  background-color: var(--muted);
+}
+
+.deleteButton {
+  color: var(--destructive);
+  border-color: var(--destructive);
+}
+
+.deleteButton:hover {
+  background-color: var(--destructive);
+  color: var(--destructive-foreground);
+}
+
+.ruleDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.ruleValue {
+  color: var(--foreground);
+  font-size: 0.875rem;
+}
+
+.ruleRange {
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+}
+
+.conditionsSection {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+}
+
+.conditionsTitle {
+  color: var(--foreground);
+  font-weight: 500;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+.conditionsList {
+  list-style: disc;
+  list-style-position: inside;
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 2rem;
+  color: var(--muted-foreground);
+}
+
+.emptyIcon {
+  width: 3rem;
+  height: 3rem;
+  margin: 0 auto 1rem;
+  color: var(--muted-foreground);
+}
+
+.emptyTitle {
+  color: var(--foreground);
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.emptyDescription {
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.closeButton {
+  background-color: transparent;
+  border: 1px solid var(--border);
+  color: var(--foreground);
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.closeButton:hover {
+  background-color: var(--muted);
+}

@@ -3,19 +3,22 @@ import { db } from '../drizzle';
 import { 
   agencies,
   agencySettings,
-  operators,
-  operatorItems,
-  operatorItemPaymentMethods,
   clients,
   type Agency,
   type NewAgency,
   type AgencySettings,
   type NewAgencySettings,
-  type Operator,
-  type NewOperator,
   type Client,
   type NewClient
 } from '../schema/agency';
+import {
+  operators,
+  operatorItems,
+  type Operator,
+  type NewOperator,
+  type OperatorItem,
+  type NewOperatorItem
+} from '../schema/operators';
 import { 
   salesFunnels,
   salesFunnelStages,
