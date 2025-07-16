@@ -267,7 +267,7 @@ npm run db:generate
 npm run db:migrate
 ```
 
-#### Etapa 3.3: Criar página do catálogo
+#### Etapa 3.3: Criar página de itens base
 
 1. Na pasta `app/(dashboard)/catalog`, crie `page.tsx`
 2. **Este arquivo servirá para**: Listar todos os itens base do catálogo
@@ -296,9 +296,7 @@ npm run db:migrate
 2. **Este arquivo servirá para**: Criar/editar um item e seus campos
 3. **Seções**:
    - Informações básicas (nome, descrição, categoria)
-   - Campos do item (lista reordenável)
-   - Preview do formulário
-   - Operadoras que usam este item
+   - Campos customizaveis do item (lista reordenável)
 
 #### Etapa 3.6: Criar componente de editor de campos
 
@@ -391,7 +389,7 @@ npm run db:migrate
 2. **Este arquivo servirá para**: Listar todas as operadoras cadastradas
 3. **Funcionalidades**:
    - Grid de cards com logo, nome e status
-   - Indicadores: produtos ativos, propostas no mês
+   - Indicadores: Itens Base ativos, propostas no mês, reservas no mês
    - Filtros: ativas/inativas, com/sem produtos
    - Busca por nome/CNPJ
    - Botão para adicionar operadora (Master/Admin)
@@ -407,27 +405,31 @@ npm run db:migrate
    - **Endereço**: CEP, Rua, Número, Complemento, Bairro, Cidade, Estado
    - **Observações**: Campo de texto livre
 
+   
+
 #### Etapa 4.5: Criar página de detalhes da operadora
 
 1. Na pasta `app/(dashboard)/operators/[operatorId]`, crie `page.tsx`
 2. **Este arquivo servirá para**: Gerenciar uma operadora específica
 3. **Abas necessárias**:
    - **Informações**: Dados cadastrais editáveis
-   - **Produtos**: Itens do catálogo associados
-   - **Comissões**: Regras de comissionamento
+   - **Itens Base**: Visualizar Itens Base (nome do item base | % de comissão)
    - **Documentos**: Upload de contratos/documentos
-   - **Histórico**: Log de alterações e propostas
+   - **Documentos**: Visualizar documentos que ja foram feitos o update
+   - **Histórico**: Log de alterações
 
-#### Etapa 4.6: Criar página de produtos da operadora
+#### Etapa 4.6: Criar página de Itens Base da operadora
 
 1. Na pasta `app/(dashboard)/operators/[operatorId]`, crie `products/page.tsx`
-2. **Este arquivo servirá para**: Gerenciar produtos/itens da operadora
+2. **Este arquivo servirá para**: Gerenciar itens Base da operadora
 3. **Funcionalidades**:
-   - Lista de itens do catálogo disponíveis
-   - Checkbox para associar/desassociar
-   - Nome customizado do produto na operadora
-   - Campos específicos da operadora
-   - Status ativo/inativo por produto
+   - Mostra todos os itens base cadastrados nesse operadora. - Botão para editar item base me cada item
+   - Botão de adicionar Item Base
+      - Lista de itens Base disponíveis (seleciona)
+         - Nome customizado do produto na operadora
+         - Status ativo/inativo por produto
+         - % que a operadora paga para esse Item Base
+   - Botão de Excluir Item Base      
 
 #### Etapa 4.7: Criar componente de associação de itens
 
@@ -441,7 +443,6 @@ npm run db:migrate
    - Configuração inicial de comissão
 
 #### Etapa 4.8: Criar editor de comissões
-
 1. Na pasta `components/operators`, crie `commission-editor.tsx`
 2. **Este arquivo servirá para**: Definir regras de comissão complexas
 3. **Tipos de comissão**:
@@ -475,7 +476,8 @@ npm run db:migrate
 1. Na pasta `lib/validations/operators`, crie:
    - `operator.schema.ts` - Dados da operadora
    - `commission.schema.ts` - Regras de comissão
-   - `association.schema.ts` - Associação de produtos
+      Temos que incluir um seletor de tipo de comissionamento para cada operadora, Se ela vai seguir um comissionamento por item base ou por regra geral definida #### Etapa 4.8: Criar editor de comissões
+   - `association.schema.ts` - Associação de itens base - Importante lembrar que cada operadora pode ter varios itens base, inclusive o mesmo item base com comissionamentos diferentes.
 2. **Validações especiais**:
    - CNPJ válido e único
    - Email/telefone válidos
