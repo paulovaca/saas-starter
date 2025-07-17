@@ -136,7 +136,9 @@ export function CreateCommissionRuleModal({
               }
             >
               <SelectTrigger>
-                <SelectValue placeholder={getRuleTypeLabel(formData.ruleType)} />
+                <span className={styles.selectValueCustom}>
+                  {formData.ruleType ? getRuleTypeLabel(formData.ruleType) : "Selecione o tipo de regra"}
+                </span>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="percentage_fixed">Porcentagem Fixa</SelectItem>

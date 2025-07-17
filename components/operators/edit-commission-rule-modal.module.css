@@ -75,6 +75,12 @@
   box-shadow: 0 0 0 2px var(--primary-foreground);
 }
 
+.selectValueCustom {
+  flex: 1;
+  text-align: left;
+  color: var(--foreground);
+}
+
 .selectContent {
   background-color: var(--popover);
   border: 1px solid var(--border);

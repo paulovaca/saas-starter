@@ -31,6 +31,16 @@ export function CommissionModal({ isOpen, onClose, item: initialItem, onSuccess 
   const [item, setItem] = useState(initialItem);
   const [refreshKey, setRefreshKey] = useState(0);
 
+  const getRuleTypeLabel = (ruleType: string) => {
+    switch (ruleType) {
+      case 'percentage_fixed': return 'Porcentagem Fixa';
+      case 'value_fixed': return 'Valor Fixo Por Venda';
+      case 'tiered': return 'Escalonamento';
+      case 'custom': return 'Personalizado';
+      default: return ruleType;
+    }
+  };
+
   // Update local item when initialItem changes or when refreshKey changes
   useEffect(() => {
     if (initialItem) {
@@ -133,7 +143,7 @@ export function CommissionModal({ isOpen, onClose, item: initialItem, onSuccess 
                   <CardHeader>
                     <div className={styles.ruleHeader}>
                       <CardTitle className={styles.ruleType}>
-                        Regra {rule.ruleType}
+                        {getRuleTypeLabel(rule.ruleType)}
                       </CardTitle>
                       <div className={styles.ruleActions}>
                         <Badge variant="outline">

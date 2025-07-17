@@ -48,6 +48,16 @@ interface OperatorDetailsContentProps {
 export function OperatorDetailsContent({ operator }: OperatorDetailsContentProps) {
   const router = useRouter();
   const { user, canDeleteOperators } = usePermissions();
+  
+  const getRuleTypeLabel = (ruleType: string) => {
+    switch (ruleType) {
+      case 'percentage_fixed': return 'Porcentagem Fixa';
+      case 'value_fixed': return 'Valor Fixo Por Venda';
+      case 'tiered': return 'Escalonamento';
+      case 'custom': return 'Personalizado';
+      default: return ruleType;
+    }
+  };
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isAssociationModalOpen, setIsAssociationModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<any>(null);
@@ -363,7 +373,7 @@ export function OperatorDetailsContent({ operator }: OperatorDetailsContentProps
                           <p className={styles.commissionRuleTitle}>Regras de Comissão:</p>
                           {item.commissionRules.map((rule) => (
                             <div key={rule.id} className={styles.commissionRule}>
-                              • {rule.ruleType}: {rule.percentage && `${rule.percentage}%`} 
+                              • {getRuleTypeLabel(rule.ruleType)}: {rule.percentage && `${rule.percentage}%`} 
                               {rule.fixedValue && `R$ ${rule.fixedValue.toFixed(2)}`}
                               {rule.minValue && rule.maxValue && ` (R$ ${rule.minValue} - R$ ${rule.maxValue})`}
                             </div>
