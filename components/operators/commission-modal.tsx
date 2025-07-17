@@ -95,31 +95,31 @@ export function CommissionModal({ isOpen, onClose, item: initialItem, onSuccess 
       <DialogContent className={`sm:max-w-[600px] max-h-[80vh] overflow-y-auto ${styles.modal}`}>
         <DialogHeader>
           <DialogTitle>Gerenciar Comissões</DialogTitle>
-          <p className="text-sm text-muted-foreground">
+          <p className={styles.itemId}>
             {item?.customName || `Item ${item?.catalogItemId?.slice(-8)}`}
           </p>
         </DialogHeader>
         
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
+        <div className={styles.rulesContainer}>
+          <div className={styles.ruleHeader}>
             <div>
-              <h3 className="text-lg font-medium">Regras de Comissão</h3>
-              <p className="text-sm text-muted-foreground">
+              <h3 className={styles.ruleType}>Regras de Comissão</h3>
+              <p className={styles.itemId}>
                 Configure as regras de comissionamento para este item
               </p>
             </div>
-            <Button onClick={handleAddRule}>
-              <Plus className="mr-2 h-4 w-4" />
+            <Button onClick={handleAddRule} className={styles.addButton}>
+              <Plus className={styles.plusIcon} />
               Nova Regra
             </Button>
           </div>
 
           {item?.commissionRules?.length === 0 ? (
             <Card>
-              <CardContent className="flex flex-col items-center justify-center py-12">
-                <div className="text-center">
-                  <h3 className="text-lg font-medium mb-2">Nenhuma regra configurada</h3>
-                  <p className="text-muted-foreground mb-4">
+              <CardContent className={styles.emptyState}>
+                <div>
+                  <h3 className={styles.emptyTitle}>Nenhuma regra configurada</h3>
+                  <p className={styles.emptyDescription}>
                     Este item ainda não possui regras de comissão configuradas.
                     Use o botão "Nova Regra" acima para adicionar a primeira regra.
                   </p>
@@ -127,15 +127,15 @@ export function CommissionModal({ isOpen, onClose, item: initialItem, onSuccess 
               </CardContent>
             </Card>
           ) : (
-            <div className="space-y-3">
+            <div className={styles.rulesContainer}>
               {item?.commissionRules?.map((rule: any) => (
-                <Card key={rule.id}>
-                  <CardHeader className="pb-3">
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="text-base">
+                <Card key={rule.id} className={styles.ruleCard}>
+                  <CardHeader>
+                    <div className={styles.ruleHeader}>
+                      <CardTitle className={styles.ruleType}>
                         Regra {rule.ruleType}
                       </CardTitle>
-                      <div className="flex items-center space-x-2">
+                      <div className={styles.ruleActions}>
                         <Badge variant="outline">
                           {rule.percentage && `${rule.percentage}%`}
                           {rule.fixedValue && `R$ ${rule.fixedValue.toFixed(2)}`}
@@ -144,31 +144,32 @@ export function CommissionModal({ isOpen, onClose, item: initialItem, onSuccess 
                           variant="ghost"
                           size="sm"
                           onClick={() => handleEditRule(rule)}
+                          className={styles.actionButton}
                         >
-                          <Edit className="h-4 w-4" />
+                          <Edit className={styles.editIcon} />
                         </Button>
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={() => handleDeleteRule(rule)}
-                          className="text-destructive hover:text-destructive"
+                          className={`${styles.actionButton} ${styles.deleteButton}`}
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <Trash2 className={styles.deleteIcon} />
                         </Button>
                       </div>
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <div className="space-y-2 text-sm">
+                    <div className={styles.ruleDetails}>
                       {rule.minValue && rule.maxValue && (
-                        <p className="text-muted-foreground">
+                        <p className={styles.ruleRange}>
                           Faixa: R$ {rule.minValue.toFixed(2)} - R$ {rule.maxValue.toFixed(2)}
                         </p>
                       )}
                       {rule.conditions && Object.keys(rule.conditions).length > 0 && (
-                        <div>
-                          <p className="font-medium">Condições:</p>
-                          <ul className="list-disc list-inside text-muted-foreground">
+                        <div className={styles.conditionsSection}>
+                          <p className={styles.conditionsTitle}>Condições:</p>
+                          <ul className={styles.conditionsList}>
                             {Object.entries(rule.conditions).map(([key, value]) => (
                               <li key={key}>
                                 {key}: {String(value)}
@@ -184,8 +185,8 @@ export function CommissionModal({ isOpen, onClose, item: initialItem, onSuccess 
             </div>
           )}
 
-          <div className="flex justify-end space-x-2 pt-4 border-t">
-            <Button variant="outline" onClick={onClose}>
+          <div className={styles.buttonContainer}>
+            <Button variant="outline" onClick={onClose} className={styles.closeButton}>
               Fechar
             </Button>
           </div>

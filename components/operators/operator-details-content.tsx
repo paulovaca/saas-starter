@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';  
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -130,57 +130,56 @@ export function OperatorDetailsContent({ operator }: OperatorDetailsContentProps
   };
 
   return (
-    <>
+    <div className={styles.detailsContainer}>
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <Button variant="ghost" size="sm" asChild>
+      <div className={styles.headerSection}>
+        <div className={styles.headerLeft}>
+          <Button variant="ghost" size="sm" asChild className={styles.backButton}>
             <Link href="/operators">
-              <ArrowLeft className="h-4 w-4 mr-2" />
+              <ArrowLeft className={styles.backIcon} />
               Voltar
             </Link>
           </Button>
-          <div className="flex items-center space-x-3">
+          <div className={styles.operatorHeader}>
             {operator.logo ? (
-              <div className="relative h-16 w-16 rounded-lg overflow-hidden bg-muted">
-                <Image
-                  src={operator.logo}
-                  alt={`Logo ${operator.name}`}
-                  fill
-                  className="object-contain"
-                />
+              <div className={styles.operatorLogo}>                        <Image
+                          src={operator.logo}
+                          alt={`Logo ${operator.name}`}
+                          fill
+                          className={styles.objectContain}
+                        />
               </div>
             ) : (
-              <div className="h-16 w-16 rounded-lg bg-muted flex items-center justify-center">
-                <Building2 className="h-8 w-8 text-muted-foreground" />
+              <div className={styles.operatorLogoPlaceholder}>
+                <Building2 className={styles.operatorLogoIcon} />
               </div>
             )}
-            <div>
-              <h1 className="text-2xl font-semibold text-foreground">{operator.name}</h1>
+            <div className={styles.operatorInfo}>
+              <h1>{operator.name}</h1>
               {operator.cnpj && (
-                <p className="text-muted-foreground">CNPJ: {operator.cnpj}</p>
+                <p>CNPJ: {operator.cnpj}</p>
               )}
             </div>
           </div>
         </div>
         
-        <div className="flex items-center space-x-2">
+        <div className={styles.headerActions}>
           <Badge variant={operator.isActive ? 'default' : 'secondary'}>
             {operator.isActive ? 'Ativa' : 'Inativa'}
           </Badge>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm">
-                <MoreHorizontal className="h-4 w-4" />
+                <MoreHorizontal className={styles.moreIcon} />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem onClick={() => setIsEditModalOpen(true)}>
-                <Edit className="mr-2 h-4 w-4" />
+                <Edit className={styles.editIcon} />
                 Editar
               </DropdownMenuItem>
               <DropdownMenuItem onClick={handleToggleStatus}>
-                <Power className="mr-2 h-4 w-4" />
+                <Power className={styles.powerIcon} />
                 {operator.isActive ? 'Desativar' : 'Ativar'}
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -189,49 +188,50 @@ export function OperatorDetailsContent({ operator }: OperatorDetailsContentProps
       </div>
 
       {/* Tabs */}
-      <Tabs defaultValue="info" className="space-y-4">
-        <TabsList className={styles.tabsList}>
-          <TabsTrigger value="info" className={styles.tabsTrigger}>Informações</TabsTrigger>
-          <TabsTrigger value="items" className={styles.tabsTrigger}>
-            Itens Base ({operator.items.length})
-          </TabsTrigger>
-          <TabsTrigger value="documents" className={styles.tabsTrigger}>
-            Documentos ({operator.documents.length})
-          </TabsTrigger>
-        </TabsList>
+      <div className={styles.tabsContainer}>
+        <Tabs defaultValue="info">
+          <TabsList className={styles.tabsList}>
+            <TabsTrigger value="info" className={styles.tabsTrigger}>Informações</TabsTrigger>
+            <TabsTrigger value="items" className={styles.tabsTrigger}>
+              Itens Base ({operator.items.length})
+            </TabsTrigger>
+            <TabsTrigger value="documents" className={styles.tabsTrigger}>
+              Documentos ({operator.documents.length})
+            </TabsTrigger>
+          </TabsList>
 
         {/* Information Tab */}
-        <TabsContent value="info" className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2">
+          <TabsContent value="info">
+            <div className={styles.infoGrid}>
             {/* Contact Information */}
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Users className="h-5 w-5" />
+                <CardTitle className={styles.contactHeader}>
+                  <Users className={styles.contactIcon} />
                   Informações de Contato
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3">
+              <CardContent>
                 {operator.contactName && (
-                  <div className="flex items-center space-x-2">
-                    <Users className="h-4 w-4 text-muted-foreground" />
+                  <div className={styles.contactItem}>
+                    <Users className={styles.contactIcon} />
                     <span>{operator.contactName}</span>
                   </div>
                 )}
                 {operator.contactEmail && (
-                  <div className="flex items-center space-x-2">
-                    <Mail className="h-4 w-4 text-muted-foreground" />
+                  <div className={styles.contactItem}>
+                    <Mail className={styles.contactIcon} />
                     <span>{operator.contactEmail}</span>
                   </div>
                 )}
                 {operator.contactPhone && (
-                  <div className="flex items-center space-x-2">
-                    <Phone className="h-4 w-4 text-muted-foreground" />
+                  <div className={styles.contactItem}>
+                    <Phone className={styles.contactIcon} />
                     <span>{operator.contactPhone}</span>
                   </div>
                 )}
                 {!operator.contactName && !operator.contactEmail && !operator.contactPhone && (
-                  <p className="text-muted-foreground text-sm">
+                  <p className={styles.emptyStateDescription}>
                     Nenhuma informação de contato cadastrada
                   </p>
                 )}
@@ -241,16 +241,16 @@ export function OperatorDetailsContent({ operator }: OperatorDetailsContentProps
             {/* Address */}
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <MapPin className="h-5 w-5" />
+                <CardTitle className={styles.contactHeader}>
+                  <MapPin className={styles.mapIcon} />
                   Endereço
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 {operator.address ? (
-                  <p className="text-sm">{operator.address}</p>
+                  <p className={styles.notesContent}>{operator.address}</p>
                 ) : (
-                  <p className="text-muted-foreground text-sm">
+                  <p className={styles.emptyStateDescription}>
                     Nenhum endereço cadastrado
                   </p>
                 )}
@@ -262,57 +262,57 @@ export function OperatorDetailsContent({ operator }: OperatorDetailsContentProps
           {operator.notes && (
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <FileText className="h-5 w-5" />
+                <CardTitle className={styles.contactHeader}>
+                  <FileText className={styles.fileIcon} />
                   Observações
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm whitespace-pre-wrap">{operator.notes}</p>
+                <p className={styles.notesContent}>{operator.notes}</p>
               </CardContent>
             </Card>
           )}
         </TabsContent>
 
         {/* Items Tab */}
-        <TabsContent value="items" className="space-y-4">
-          <div className="flex items-center justify-between">
+        <TabsContent value="items">
+          <div className={styles.itemsHeader}>
             <div>
-              <h3 className="text-lg font-medium">Itens Base da Operadora</h3>
-              <p className="text-muted-foreground">
+              <h3 className={styles.itemsTitle}>Itens Base da Operadora</h3>
+              <p className={styles.itemsDescription}>
                 Produtos e serviços oferecidos por esta operadora
               </p>
             </div>
             <Button onClick={() => setIsAssociationModalOpen(true)}>
-              <Plus className="mr-2 h-4 w-4" />
+              <Plus className={styles.plusIcon} />
               Adicionar Item
             </Button>
           </div>
 
           {operator.items.length === 0 ? (
             <Card>
-              <CardContent className="flex flex-col items-center justify-center py-12">
-                <Package className="h-12 w-12 text-muted-foreground mb-4" />
-                <h3 className="text-lg font-medium mb-2">Nenhum item cadastrado</h3>
-                <p className="text-muted-foreground text-center mb-4">
+              <CardContent className={styles.emptyState}>
+                <Package className={styles.emptyStateIcon} />
+                <h3 className={styles.emptyStateTitle}>Nenhum item cadastrado</h3>
+                <p className={styles.emptyStateDescription}>
                   Esta operadora ainda não possui itens do catálogo associados.
                 </p>
                 <Button onClick={() => setIsAssociationModalOpen(true)}>
-                  <Plus className="mr-2 h-4 w-4" />
+                  <Plus className={styles.plusIcon} />
                   Adicionar Primeiro Item
                 </Button>
               </CardContent>
             </Card>
           ) : (
-            <div className="grid gap-4">
+            <div className={styles.itemsGrid}>
               {operator.items.map((item) => (
                 <Card key={item.id}>
                   <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="text-base">
+                    <div className={styles.itemHeader}>
+                      <CardTitle className={styles.itemTitle}>
                         {item.customName || `Item ${item.catalogItemId.slice(-8)}`}
                       </CardTitle>
-                      <div className="flex items-center space-x-2">
+                      <div className={styles.itemActions}>
                         <Badge variant={item.isActive ? 'default' : 'secondary'}>
                           {item.isActive ? 'Ativo' : 'Inativo'}
                         </Badge>
@@ -323,28 +323,28 @@ export function OperatorDetailsContent({ operator }: OperatorDetailsContentProps
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="sm">
-                              <MoreHorizontal className="h-4 w-4" />
+                              <MoreHorizontal className={styles.itemMoreIcon} />
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
                             <DropdownMenuItem onClick={() => handleEditItem(item)}>
-                              <Edit className="mr-2 h-4 w-4" />
+                              <Edit className={styles.itemEditIcon} />
                               Editar
                             </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => handleManageCommissions(item)}>
-                              <Settings className="mr-2 h-4 w-4" />
+                              <Settings className={styles.settingsIcon} />
                               Comissões
                             </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => handleToggleItemStatus(item)}>
-                              <Power className="mr-2 h-4 w-4" />
+                              <Power className={styles.itemPowerIcon} />
                               {item.isActive ? 'Desativar' : 'Ativar'}
                             </DropdownMenuItem>
                             {canHardDelete && (
                               <DropdownMenuItem 
-                                className="text-destructive focus:text-destructive"
+                                className={styles.destructiveMenuItem}
                                 onClick={() => handleDeleteItem(item.id)}
                               >
-                                <Trash2 className="mr-2 h-4 w-4" />
+                                <Trash2 className={styles.trashIcon} />
                                 Excluir Definitivamente
                               </DropdownMenuItem>
                             )}
@@ -354,15 +354,15 @@ export function OperatorDetailsContent({ operator }: OperatorDetailsContentProps
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <div className="space-y-2">
-                      <p className="text-sm text-muted-foreground">
+                    <div className={styles.itemContent}>
+                      <p className={styles.itemCatalogId}>
                         ID do Catálogo: {item.catalogItemId}
                       </p>
                       {item.commissionRules.length > 0 && (
-                        <div className="space-y-1">
-                          <p className="text-sm font-medium">Regras de Comissão:</p>
+                        <div className={styles.commissionRules}>
+                          <p className={styles.commissionRuleTitle}>Regras de Comissão:</p>
                           {item.commissionRules.map((rule) => (
-                            <div key={rule.id} className="text-sm text-muted-foreground">
+                            <div key={rule.id} className={styles.commissionRule}>
                               • {rule.ruleType}: {rule.percentage && `${rule.percentage}%`} 
                               {rule.fixedValue && `R$ ${rule.fixedValue.toFixed(2)}`}
                               {rule.minValue && rule.maxValue && ` (R$ ${rule.minValue} - R$ ${rule.maxValue})`}
@@ -379,55 +379,55 @@ export function OperatorDetailsContent({ operator }: OperatorDetailsContentProps
         </TabsContent>
 
         {/* Documents Tab */}
-        <TabsContent value="documents" className="space-y-4">
-          <div className="flex items-center justify-between">
+        <TabsContent value="documents">
+          <div className={styles.itemsHeader}>
             <div>
-              <h3 className="text-lg font-medium">Documentos</h3>
-              <p className="text-muted-foreground">
+              <h3 className={styles.itemsTitle}>Documentos</h3>
+              <p className={styles.itemsDescription}>
                 Contratos, tabelas de preços e outros documentos
               </p>
             </div>
             <Button>
-              <Plus className="mr-2 h-4 w-4" />
+              <Plus className={styles.plusIcon} />
               Upload Documento
             </Button>
           </div>
 
           {operator.documents.length === 0 ? (
             <Card>
-              <CardContent className="flex flex-col items-center justify-center py-12">
-                <FileText className="h-12 w-12 text-muted-foreground mb-4" />
-                <h3 className="text-lg font-medium mb-2">Nenhum documento</h3>
-                <p className="text-muted-foreground text-center mb-4">
+              <CardContent className={styles.emptyState}>
+                <FileText className={styles.emptyStateIcon} />
+                <h3 className={styles.emptyStateTitle}>Nenhum documento</h3>
+                <p className={styles.emptyStateDescription}>
                   Faça upload de contratos, tabelas de preços e outros documentos importantes.
                 </p>
                 <Button>
-                  <Plus className="mr-2 h-4 w-4" />
+                  <Plus className={styles.plusIcon} />
                   Upload Primeiro Documento
                 </Button>
               </CardContent>
             </Card>
           ) : (
-            <div className="grid gap-4">
+            <div className={styles.documentsGrid}>
               {operator.documents.map((document) => (
                 <Card key={document.id}>
-                  <CardContent className="flex items-center justify-between p-4">
-                    <div className="flex items-center space-x-3">
-                      <FileText className="h-8 w-8 text-muted-foreground" />
-                      <div>
-                        <p className="font-medium">{document.fileName}</p>
-                        <p className="text-sm text-muted-foreground">
+                  <CardContent className={styles.documentContent}>
+                    <div className={styles.documentInfo}>
+                      <FileText className={styles.documentIcon} />
+                      <div className={styles.documentDetails}>
+                        <h4>{document.fileName}</h4>
+                        <p className={styles.documentType}>
                           {document.documentType === 'contract' && 'Contrato'}
                           {document.documentType === 'price_table' && 'Tabela de Preços'}
                           {document.documentType === 'marketing_material' && 'Material de Marketing'}
                           {document.documentType === 'other' && 'Outro'}
                         </p>
-                        <p className="text-xs text-muted-foreground">
+                        <p className={styles.documentDate}>
                           Upload: {new Date(document.uploadedAt).toLocaleDateString()}
                         </p>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-2">
+                    <div className={styles.documentActions}>
                       <Button variant="outline" size="sm" asChild>
                         <a href={document.documentUrl} target="_blank" rel="noopener noreferrer">
                           Ver
@@ -436,15 +436,16 @@ export function OperatorDetailsContent({ operator }: OperatorDetailsContentProps
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button variant="ghost" size="sm">
-                            <MoreHorizontal className="h-4 w-4" />
+                            <MoreHorizontal className={styles.itemMoreIcon} />
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem>
-                            <Edit className="mr-2 h-4 w-4" />
+                            <Edit className={styles.itemEditIcon} />
                             Renomear
                           </DropdownMenuItem>
-                          <DropdownMenuItem className="text-destructive">
+                          <DropdownMenuItem className={styles.destructiveMenuItem}>
+                            <Trash2 className={styles.trashIcon} />
                             Excluir
                           </DropdownMenuItem>
                         </DropdownMenuContent>
@@ -456,7 +457,8 @@ export function OperatorDetailsContent({ operator }: OperatorDetailsContentProps
             </div>
           )}
         </TabsContent>
-      </Tabs>
+        </Tabs>
+      </div>
 
       <OperatorFormModal
         isOpen={isEditModalOpen}
@@ -484,6 +486,6 @@ export function OperatorDetailsContent({ operator }: OperatorDetailsContentProps
         item={selectedItem}
         onSuccess={() => router.refresh()}
       />
-    </>
+    </div>
   );
 }

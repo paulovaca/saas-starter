@@ -2,6 +2,7 @@ import { getOperatorDetails } from '@/lib/actions/operators/get-operator-details
 import { OperatorDetailsContent } from '@/components/operators/operator-details-content';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
+import styles from './page.module.css';
 
 interface OperatorDetailsPageProps {
   params: {
@@ -34,7 +35,7 @@ export default async function OperatorDetailsPage({ params }: OperatorDetailsPag
   }
 
   return (
-    <div className="space-y-6">
+    <div className={styles.container}>
       <OperatorDetailsContent operator={result.data} />
     </div>
   );

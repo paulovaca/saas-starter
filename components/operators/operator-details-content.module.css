@@ -276,6 +276,104 @@
   gap: 0.5rem;
 }
 
+/* Additional utility classes */
+.destructiveMenuItem {
+  color: var(--destructive) !important;
+}
+
+.destructiveMenuItem:focus {
+  color: var(--destructive) !important;
+}
+
+/* Object contain for images */
+.objectContain {
+  object-fit: contain;
+}
+
+/* Icon spacing classes for consistency */
+.iconMarginRight {
+  margin-right: 0.5rem;
+}
+
+.iconSpacing {
+  height: 1rem;
+  width: 1rem;
+}
+
+/* Icon classes */
+.backIcon {
+  height: 1rem;
+  width: 1rem;
+  margin-right: 0.5rem;
+}
+
+.moreIcon {
+  height: 1rem;
+  width: 1rem;
+}
+
+.editIcon {
+  margin-right: 0.5rem;
+  height: 1rem;
+  width: 1rem;
+}
+
+.powerIcon {
+  margin-right: 0.5rem;
+  height: 1rem;
+  width: 1rem;
+}
+
+.contactIcon {
+  height: 1.25rem;
+  width: 1.25rem;
+}
+
+.mapIcon {
+  height: 1.25rem;
+  width: 1.25rem;
+}
+
+.fileIcon {
+  height: 1.25rem;
+  width: 1.25rem;
+}
+
+.plusIcon {
+  margin-right: 0.5rem;
+  height: 1rem;
+  width: 1rem;
+}
+
+.itemMoreIcon {
+  height: 1rem;
+  width: 1rem;
+}
+
+.itemEditIcon {
+  margin-right: 0.5rem;
+  height: 1rem;
+  width: 1rem;
+}
+
+.settingsIcon {
+  margin-right: 0.5rem;
+  height: 1rem;
+  width: 1rem;
+}
+
+.itemPowerIcon {
+  margin-right: 0.5rem;
+  height: 1rem;
+  width: 1rem;
+}
+
+.trashIcon {
+  margin-right: 0.5rem;
+  height: 1rem;
+  width: 1rem;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .headerSection {

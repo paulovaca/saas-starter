@@ -84,7 +84,7 @@ export function EditItemModal({ isOpen, onClose, item, onSuccess }: EditItemModa
               Cancelar
             </Button>
             <Button type="submit" disabled={isLoading} className={styles.submitButton}>
-              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {isLoading && <Loader2 className={styles.loadingIcon} />}
               Atualizar Item
             </Button>
           </div>

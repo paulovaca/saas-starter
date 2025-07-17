@@ -17,7 +17,7 @@ const envSchema = z.object({
   AUTH_SECRET: z.string().min(32, 'AUTH_SECRET deve ter pelo menos 32 caracteres'),
 
   // URLs
-  NEXT_PUBLIC_APP_URL: z.string().url('NEXT_PUBLIC_APP_URL deve ser uma URL válida'),
+  BASE_URL: z.string().url('BASE_URL deve ser uma URL válida'),
 
   // Stripe (opcional em dev)
   STRIPE_SECRET_KEY: z.string().optional(),
@@ -41,7 +41,7 @@ async function validateEnvironment() {
     console.log(chalk.green('✅ Variáveis obrigatórias:'));
     console.log(`   - DATABASE_URL: ${chalk.gray('Configurado')}`);
     console.log(`   - AUTH_SECRET: ${chalk.gray('Configurado')}`);
-    console.log(`   - NEXT_PUBLIC_APP_URL: ${chalk.gray(env.NEXT_PUBLIC_APP_URL)}`);
+    console.log(`   - BASE_URL: ${chalk.gray(env.BASE_URL)}`);
 
     console.log('\n' + chalk.yellow('📦 Variáveis opcionais:'));
     

@@ -1,29 +1,31 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+import styles from './operators-page-content.module.css';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
 } from '@/components/ui/select';
-import { 
-  Plus, 
-  Search, 
-  Building2, 
-  MoreHorizontal, 
-  Edit, 
-  Power, 
+import {
+  Plus,
+  Search,
+  Building2,
+  MoreHorizontal,
+  Edit,
+  Power,
   Users,
   FileText,
   Phone,
   Mail,
-  Trash2
+  Trash2,
+  X
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -77,6 +79,7 @@ export function OperatorsPageContent({ operators, pagination, filters }: Operato
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [operatorToDelete, setOperatorToDelete] = useState<{ id: string; name: string } | null>(null);
   const [searchTerm, setSearchTerm] = useState(filters.search || '');
+  const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout>();
   const [activeFilter, setActiveFilter] = useState<string>(
     filters.isActive === true ? 'active' : filters.isActive === false ? 'inactive' : 'all'
   );
@@ -95,6 +98,20 @@ export function OperatorsPageContent({ operators, pagination, filters }: Operato
     }
     router.push(`/operators?${params.toString()}`);
   };
+
+  useEffect(() => {
+    if (searchTimeout) clearTimeout(searchTimeout);
+    
+    if (searchTerm !== filters.search || 
+        activeFilter !== (filters.isActive === true ? 'active' : filters.isActive === false ? 'inactive' : 'all') ||
+        productsFilter !== (filters.hasProducts === true ? 'with-products' : filters.hasProducts === false ? 'without-products' : 'all')) {
+      setSearchTimeout(setTimeout(handleSearch, 500));
+    }
+    
+    return () => {
+      if (searchTimeout) clearTimeout(searchTimeout);
+    };
+  }, [searchTerm, activeFilter, productsFilter]);
 
   const handleToggleStatus = async (operatorId: string, currentStatus: boolean) => {
     try {
@@ -140,93 +157,121 @@ export function OperatorsPageContent({ operators, pagination, filters }: Operato
   };
 
   return (
-    <>
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-        <div className="flex flex-1 items-center space-x-2">
-          <div className="relative flex-1 max-w-sm">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+    <div className={styles.operatorsContainer}>
+      <div className={styles.filtersSection}>
+        <div className={styles.searchContainer}>
+          <div className={styles.searchInputWrapper}>
+            <Search className={styles.searchIcon} />
             <Input
               placeholder="Buscar por nome, CNPJ ou contato..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-              className="pl-9"
+              className={styles.searchInput}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleSearch();
+                }
+              }}
             />
+            {searchTerm && (
+              <button
+                className={styles.clearButton}
+                onClick={() => {
+                  setSearchTerm('');
+                  handleSearch();
+                }}
+              >
+                <X className={styles.clearIcon} size={16} />
+              </button>
+            )}
           </div>
-          <Button variant="outline" onClick={handleSearch}>
-            <Search className="h-4 w-4" />
-          </Button>
-          <Select value={activeFilter} onValueChange={setActiveFilter}>
-            <SelectTrigger className="w-[140px]">
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Todos</SelectItem>
-              <SelectItem value="active">Ativas</SelectItem>
-              <SelectItem value="inactive">Inativas</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select value={productsFilter} onValueChange={setProductsFilter}>
-            <SelectTrigger className="w-[160px]">
-              <SelectValue placeholder="Produtos" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Todos</SelectItem>
-              <SelectItem value="with-products">Com Produtos</SelectItem>
-              <SelectItem value="without-products">Sem Produtos</SelectItem>
-            </SelectContent>
-          </Select>
+          
+          <div className={styles.filterButtons}>
+            <Select 
+              value={activeFilter} 
+              onValueChange={(value) => {
+                setActiveFilter(value);
+                handleSearch();
+              }}
+            >
+              <SelectTrigger className={styles.filterSelect}>
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos status</SelectItem>
+                <SelectItem value="active">Ativas</SelectItem>
+                <SelectItem value="inactive">Inativas</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select 
+              value={productsFilter} 
+              onValueChange={(value) => {
+                setProductsFilter(value);
+                handleSearch();
+              }}
+            >
+              <SelectTrigger className={styles.productsFilterSelect}>
+                <SelectValue placeholder="Produtos" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos produtos</SelectItem>
+                <SelectItem value="with-products">Com produtos</SelectItem>
+                <SelectItem value="without-products">Sem produtos</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
-        
+       
         <Button onClick={() => setIsModalOpen(true)}>
-          <Plus className="mr-2 h-4 w-4" />
+          <Plus className={styles.plusIcon} />
           Nova Operadora
         </Button>
       </div>
 
       {operators.length === 0 ? (
         <Card>
-          <CardContent className="flex flex-col items-center justify-center py-12">
-            <Building2 className="h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-medium mb-2">Nenhuma operadora encontrada</h3>
-            <p className="text-muted-foreground text-center mb-4">
+          <CardContent className={styles.emptyState}>
+            <Building2 className={styles.emptyStateIcon} />
+            <h3 className={styles.emptyStateTitle}>Nenhuma operadora encontrada</h3>
+            <p className={styles.emptyStateDescription}>
               {filters.search || filters.isActive !== undefined || filters.hasProducts !== undefined
                 ? 'Tente ajustar os filtros para encontrar operadoras.'
                 : 'Você ainda não cadastrou nenhuma operadora. Crie sua primeira operadora parceira.'}
             </p>
             {!filters.search && filters.isActive === undefined && filters.hasProducts === undefined && (
               <Button onClick={() => setIsModalOpen(true)}>
-                <Plus className="mr-2 h-4 w-4" />
+                <Plus className={styles.plusIcon} />
                 Nova Operadora
               </Button>
             )}
           </CardContent>
         </Card>
       ) : (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className={styles.operatorsGrid}>
           {operators.map((operator) => (
-            <Card key={operator.id} className="hover:shadow-md transition-shadow">
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center space-x-3">
+            <Card key={operator.id} className={styles.operatorCard}>
+              <CardHeader className={styles.operatorHeader}>
+                <div className={styles.operatorHeaderContent}>
+                  <div className={styles.operatorInfo}>
                     {operator.logo ? (
-                      <div className="relative h-12 w-12 rounded-lg overflow-hidden bg-muted">
+                      <div className={styles.operatorLogo}>
                         <Image
                           src={operator.logo}
                           alt={`Logo ${operator.name}`}
                           fill
-                          className="object-contain"
+                          className={styles.logoIcon}
                         />
                       </div>
                     ) : (
-                      <div className="h-12 w-12 rounded-lg bg-muted flex items-center justify-center">
-                        <Building2 className="h-6 w-6 text-muted-foreground" />
+                      <div className={styles.operatorLogoPlaceholder}>
+                        <Building2 className={styles.operatorLogoIcon} />
                       </div>
                     )}
-                    <div className="flex-1">
-                      <CardTitle className="text-lg">{operator.name}</CardTitle>
+                    <div className={styles.operatorDetails}>
+                      <CardTitle className={styles.operatorName}>{operator.name}</CardTitle>
                       {operator.cnpj && (
-                        <CardDescription className="mt-1">
+                        <CardDescription className={styles.operatorCnpj}>
                           CNPJ: {operator.cnpj}
                         </CardDescription>
                       )}
@@ -235,28 +280,28 @@ export function OperatorsPageContent({ operators, pagination, filters }: Operato
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" size="sm">
-                        <MoreHorizontal className="h-4 w-4" />
+                        <MoreHorizontal className={styles.moreIcon} />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem asChild>
                         <Link href={`/operators/${operator.id}`}>
-                          <Edit className="mr-2 h-4 w-4" />
+                          <Edit className={styles.editIcon} />
                           Editar
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         onClick={() => handleToggleStatus(operator.id, operator.isActive)}
                       >
-                        <Power className="mr-2 h-4 w-4" />
+                        <Power className={styles.powerIcon} />
                         {operator.isActive ? 'Desativar' : 'Ativar'}
                       </DropdownMenuItem>
                       {canDeleteOperators() && (
                         <DropdownMenuItem
                           onClick={() => handleDeleteClick(operator.id, operator.name)}
-                          className="text-destructive focus:text-destructive"
+                          className={styles.destructiveMenuItem}
                         >
-                          <Trash2 className="mr-2 h-4 w-4" />
+                          <Trash2 className={styles.deleteIcon} />
                           Excluir
                         </DropdownMenuItem>
                       )}
@@ -264,45 +309,45 @@ export function OperatorsPageContent({ operators, pagination, filters }: Operato
                   </DropdownMenu>
                 </div>
               </CardHeader>
-              
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between">
+             
+              <CardContent className={styles.operatorContent}>
+                <div className={styles.operatorStats}>
                   <Badge variant={operator.isActive ? 'default' : 'secondary'}>
                     {operator.isActive ? 'Ativa' : 'Inativa'}
                   </Badge>
-                  <div className="flex items-center text-sm text-muted-foreground">
-                    <Users className="mr-1 h-4 w-4" />
+                  <div className={styles.operatorItemsCount}>
+                    <Users className={styles.operatorItemsIcon} />
                     {operator.itemsCount} {operator.itemsCount === 1 ? 'produto' : 'produtos'}
                   </div>
                 </div>
 
                 {(operator.contactEmail || operator.contactPhone || operator.contactName) && (
-                  <div className="space-y-2">
+                  <div className={styles.operatorContactInfo}>
                     {operator.contactName && (
-                      <div className="flex items-center text-sm">
-                        <Users className="mr-2 h-4 w-4 text-muted-foreground" />
-                        <span className="truncate">{operator.contactName}</span>
+                      <div className={styles.operatorContactItem}>
+                        <Users className={styles.operatorContactIcon} />
+                        <span className={styles.operatorContactText}>{operator.contactName}</span>
                       </div>
                     )}
                     {operator.contactEmail && (
-                      <div className="flex items-center text-sm">
-                        <Mail className="mr-2 h-4 w-4 text-muted-foreground" />
-                        <span className="truncate">{operator.contactEmail}</span>
+                      <div className={styles.operatorContactItem}>
+                        <Mail className={styles.operatorContactIcon} />
+                        <span className={styles.operatorContactText}>{operator.contactEmail}</span>
                       </div>
                     )}
                     {operator.contactPhone && (
-                      <div className="flex items-center text-sm">
-                        <Phone className="mr-2 h-4 w-4 text-muted-foreground" />
+                      <div className={styles.operatorContactItem}>
+                        <Phone className={styles.operatorContactIcon} />
                         <span>{operator.contactPhone}</span>
                       </div>
                     )}
                   </div>
                 )}
 
-                <div className="pt-2 border-t">
-                  <Button variant="outline" size="sm" asChild className="w-full">
+                <div className={styles.operatorActions}>
+                  <Button variant="outline" size="sm" asChild className={styles.operatorActionsButton}>
                     <Link href={`/operators/${operator.id}`}>
-                      <FileText className="mr-2 h-4 w-4" />
+                      <FileText className={styles.operatorActionsIcon} />
                       Ver Detalhes
                     </Link>
                   </Button>
@@ -314,7 +359,7 @@ export function OperatorsPageContent({ operators, pagination, filters }: Operato
       )}
 
       {pagination.totalPages > 1 && (
-        <div className="flex items-center justify-center space-x-2">
+        <div className={styles.pagination}>
           <Button
             variant="outline"
             disabled={!pagination.hasPrev}
@@ -326,7 +371,7 @@ export function OperatorsPageContent({ operators, pagination, filters }: Operato
           >
             Anterior
           </Button>
-          <span className="text-sm text-muted-foreground">
+          <span className={styles.paginationInfo}>
             Página {pagination.page} de {pagination.totalPages}
           </span>
           <Button
@@ -348,7 +393,7 @@ export function OperatorsPageContent({ operators, pagination, filters }: Operato
           <AlertDialogHeader>
             <AlertDialogTitle>Confirmar Exclusão</AlertDialogTitle>
             <AlertDialogDescription>
-              Tem certeza de que deseja excluir a operadora "{operatorToDelete?.name}"? 
+              Tem certeza de que deseja excluir a operadora "{operatorToDelete?.name}"?
               Esta ação é irreversível e todos os dados relacionados serão perdidos permanentemente.
             </AlertDialogDescription>
           </AlertDialogHeader>
@@ -356,7 +401,7 @@ export function OperatorsPageContent({ operators, pagination, filters }: Operato
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleConfirmDelete}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              className={styles.destructiveButton}
             >
               Excluir
             </AlertDialogAction>
@@ -368,6 +413,6 @@ export function OperatorsPageContent({ operators, pagination, filters }: Operato
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       />
-    </>
+    </div>
   );
 }

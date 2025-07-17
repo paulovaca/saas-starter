@@ -150,7 +150,7 @@ export function OperatorFormModal({ isOpen, onClose, operator }: OperatorFormMod
             <input type="hidden" {...form.register('id')} value={operator.id} />
           )}
           
-          <Tabs defaultValue="general" className="w-full">
+          <Tabs defaultValue="general" className={styles.formContainer}>
             <TabsList className={styles.tabsList}>
               <TabsTrigger value="general">Dados Principais</TabsTrigger>
               <TabsTrigger value="contact">Contato</TabsTrigger>

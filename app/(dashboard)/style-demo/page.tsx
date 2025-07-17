@@ -150,13 +150,13 @@ export default function StyleDemo() {
                 <Input 
                   id="search" 
                   placeholder="Buscar clientes..." 
-                  className="pl-10"
+                  className={styles.inputWithIcon}
                 />
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                <Search className={styles.inputIcon} />
               </div>
             </div>
 
-            <div className="space-y-2">
+            <div className={styles.fieldGroup}>
               <Label htmlFor="disabled">Campo desabilitado</Label>
               <Input 
                 id="disabled" 
@@ -165,32 +165,32 @@ export default function StyleDemo() {
               />
             </div>
 
-            <div className="space-y-2">
+            <div className={styles.fieldGroup}>
               <Label htmlFor="error">Campo com erro</Label>
               <Input 
                 id="error" 
                 placeholder="Campo com erro" 
                 aria-invalid="true"
-                className="border-destructive"
+                className={styles.errorInput}
               />
-              <p className="text-sm text-destructive">Este campo é obrigatório</p>
+              <p className={styles.errorText}>Este campo é obrigatório</p>
             </div>
           </div>
         </CardContent>
       </Card>
 
       {/* Seção de Cards */}
-      <div className="space-y-4">
-        <h2 className="text-2xl font-bold">Cards e Superfícies</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className={styles.cardsSection}>
+        <h2 className={styles.sectionHeader}>Cards e Superfícies</h2>
+        <div className={styles.cardsGrid}>
           <Card>
             <CardHeader>
               <CardTitle>Total de Clientes</CardTitle>
               <CardDescription>Clientes ativos no sistema</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-primary">1,234</div>
-              <p className="text-sm text-muted-foreground mt-2">
+              <div className={`${styles.cardValue} ${styles.cardValuePrimary}`}>1,234</div>
+              <p className={styles.cardDescription}>
                 +12% em relação ao mês anterior
               </p>
             </CardContent>
@@ -202,8 +202,8 @@ export default function StyleDemo() {
               <CardDescription>Em negociação</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-warning">56</div>
-              <p className="text-sm text-muted-foreground mt-2">
+              <div className={`${styles.cardValue} ${styles.cardValueWarning}`}>56</div>
+              <p className={styles.cardDescription}>
                 23 precisam de follow-up
               </p>
             </CardContent>
@@ -215,8 +215,8 @@ export default function StyleDemo() {
               <CardDescription>Fechadas com sucesso</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-success">89</div>
-              <p className="text-sm text-muted-foreground mt-2">
+              <div className={`${styles.cardValue} ${styles.cardValueSuccess}`}>89</div>
+              <p className={styles.cardDescription}>
                 Meta: 100 vendas
               </p>
             </CardContent>
@@ -233,80 +233,80 @@ export default function StyleDemo() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="space-y-2">
-              <div className="w-full h-12 bg-primary rounded-md"></div>
-              <p className="text-sm font-medium">Primary</p>
-              <p className="text-xs text-muted-foreground">Ações principais</p>
+          <div className={styles.colorsGrid}>
+            <div className={styles.colorItem}>
+              <div className={`${styles.colorSwatch} ${styles.colorSwatchPrimary}`}></div>
+              <p className={styles.colorName}>Primary</p>
+              <p className={styles.colorUsage}>Ações principais</p>
             </div>
             
-            <div className="space-y-2">
-              <div className="w-full h-12 bg-secondary rounded-md"></div>
-              <p className="text-sm font-medium">Secondary</p>
-              <p className="text-xs text-muted-foreground">Ações secundárias</p>
+            <div className={styles.colorItem}>
+              <div className={`${styles.colorSwatch} ${styles.colorSwatchSecondary}`}></div>
+              <p className={styles.colorName}>Secondary</p>
+              <p className={styles.colorUsage}>Ações secundárias</p>
             </div>
             
-            <div className="space-y-2">
-              <div className="w-full h-12 bg-success rounded-md"></div>
-              <p className="text-sm font-medium">Success</p>
-              <p className="text-xs text-muted-foreground">Estados positivos</p>
+            <div className={styles.colorItem}>
+              <div className={`${styles.colorSwatch} ${styles.colorSwatchSuccess}`}></div>
+              <p className={styles.colorName}>Success</p>
+              <p className={styles.colorUsage}>Estados positivos</p>
             </div>
             
-            <div className="space-y-2">
-              <div className="w-full h-12 bg-warning rounded-md"></div>
-              <p className="text-sm font-medium">Warning</p>
-              <p className="text-xs text-muted-foreground">Atenção</p>
+            <div className={styles.colorItem}>
+              <div className={`${styles.colorSwatch} ${styles.colorSwatchWarning}`}></div>
+              <p className={styles.colorName}>Warning</p>
+              <p className={styles.colorUsage}>Atenção</p>
             </div>
             
-            <div className="space-y-2">
-              <div className="w-full h-12 bg-destructive rounded-md"></div>
-              <p className="text-sm font-medium">Destructive</p>
-              <p className="text-xs text-muted-foreground">Ações perigosas</p>
+            <div className={styles.colorItem}>
+              <div className={`${styles.colorSwatch} ${styles.colorSwatchDestructive}`}></div>
+              <p className={styles.colorName}>Destructive</p>
+              <p className={styles.colorUsage}>Ações perigosas</p>
             </div>
             
-            <div className="space-y-2">
-              <div className="w-full h-12 bg-muted rounded-md"></div>
-              <p className="text-sm font-medium">Muted</p>
-              <p className="text-xs text-muted-foreground">Backgrounds neutros</p>
+            <div className={styles.colorItem}>
+              <div className={`${styles.colorSwatch} ${styles.colorSwatchMuted}`}></div>
+              <p className={styles.colorName}>Muted</p>
+              <p className={styles.colorUsage}>Backgrounds neutros</p>
             </div>
             
-            <div className="space-y-2">
-              <div className="w-full h-12 bg-accent rounded-md"></div>
-              <p className="text-sm font-medium">Accent</p>
-              <p className="text-xs text-muted-foreground">Destaques</p>
+            <div className={styles.colorItem}>
+              <div className={`${styles.colorSwatch} ${styles.colorSwatchAccent}`}></div>
+              <p className={styles.colorName}>Accent</p>
+              <p className={styles.colorUsage}>Destaques</p>
             </div>
             
-            <div className="space-y-2">
-              <div className="w-full h-12 bg-card border rounded-md"></div>
-              <p className="text-sm font-medium">Card</p>
-              <p className="text-xs text-muted-foreground">Superfícies</p>
+            <div className={styles.colorItem}>
+              <div className={`${styles.colorSwatch} ${styles.colorSwatchCard}`}></div>
+              <p className={styles.colorName}>Card</p>
+              <p className={styles.colorUsage}>Superfícies</p>
             </div>
           </div>
         </CardContent>
       </Card>
 
       {/* Dicas de UX */}
-      <Card className="border-success/20 bg-success/5">
+      <Card className={styles.tipCard}>
         <CardHeader>
-          <CardTitle className="text-success">
-            <CheckCircle className="w-5 h-5 inline mr-2" />
+          <CardTitle className={styles.tipTitle}>
+            <CheckCircle className={styles.tipIcon} />
             ✅ Problema dos Botões Resolvido!
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            <p className="text-foreground">
+          <div className={styles.tipContent}>
+            <p className={styles.tipText}>
               <strong>Problema identificado e corrigido:</strong> Os botões estavam com a mesma cor do fundo devido a:
             </p>
-            <ul className="space-y-2 text-sm list-disc list-inside">
+            <ul className={styles.tipList}>
               <li>Duplicação de imports no CSS</li>
               <li>Conflitos nas variáveis de cor</li>
               <li>Classes customizadas sobrescrevendo os estilos padrão</li>
             </ul>
             
-            <div className="border-t pt-4">
-              <p className="font-medium text-foreground mb-2">✅ Soluções implementadas:</p>
-              <ul className="space-y-1 text-sm">
+            <div className={styles.solutionsSection}>
+              <p className={styles.solutionsTitle}>✅ Soluções implementadas:</p>
+              <ul className={styles.solutionsList}>
                 <li>🔧 CSS limpo e organizado sem duplicações</li>
                 <li>🎨 Cores com contraste adequado (azul vibrante para primary)</li>
                 <li>⚡ Botões com efeitos visuais (escala no clique)</li>
@@ -316,16 +316,16 @@ export default function StyleDemo() {
               </ul>
             </div>
 
-            <div className="bg-muted p-3 rounded-md">
-              <p className="text-sm font-medium">🎯 Teste agora:</p>
-              <div className="flex gap-2 mt-2">
+            <div className={styles.testSection}>
+              <p className={styles.testTitle}>🎯 Teste agora:</p>
+              <div className={styles.testButtons}>
                 <Button size="sm">Botão Primary</Button>
                 <Button variant="secondary" size="sm">Secondary</Button>
                 <Button variant="outline" size="sm">Outline</Button>
                 <Button variant="success" size="sm">Success</Button>
                 <Button variant="destructive" size="sm">Destructive</Button>
               </div>
-              <p className="text-xs text-muted-foreground mt-2">
+              <p className={styles.testNote}>
                 Todos com cores bem definidas e contrastantes! 🎉
               </p>
             </div>

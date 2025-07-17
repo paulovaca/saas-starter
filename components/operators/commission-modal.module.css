@@ -194,3 +194,20 @@
 .closeButton:hover {
   background-color: var(--muted);
 }
+
+/* Icon classes */
+.plusIcon {
+  margin-right: 0.5rem;
+  height: 1rem;
+  width: 1rem;
+}
+
+.editIcon {
+  height: 1rem;
+  width: 1rem;
+}
+
+.deleteIcon {
+  height: 1rem;
+  width: 1rem;
+}

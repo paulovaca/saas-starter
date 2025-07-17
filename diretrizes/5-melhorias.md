@@ -580,7 +580,7 @@ const envSchema = z.object({
   STRIPE_PRICE_ID: z.string().startsWith('price_'),
   
   // App
-  NEXT_PUBLIC_APP_URL: z.string().url(),
+  BASE_URL: z.string().url(),
   NODE_ENV: z.enum(['development', 'production', 'test']),
   
   // Optional

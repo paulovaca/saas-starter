@@ -16,7 +16,7 @@ const envSchema = z.object({
   STRIPE_WEBHOOK_SECRET: z.string().min(1, 'STRIPE_WEBHOOK_SECRET is required'),
   
   // Application URLs
-  NEXT_PUBLIC_APP_URL: z.string().url('NEXT_PUBLIC_APP_URL must be a valid URL').default('http://localhost:3000'),
+  BASE_URL: z.string().url('BASE_URL must be a valid URL').default('http://localhost:3000'),
   
   // Email (optional for now)
   EMAIL_FROM: z.string().email().optional(),

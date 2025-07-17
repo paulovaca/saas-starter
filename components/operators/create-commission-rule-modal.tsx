@@ -47,6 +47,16 @@ export function CreateCommissionRuleModal({
     tiers: [] as { minAmount: number; maxAmount: number; percentage?: number; fixedValue?: number }[],
   });
 
+  const getRuleTypeLabel = (ruleType: string) => {
+    switch (ruleType) {
+      case 'percentage_fixed': return 'Porcentagem Fixa';
+      case 'value_fixed': return 'Valor Fixo Por Venda';
+      case 'tiered': return 'Escalonamento';
+      case 'custom': return 'Personalizado';
+      default: return 'Selecione o tipo de regra';
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -116,8 +126,8 @@ export function CreateCommissionRuleModal({
           <DialogTitle>Nova Regra de Comissão</DialogTitle>
         </DialogHeader>
         
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
+        <form onSubmit={handleSubmit} className={styles.formContainer}>
+          <div className={styles.formField}>
             <Label htmlFor="ruleType">Tipo de Regra</Label>
             <Select
               value={formData.ruleType}
@@ -126,7 +136,7 @@ export function CreateCommissionRuleModal({
               }
             >
               <SelectTrigger>
-                <SelectValue placeholder="Selecione o tipo de regra" />
+                <SelectValue placeholder={getRuleTypeLabel(formData.ruleType)} />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="percentage_fixed">Porcentagem Fixa</SelectItem>
@@ -139,7 +149,7 @@ export function CreateCommissionRuleModal({
 
           {/* Campos específicos para cada tipo */}
           {formData.ruleType === 'percentage_fixed' && (
-            <div className="space-y-2">
+            <div className={styles.formField}>
               <Label htmlFor="percentage">Percentual (%)</Label>
               <Input
                 id="percentage"
@@ -156,7 +166,7 @@ export function CreateCommissionRuleModal({
           )}
 
           {formData.ruleType === 'value_fixed' && (
-            <div className="space-y-2">
+            <div className={styles.formField}>
               <Label htmlFor="fixedValue">Valor Fixo por Venda (R$)</Label>
               <Input
                 id="fixedValue"
@@ -172,18 +182,18 @@ export function CreateCommissionRuleModal({
           )}
 
           {formData.ruleType === 'tiered' && (
-            <div className="space-y-4">
-              <div className="space-y-2">
+            <div className={styles.tiersSection}>
+              <div className={styles.formField}>
                 <Label>Escalonamento de Comissão</Label>
-                <p className="text-sm text-muted-foreground">
+                <p className={styles.helpText}>
                   Configure diferentes faixas de valor com comissões específicas
                 </p>
               </div>
               
               {formData.tiers.map((tier, index) => (
-                <div key={index} className="p-4 border rounded-lg space-y-3">
-                  <div className="flex justify-between items-center">
-                    <h4 className="font-medium">Faixa {index + 1}</h4>
+                <div key={index} className={`${styles.tierItem} ${styles.tiersList}`}>
+                  <div className={styles.tiersHeader}>
+                    <h4 className={styles.tiersTitle}>Faixa {index + 1}</h4>
                     <Button
                       type="button"
                       variant="outline"
@@ -197,7 +207,7 @@ export function CreateCommissionRuleModal({
                     </Button>
                   </div>
                   
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className={styles.gridContainer}>
                     <div>
                       <Label>Valor Mínimo (R$)</Label>
                       <Input
@@ -230,7 +240,7 @@ export function CreateCommissionRuleModal({
                     </div>
                   </div>
                   
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className={styles.gridContainer}>
                     <div>
                       <Label>Percentual (%)</Label>
                       <Input
@@ -275,7 +285,7 @@ export function CreateCommissionRuleModal({
                     tiers: [...prev.tiers, { minAmount: 0, maxAmount: 0 }]
                   }));
                 }}
-                className="w-full"
+                className={styles.addTierButton}
               >
                 Adicionar Faixa
               </Button>
@@ -283,7 +293,7 @@ export function CreateCommissionRuleModal({
           )}
 
           {formData.ruleType === 'custom' && (
-            <div className="space-y-2">
+            <div className={styles.formField}>
               <Label htmlFor="conditions">Configuração Personalizada (JSON)</Label>
               <Textarea
                 id="conditions"
@@ -292,13 +302,13 @@ export function CreateCommissionRuleModal({
                 placeholder='{"type": "custom", "formula": "value * 0.1 + base", "base": 50}'
                 rows={5}
               />
-              <p className="text-xs text-muted-foreground">
+              <p className={styles.helpText}>
                 Configure uma regra personalizada em formato JSON com fórmulas específicas
               </p>
             </div>
           )}
 
-          <div className="flex justify-end space-x-2 pt-4">
+          <div className={styles.buttonContainer}>
             <Button
               type="button"
               variant="outline"
@@ -308,7 +318,7 @@ export function CreateCommissionRuleModal({
               Cancelar
             </Button>
             <Button type="submit" disabled={isLoading}>
-              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {isLoading && <Loader2 className={styles.loadingIcon} />}
               Criar Regra
             </Button>
           </div>
