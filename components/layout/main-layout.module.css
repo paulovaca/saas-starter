@@ -145,6 +145,20 @@
   font-size: 0.875rem;
 }
 
+/* Navigation Separator */
+.navigationSeparator {
+  margin: 1rem 0 0.5rem 0;
+  padding: 0 1rem;
+}
+
+.separatorText {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
 /* Sidebar Footer */
 .sidebarFooter {
   padding: 1rem;

@@ -1,6 +1,7 @@
 import { getOperatorDetails } from '@/lib/actions/operators/get-operator-details';
 import { OperatorDetailsContent } from '@/components/operators/operator-details-content';
-import { notFound } from 'next/navigation';
+import { getUser } from '@/lib/db/queries/auth';
+import { notFound, redirect } from 'next/navigation';
 import { Metadata } from 'next';
 import styles from './page.module.css';
 
@@ -27,6 +28,13 @@ export async function generateMetadata({ params }: OperatorDetailsPageProps): Pr
 }
 
 export default async function OperatorDetailsPage({ params }: OperatorDetailsPageProps) {
+  const user = await getUser();
+  
+  // Verificar se o usuário tem permissão para acessar operadoras
+  if (!user || !['DEVELOPER', 'MASTER', 'ADMIN'].includes(user.role)) {
+    redirect('/');
+  }
+
   const { operatorId } = await params;
   const result = await getOperatorDetails(operatorId);
 

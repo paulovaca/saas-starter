@@ -1,5 +1,7 @@
 import { getOperators } from '@/lib/actions/operators/get-operators';
 import { OperatorsPageContent } from '@/components/operators/operators-page-content';
+import { getUser } from '@/lib/db/queries/auth';
+import { redirect } from 'next/navigation';
 import { Metadata } from 'next';
 import styles from './page.module.css';
 
@@ -18,6 +20,13 @@ interface OperatorsPageProps {
 }
 
 export default async function OperatorsPage({ searchParams }: OperatorsPageProps) {
+  const user = await getUser();
+  
+  // Verificar se o usuário tem permissão para acessar operadoras
+  if (!user || !['DEVELOPER', 'MASTER', 'ADMIN'].includes(user.role)) {
+    redirect('/');
+  }
+
   const params = await searchParams;
   const filters = {
     search: params.search,

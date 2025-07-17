@@ -44,12 +44,32 @@ interface NavigationItem {
   requiredPermission?: string;
 }
 
-const navigationItems: NavigationItem[] = [
+// Itens de navegação principais (visíveis para todos)
+const mainNavigationItems: NavigationItem[] = [
   {
     href: '/',
     label: 'Dashboard',
     icon: Home,
   },
+  {
+    href: '/clients',
+    label: 'Clientes',
+    icon: Users,
+  },
+  {
+    href: '/proposals',
+    label: 'Propostas',
+    icon: FileText,
+  },
+  {
+    href: '/reports',
+    label: 'Relatórios',
+    icon: BarChart3,
+  },
+];
+
+// Itens administrativos (visíveis apenas para MASTER e ADMIN)
+const adminNavigationItems: NavigationItem[] = [
   {
     href: '/users',
     label: 'Usuários',
@@ -72,21 +92,7 @@ const navigationItems: NavigationItem[] = [
     href: '/operators',
     label: 'Operadoras',
     icon: Building2,
-  },
-  {
-    href: '/clients',
-    label: 'Clientes',
-    icon: Users,
-  },
-  {
-    href: '/proposals',
-    label: 'Propostas',
-    icon: FileText,
-  },
-  {
-    href: '/reports',
-    label: 'Relatórios',
-    icon: BarChart3,
+    requiredPermission: 'canManageOperators',
   },
 ];
 
@@ -221,7 +227,8 @@ function Sidebar({ isOpen, onToggle }: { isOpen: boolean; onToggle: () => void }
 
         {/* Navigation */}
         <nav className={styles.navigation}>
-          {navigationItems.map((item) => {
+          {/* Navegação Principal */}
+          {mainNavigationItems.map((item) => {
             if (!hasPermission(item.requiredPermission)) {
               return null;
             }
@@ -246,6 +253,40 @@ function Sidebar({ isOpen, onToggle }: { isOpen: boolean; onToggle: () => void }
               </Link>
             );
           })}
+
+          {/* Funções Administrativas (apenas para MASTER e ADMIN) */}
+          {hasPermission('canAccessUsers') && (
+            <>
+              <div className={styles.navigationSeparator}>
+                <span className={styles.separatorText}>Funções Administrativas</span>
+              </div>
+              {adminNavigationItems.map((item) => {
+                if (!hasPermission(item.requiredPermission)) {
+                  return null;
+                }
+
+                const Icon = item.icon;
+                const isActive = isActiveLink(item.href);
+
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`${styles.navLink} ${isActive ? styles.navLinkActive : ''}`}
+                    onClick={() => {
+                      // Close mobile menu when link is clicked
+                      if (window.innerWidth < 768) {
+                        onToggle();
+                      }
+                    }}
+                  >
+                    <Icon className={styles.navIcon} />
+                    <span className={styles.navLabel}>{item.label}</span>
+                  </Link>
+                );
+              })}
+            </>
+          )}
         </nav>
 
         {/* User Menu */}
