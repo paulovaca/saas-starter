@@ -34,25 +34,14 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { OperatorFormModal } from './operator-form-modal';
+import { DeleteOperatorModal } from './delete-operator-modal';
 import { OperatorWithStats } from '@/lib/actions/operators/get-operators';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { toggleOperatorStatus } from '@/lib/actions/operators/toggle-operator-status';
-import { deleteOperator } from '@/lib/actions/operators/delete-operator';
 import { usePermissions } from '@/hooks/use-permissions';
 import { toast } from 'sonner';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
 
 interface OperatorsPageContentProps {
   operators: OperatorWithStats[];
@@ -76,8 +65,13 @@ export function OperatorsPageContent({ operators, pagination, filters }: Operato
   const router = useRouter();
   const { canDeleteOperators } = usePermissions();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [operatorToDelete, setOperatorToDelete] = useState<{ id: string; name: string } | null>(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [operatorToDelete, setOperatorToDelete] = useState<{ 
+    id: string; 
+    name: string; 
+    cnpj?: string | null; 
+    contactEmail?: string | null; 
+  } | null>(null);
   const [searchTerm, setSearchTerm] = useState(filters.search || '');
   const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout>();
   const [activeFilter, setActiveFilter] = useState<string>(
@@ -131,29 +125,14 @@ export function OperatorsPageContent({ operators, pagination, filters }: Operato
     }
   };
 
-  const handleDeleteClick = (operatorId: string, operatorName: string) => {
-    setOperatorToDelete({ id: operatorId, name: operatorName });
-    setIsDeleteDialogOpen(true);
-  };
-
-  const handleConfirmDelete = async () => {
-    if (!operatorToDelete) return;
-
-    try {
-      const result = await deleteOperator({ operatorId: operatorToDelete.id });
-
-      if (result.success) {
-        toast.success(result.message);
-        router.refresh();
-      } else {
-        toast.error(result.error || result.message);
-      }
-    } catch (error) {
-      toast.error('Erro ao excluir operadora');
-    } finally {
-      setIsDeleteDialogOpen(false);
-      setOperatorToDelete(null);
-    }
+  const handleDeleteClick = (operator: { 
+    id: string; 
+    name: string; 
+    cnpj?: string | null; 
+    contactEmail?: string | null; 
+  }) => {
+    setOperatorToDelete(operator);
+    setIsDeleteModalOpen(true);
   };
 
   return (
@@ -298,7 +277,12 @@ export function OperatorsPageContent({ operators, pagination, filters }: Operato
                       </DropdownMenuItem>
                       {canDeleteOperators() && (
                         <DropdownMenuItem
-                          onClick={() => handleDeleteClick(operator.id, operator.name)}
+                          onClick={() => handleDeleteClick({
+                            id: operator.id,
+                            name: operator.name,
+                            cnpj: operator.cnpj,
+                            contactEmail: operator.contactEmail
+                          })}
                           className={styles.destructiveMenuItem}
                         >
                           <Trash2 className={styles.deleteIcon} />
@@ -388,26 +372,11 @@ export function OperatorsPageContent({ operators, pagination, filters }: Operato
         </div>
       )}
 
-      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Confirmar Exclusão</AlertDialogTitle>
-            <AlertDialogDescription>
-              Tem certeza de que deseja excluir a operadora "{operatorToDelete?.name}"?
-              Esta ação é irreversível e todos os dados relacionados serão perdidos permanentemente.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleConfirmDelete}
-              className={styles.destructiveButton}
-            >
-              Excluir
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <DeleteOperatorModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        operator={operatorToDelete || { id: '', name: '' }}
+      />
 
       <OperatorFormModal
         isOpen={isModalOpen}
