@@ -9,12 +9,12 @@ export const metadata: Metadata = {
 };
 
 interface OperatorsPageProps {
-  searchParams: {
+  searchParams: Promise<{
     search?: string;
     isActive?: string;
     hasProducts?: string;
     page?: string;
-  };
+  }>;
 }
 
 export default async function OperatorsPage({ searchParams }: OperatorsPageProps) {

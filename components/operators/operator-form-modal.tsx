@@ -29,6 +29,27 @@ interface OperatorFormModalProps {
   operator?: Operator | OperatorDetails;
 }
 
+interface FormData {
+  id?: string;
+  name: string;
+  logo?: string;
+  cnpj?: string;
+  description?: string;
+  contactName?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+  website?: string;
+  address?: {
+    street?: string;
+    number?: string;
+    zipCode?: string;
+    city?: string;
+    state?: string;
+    country?: string;
+  };
+  notes?: string;
+}
+
 export function OperatorFormModal({ isOpen, onClose, operator }: OperatorFormModalProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -50,33 +71,54 @@ export function OperatorFormModal({ isOpen, onClose, operator }: OperatorFormMod
     };
   };
 
-  const form = useForm<CreateOperatorInput | UpdateOperatorInput>({
+  const form = useForm({
     resolver: zodResolver(isEditing ? updateOperatorSchema : createOperatorSchema),
     defaultValues: {
-      ...(isEditing && operator ? { id: operator.id } : {}),
       name: operator?.name || '',
       logo: operator?.logo || '',
       cnpj: operator?.cnpj || '',
-      description: operator?.description || '',
+      description: (operator as any)?.description || '',
       contactName: operator?.contactName || '',
       contactEmail: operator?.contactEmail || '',
       contactPhone: operator?.contactPhone || '',
-      website: operator?.website || '',
-      address: operator?.address ? getAddressObject(operator.address) : {},
+      website: (operator as any)?.website || '',
+      address: operator?.address ? getAddressObject(operator.address) : {
+        street: '',
+        number: '',
+        city: '',
+        state: '',
+        zipCode: '',
+        country: '',
+      },
       notes: operator?.notes || '',
+      ...(isEditing && operator ? { id: operator.id } : {}),
     },
   });
 
-  const onSubmit = async (data: CreateOperatorInput | UpdateOperatorInput) => {
+  const onSubmit = async (data: FormData) => {
     console.log('🔥 onSubmit DISPARADO!');
     console.log('📊 Data recebida:', data);
     console.log('✏️ isEditing:', isEditing);
     
     setIsLoading(true);
     try {
-      if (isEditing) {
+      if (isEditing && operator) {
         console.log('🔄 Entrando no fluxo de UPDATE...');
-        const result = await updateOperator(data as UpdateOperatorInput);
+        const updateData: UpdateOperatorInput = {
+          id: operator.id,
+          name: data.name,
+          logo: data.logo,
+          cnpj: data.cnpj,
+          description: data.description,
+          contactName: data.contactName,
+          contactEmail: data.contactEmail,
+          contactPhone: data.contactPhone,
+          website: data.website,
+          address: data.address,
+          notes: data.notes,
+        };
+        
+        const result = await updateOperator(updateData);
         console.log('📥 Resultado do update:', result);
         
         if (result.success) {
@@ -88,7 +130,20 @@ export function OperatorFormModal({ isOpen, onClose, operator }: OperatorFormMod
         }
       } else {
         console.log('➕ Entrando no fluxo de CREATE...');
-        const result = await createOperator(data as CreateOperatorInput);
+        const createData: CreateOperatorInput = {
+          name: data.name,
+          logo: data.logo,
+          cnpj: data.cnpj,
+          description: data.description,
+          contactName: data.contactName,
+          contactEmail: data.contactEmail,
+          contactPhone: data.contactPhone,
+          website: data.website,
+          address: data.address,
+          notes: data.notes,
+        };
+        
+        const result = await createOperator(createData);
         console.log('📥 Resultado do create:', result);
         
         if (result.success) {
@@ -138,7 +193,7 @@ export function OperatorFormModal({ isOpen, onClose, operator }: OperatorFormMod
               console.log('❌ ERRO DE VALIDAÇÃO:', errors);
               console.log('❌ Detalhes dos erros:');
               Object.keys(errors).forEach(key => {
-                console.log(`  - Campo "${key}":`, errors[key]?.message);
+                console.log(`  - Campo "${key}":`, (errors as any)[key]?.message);
               });
               toast.error('Por favor, corrija os erros no formulário');
             }
@@ -147,7 +202,7 @@ export function OperatorFormModal({ isOpen, onClose, operator }: OperatorFormMod
         >
           {/* Campo hidden para o ID quando editando */}
           {isEditing && operator && (
-            <input type="hidden" {...form.register('id')} value={operator.id} />
+            <input type="hidden" name="id" value={operator.id} />
           )}
           
           <Tabs defaultValue="general" className={styles.formContainer}>
@@ -418,8 +473,9 @@ export function OperatorFormModal({ isOpen, onClose, operator }: OperatorFormMod
                 console.log('🔍 Form is valid:', form.formState.isValid);
                 
                 // Log detalhado dos erros
-                Object.keys(form.formState.errors).forEach(key => {
-                  console.log(`❌ Erro no campo ${key}:`, form.formState.errors[key]);
+                const errors = form.formState.errors;
+                Object.keys(errors).forEach(key => {
+                  console.log(`❌ Erro no campo ${key}:`, (errors as any)[key]);
                 });
               }}
             >

@@ -12,7 +12,7 @@ export const associateItemsSchema = z.object({
   commissionType: z.enum(['percentage', 'fixed', 'tiered'], {
     errorMap: () => ({ message: 'Tipo de comissão deve ser: percentage, fixed ou tiered' }),
   }).default('percentage').optional(),
-  isActive: z.boolean().default(true),
+  isActive: z.boolean().default(true).optional(),
 });
 
 // Validation for updating item association

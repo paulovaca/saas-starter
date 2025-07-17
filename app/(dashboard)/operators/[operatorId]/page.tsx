@@ -5,9 +5,9 @@ import { Metadata } from 'next';
 import styles from './page.module.css';
 
 interface OperatorDetailsPageProps {
-  params: {
+  params: Promise<{
     operatorId: string;
-  };
+  }>;
 }
 
 export async function generateMetadata({ params }: OperatorDetailsPageProps): Promise<Metadata> {

@@ -42,16 +42,21 @@ export function ItemAssociationModal({ isOpen, onClose, operatorId, operatorName
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedItem, setSelectedItem] = useState<CatalogItem | null>(null);
 
-  const form = useForm<AssociateItemsInput>({
+  const form = useForm({
     resolver: zodResolver(associateItemsSchema),
     defaultValues: {
-      operatorId,
+      operatorId: '',
       catalogItemId: '',
       customName: '',
-      commissionType: 'percentage',
+      commissionType: 'percentage' as const,
       isActive: true,
     },
   });
+
+  // Set operatorId when component mounts or operatorId changes
+  useEffect(() => {
+    form.setValue('operatorId', operatorId);
+  }, [operatorId, form]);
 
   // Load catalog items
   useEffect(() => {
@@ -87,7 +92,7 @@ export function ItemAssociationModal({ isOpen, onClose, operatorId, operatorName
     (item.description && item.description.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
-  const onSubmit = async (data: AssociateItemsInput) => {
+  const onSubmit = async (data: any) => {
     if (!selectedItem) {
       toast.error('Selecione um item do catálogo');
       return;
@@ -95,11 +100,12 @@ export function ItemAssociationModal({ isOpen, onClose, operatorId, operatorName
 
     setIsLoading(true);
     try {
-      const associationData = {
-        ...data,
+      const associationData: AssociateItemsInput = {
+        operatorId: operatorId, // Use the prop directly
         catalogItemId: selectedItem.id,
         customName: data.customName || selectedItem.name,
-        commissionType: 'percentage' as const, // Valor padrão: Comissionamento Direto
+        commissionType: 'percentage', // Valor padrão: Comissionamento Direto
+        isActive: data.isActive ?? true,
       };
 
       const result = await associateItems(associationData);
