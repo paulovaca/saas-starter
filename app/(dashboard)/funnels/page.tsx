@@ -304,7 +304,7 @@ export default function FunnelsPage() {
                         
                         <button
                           className={styles.actionButton}
-                          onClick={() => window.location.href = `/funnels/${funnel.id}`}
+                          onClick={() => router.push(`/funnels/${funnel.id}`)}
                           title="Editar funil"
                         >
                           <Settings size={16} />
@@ -356,7 +356,7 @@ export default function FunnelsPage() {
                   {canManageFunnels() && (
                     <Button
                       size="sm"
-                      onClick={() => window.location.href = `/funnels/${funnel.id}`}
+                      onClick={() => router.push(`/funnels/${funnel.id}`)}
                     >
                       Gerenciar
                     </Button>

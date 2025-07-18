@@ -6,6 +6,7 @@ export * from './users';
 export * from './funnels';
 export * from './catalog';
 export * from './operators';
+export * from './clients';
 
 // Import tables for relations
 import { users, passwordResetTokens, emailVerificationTokens, userInvitations, userSessions } from './auth';

@@ -1,0 +1,24 @@
+/* =================================
+   PÁGINA DE DETALHES DO CLIENTE
+   ================================= */
+
+.clientDetailsPage {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.clientDetailsContainer {
+  flex: 1;
+  padding: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .clientDetailsContainer {
+    padding: 1rem;
+  }
+}

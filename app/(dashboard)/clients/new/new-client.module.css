@@ -1,0 +1,56 @@
+/* =================================
+   PÁGINA DE NOVO CLIENTE
+   ================================= */
+
+.newClientPage {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.newClientHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding: 0 1.5rem;
+}
+
+.newClientTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--foreground);
+  margin: 0;
+}
+
+.newClientContent {
+  flex: 1;
+  padding: 0 1.5rem;
+}
+
+.newClientLoadingMessage {
+  padding: 2rem;
+  text-align: center;
+  color: var(--muted-foreground);
+}
+
+.backIcon {
+  width: 1rem;
+  height: 1rem;
+  margin-right: 0.5rem;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .newClientHeader {
+    padding: 0 1rem;
+  }
+  
+  .newClientContent {
+    padding: 0 1rem;
+  }
+  
+  .newClientTitle {
+    font-size: 1.25rem;
+  }
+}

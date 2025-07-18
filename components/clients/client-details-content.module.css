@@ -1,0 +1,522 @@
+/* =================================
+   CONTEÚDO DE DETALHES DO CLIENTE
+   ================================= */
+
+.clientDetailsContent {
+  flex: 1;
+  padding: 1.5rem;
+}
+
+.clientDetailsHeader {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 2rem;
+  gap: 1rem;
+}
+
+.clientDetailsHeaderTop {
+  display: flex;
+  align-items: center;
+}
+
+.backButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--muted-foreground);
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  transition: all 0.2s;
+}
+
+.backButton:hover {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+
+.backIcon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.clientDetailsHeaderContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.clientDetailsHeaderMain {
+  flex: 1;
+}
+
+.clientDetailsTitle {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--foreground);
+  margin: 0 0 0.5rem 0;
+}
+
+.clientDetailsContactInfo {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.clientDetailsContactLink {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: var(--muted-foreground);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.clientDetailsContactLink:hover {
+  color: var(--primary);
+}
+
+.clientDetailsMetaTags {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.clientDetailsDocumentText {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+}
+
+.clientDetailsActions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.clientDetailsLayout {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  gap: 1.5rem;
+}
+
+.clientStatsSidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.clientStatsCard {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+}
+
+.clientStatsHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.clientStatsContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.clientStatItem {
+  text-align: center;
+}
+
+.clientStatValue {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--foreground);
+}
+
+.clientStatLabel {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+}
+
+.clientStatDivider {
+  border-top: 1px solid var(--border);
+  margin: 1rem 0;
+}
+
+.clientMainContent {
+  display: flex;
+  flex-direction: column;
+}
+
+.clientTabsContainer {
+  flex: 1;
+}
+
+.clientTabsList {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  width: 100%;
+}
+
+.clientTabsContent {
+  margin-top: 1.5rem;
+}
+
+.clientInfoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.clientInfoField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.clientInfoLabel {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--muted-foreground);
+}
+
+.clientInfoValue {
+  font-size: 0.875rem;
+  color: var(--foreground);
+}
+
+.clientInteractionsList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.clientInteractionItem {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.clientInteractionIcon {
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  background: var(--accent);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary);
+}
+
+.clientInteractionContent {
+  flex: 1;
+}
+
+.clientInteractionHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.clientInteractionUser {
+  font-weight: 500;
+  color: var(--foreground);
+}
+
+.clientInteractionTime {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+}
+
+.clientInteractionDescription {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+}
+
+.clientTasksList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.clientTaskItem {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.clientTaskContent {
+  flex: 1;
+}
+
+.clientTaskHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.clientTaskTitle {
+  font-weight: 500;
+  color: var(--foreground);
+}
+
+.clientTaskDescription {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  margin-bottom: 0.5rem;
+}
+
+.clientTaskMeta {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+}
+
+.clientProposalsList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.clientProposalItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.clientProposalContent {
+  flex: 1;
+}
+
+.clientProposalHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.clientProposalTitle {
+  font-weight: 500;
+  color: var(--foreground);
+}
+
+.clientProposalMeta {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+}
+
+.clientHistoryList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.clientHistoryItem {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.clientHistoryIcon {
+  flex-shrink: 0;
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--muted-foreground);
+}
+
+.clientHistoryContent {
+  flex: 1;
+}
+
+.clientHistoryHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.clientHistoryTitle {
+  font-weight: 500;
+  color: var(--foreground);
+}
+
+.clientHistoryTime {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+}
+
+.clientHistoryDescription {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  margin-bottom: 0.5rem;
+}
+
+.clientHistoryMeta {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+}
+
+.loadingState {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  color: var(--muted-foreground);
+}
+
+.emptyState {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  color: var(--muted-foreground);
+}
+
+/* Badge cores para prioridade */
+.priorityHigh {
+  background: var(--destructive);
+  color: var(--destructive-foreground);
+}
+
+.priorityMedium {
+  background: var(--warning);
+  color: var(--warning-foreground);
+}
+
+.priorityLow {
+  background: var(--muted);
+  color: var(--muted-foreground);
+}
+
+/* Badge cores para status */
+.statusPending {
+  background: rgb(255 237 213);
+  color: rgb(154 52 18);
+}
+
+.statusInProgress {
+  background: rgb(219 234 254);
+  color: rgb(30 64 175);
+}
+
+.statusCompleted {
+  background: rgb(220 252 231);
+  color: rgb(22 101 52);
+}
+
+.statusCancelled {
+  background: rgb(254 226 226);
+  color: rgb(153 27 27);
+}
+
+.statusSent {
+  background: rgb(219 234 254);
+  color: rgb(30 64 175);
+}
+
+.statusAccepted {
+  background: rgb(220 252 231);
+  color: rgb(22 101 52);
+}
+
+.statusRejected {
+  background: rgb(254 226 226);
+  color: rgb(153 27 27);
+}
+
+.statusExpired {
+  background: rgb(229 231 235);
+  color: rgb(55 65 81);
+}
+
+.contactIcon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.interactionIcon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.statsIcon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.buttonIcon {
+  width: 1rem;
+  height: 1rem;
+  margin-right: 0.5rem;
+}
+
+.badgeSmall {
+  font-size: 0.75rem;
+}
+
+/* Responsividade */
+@media (max-width: 1024px) {
+  .clientDetailsLayout {
+    grid-template-columns: 1fr;
+  }
+  
+  .clientStatsSidebar {
+    order: 2;
+  }
+  
+  .clientMainContent {
+    order: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .clientDetailsContent {
+    padding: 1rem;
+  }
+  
+  .clientDetailsHeader {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .clientDetailsActions {
+    width: 100%;
+  }
+  
+  .clientDetailsContactInfo {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .clientTabsList {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .clientInfoGrid {
+    grid-template-columns: 1fr;
+  }
+}

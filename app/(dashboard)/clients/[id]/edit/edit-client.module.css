@@ -1,0 +1,56 @@
+/* =================================
+   PÁGINA DE EDIÇÃO DO CLIENTE
+   ================================= */
+
+.editClientPage {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.editClientHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding: 0 1.5rem;
+}
+
+.editClientTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--foreground);
+  margin: 0;
+}
+
+.editClientContent {
+  flex: 1;
+  padding: 0 1.5rem;
+}
+
+.editClientLoadingMessage {
+  padding: 2rem;
+  text-align: center;
+  color: var(--muted-foreground);
+}
+
+.backIcon {
+  width: 1rem;
+  height: 1rem;
+  margin-right: 0.5rem;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .editClientHeader {
+    padding: 0 1rem;
+  }
+  
+  .editClientContent {
+    padding: 0 1rem;
+  }
+  
+  .editClientTitle {
+    font-size: 1.25rem;
+  }
+}

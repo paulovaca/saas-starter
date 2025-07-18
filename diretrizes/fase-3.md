@@ -25,10 +25,8 @@ Com toda a infraestrutura (Fase 1) e configurações (Fase 2) prontas, agora vam
 
 ## 🎨 Regras de Estilo OBRIGATÓRIAS:
 1. **NUNCA use estilos inline** - Sempre crie classes no arquivo CSS do módulo
-2. **SEMPRE verifique o globals.css** - Use as variáveis CSS existentes para cores
-3. **Para cada novo componente** - Crie um arquivo `.module.css` correspondente
-4. **Use as classes do tema** - Aproveite `dark:` para estilos do modo escuro
-5. **Teste sempre em ambos os temas** - Alterne entre claro e escuro durante desenvolvimento
+2. **SEMPRE verifique o globals.css** - Use as variáveis CSS existentes para cores Para ficar compativel com temas claro/escuro
+3. **Para cada novo componente ou pagina** - Crie um arquivo `.module.css` correspondente
 
 ## 📘 Prevenção de Erros TypeScript:
 1. **Sempre defina tipos explícitos** - Evite usar `any` ou deixar tipos implícitos

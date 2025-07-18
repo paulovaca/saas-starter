@@ -1,35 +1,38 @@
 import { Metadata } from 'next/types';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Users } from 'lucide-react';
+import { Suspense } from 'react';
+import ClientsPageContent from '@/components/clients/clients-page-content';
+import ClientsPageSkeleton from '@/components/clients/clients-page-skeleton';
+import styles from './clients.module.css';
 
 export const metadata: Metadata = {
   title: 'Clientes',
   description: 'Gerencie os clientes da sua agência',
 };
 
-export default function ClientsPage() {
-  return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0' }}>
-      <div style={{ marginBottom: '2rem' }}>
-        <h1 style={{ fontSize: '2rem', fontWeight: '700', margin: '0 0 0.5rem 0' }}>
-          Clientes
-        </h1>
-        <p style={{ color: 'var(--muted-foreground)', fontSize: '1rem', margin: '0' }}>
-          Gerencie todos os clientes da sua agência
-        </p>
-      </div>
+interface ClientsPageProps {
+  searchParams: Promise<{
+    search?: string;
+    funnelId?: string;
+    funnelStageId?: string;
+    userId?: string;
+    documentType?: string;
+    city?: string;
+    state?: string;
+    status?: string;
+    page?: string;
+    limit?: string;
+    view?: 'grid' | 'table';
+  }>;
+}
 
-      <Card>
-        <CardHeader>
-          <CardTitle style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <Users style={{ width: '1.25rem', height: '1.25rem', color: 'var(--primary)' }} />
-            Em Desenvolvimento
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p>Esta funcionalidade será implementada na Fase 3 do projeto.</p>
-        </CardContent>
-      </Card>
+export default async function ClientsPage({ searchParams }: ClientsPageProps) {
+  const params = await searchParams;
+  
+  return (
+    <div className={styles.clientsContainer}>
+      <Suspense fallback={<ClientsPageSkeleton />}>
+        <ClientsPageContent searchParams={params} />
+      </Suspense>
     </div>
   );
 }

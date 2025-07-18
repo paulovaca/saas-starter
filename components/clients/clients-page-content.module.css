@@ -1,0 +1,576 @@
+/* =================================
+   PÁGINA DE CONTEÚDO DOS CLIENTES
+   ================================= */
+
+.clientsPageContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Header */
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.pageTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--foreground);
+  margin: 0;
+}
+
+.newClientButton {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-radius: var(--radius);
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s;
+}
+
+.newClientButton:hover {
+  background: var(--primary-hover, hsl(var(--primary) / 0.9));
+}
+
+.newClientIcon {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* Filtros (estilo operadoras) */
+.filtersSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.searchContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.searchInputWrapper {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 1rem;
+  width: 1rem;
+  color: var(--muted-foreground);
+  pointer-events: none;
+}
+
+.searchInput {
+  padding-left: 2.5rem;
+  padding-right: 2.5rem;
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background-color: var(--background);
+  color: var(--foreground);
+  font-size: 0.875rem;
+  height: 2.5rem;
+  transition: all 0.2s;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px var(--primary-alpha);
+}
+
+.clearButton {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+  color: var(--muted-foreground);
+  transition: color 0.2s;
+}
+
+.clearButton:hover {
+  color: var(--foreground);
+}
+
+.clearIcon {
+  height: 1rem;
+  width: 1rem;
+}
+
+.filterButtons {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.filterSelect {
+  min-width: 150px;
+  height: 2.5rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background-color: var(--background);
+  color: var(--foreground);
+  font-size: 0.875rem;
+  transition: all 0.2s;
+}
+
+.filterSelect:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px var(--primary-alpha);
+}
+
+/* Responsividade */
+@media (min-width: 768px) {
+  .searchContainer {
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .searchInputWrapper {
+    flex: 1;
+    max-width: 400px;
+  }
+  
+  .filterButtons {
+    flex-wrap: nowrap;
+  }
+}
+
+/* Controles de visualização */
+.viewControls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.viewInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.viewInfoText {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+}
+
+.viewToggle {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.viewButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.viewButtonIcon {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* Grid de clientes */
+.clientsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.clientCard {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  transition: all 0.2s;
+}
+
+.clientCard:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border-color: var(--primary);
+}
+
+.clientCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.clientInfo {
+  flex: 1;
+}
+
+.clientName {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--foreground);
+  margin-bottom: 0.5rem;
+}
+
+.clientEmail {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  margin-bottom: 0.25rem;
+}
+
+.clientPhone {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+}
+
+.clientActions {
+  position: relative;
+}
+
+.clientActionsButton {
+  height: 2rem;
+  width: 2rem;
+  padding: 0;
+  border-radius: var(--radius);
+}
+
+.clientActionsIcon {
+  height: 1rem;
+  width: 1rem;
+}
+
+.clientCardBody {
+  margin-bottom: 1rem;
+}
+
+.clientDetailsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.clientDetailItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.clientDetailLabel {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.clientDetailValue {
+  font-size: 0.875rem;
+  color: var(--foreground);
+}
+
+.clientCardFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.clientStageContainer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.clientStageLabel {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+}
+
+.clientStageValue {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--foreground);
+}
+
+.clientDate {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+}
+
+/* Tabela de clientes */
+.clientsTable {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.tableHeader {
+  background: var(--muted);
+  border-bottom: 1px solid var(--border);
+}
+
+.tableHeaderRow {
+  display: grid;
+  grid-template-columns: 2fr 1.5fr 1fr 1fr 1fr 1fr 100px;
+  gap: 1rem;
+  padding: 1rem;
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.tableBody .tableRow:not(:last-child) {
+  border-bottom: 1px solid var(--border);
+}
+
+.tableRow {
+  display: grid;
+  grid-template-columns: 2fr 1.5fr 1fr 1fr 1fr 1fr 100px;
+  gap: 1rem;
+  padding: 1rem;
+  align-items: center;
+  transition: background-color 0.2s;
+}
+
+.tableRow:hover {
+  background: var(--muted);
+}
+
+.tableCell {
+  font-size: 0.875rem;
+  color: var(--foreground);
+}
+
+.tableCellMuted {
+  color: var(--muted-foreground);
+}
+
+.tableCellActions {
+  display: flex;
+  justify-content: center;
+}
+
+/* Menu de ações */
+.actionMenuItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  color: var(--foreground);
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.actionMenuItem:hover {
+  background: var(--muted);
+}
+
+.actionMenuIcon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.actionMenuItemDanger {
+  color: var(--destructive);
+}
+
+.actionMenuItemDanger:hover {
+  background: var(--destructive-hover, hsl(var(--destructive) / 0.1));
+}
+
+/* Paginação */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.paginationInfo {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+}
+
+.paginationControls {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Estados vazios */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.emptyStateIcon {
+  width: 4rem;
+  height: 4rem;
+  color: var(--muted-foreground);
+  margin-bottom: 1rem;
+}
+
+.emptyStateTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--foreground);
+  margin-bottom: 0.5rem;
+}
+
+.emptyStateDescription {
+  font-size: 1rem;
+  color: var(--muted-foreground);
+  margin-bottom: 2rem;
+}
+
+/* Loading */
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 4rem 2rem;
+}
+
+.loadingSpinner {
+  width: 2rem;
+  height: 2rem;
+  border: 2px solid var(--muted);
+  border-top: 2px solid var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.emptyStateIconSvg {
+  width: 100%;
+  height: 100%;
+}
+
+.emptyStateButton {
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.loadingSpinnerInner {
+  animation: spin 1s linear infinite;
+  border-radius: 50%;
+  height: 2rem;
+  width: 2rem;
+  border: 2px solid transparent;
+  border-top: 2px solid var(--primary);
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsividade */
+@media (max-width: 1024px) {
+  .clientsGrid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+  }
+  
+  .tableHeaderRow,
+  .tableRow {
+    grid-template-columns: 1fr 1fr 1fr 80px;
+  }
+  
+  .tableHeaderRow > *:nth-child(n+4),
+  .tableRow > *:nth-child(n+4) {
+    display: none;
+  }
+  
+  .tableHeaderRow > *:last-child,
+  .tableRow > *:last-child {
+    display: block;
+  }
+}
+
+@media (max-width: 768px) {
+  .clientsPageContent {
+    padding: 1rem;
+  }
+  
+  .pageHeader {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .filtersContainer {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .searchContainer {
+    min-width: auto;
+  }
+  
+  .viewControls {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .clientsGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .clientDetailsGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .clientCardFooter {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-start;
+  }
+  
+  .tableHeaderRow,
+  .tableRow {
+    grid-template-columns: 1fr 80px;
+  }
+  
+  .tableHeaderRow > *:not(:first-child):not(:last-child),
+  .tableRow > *:not(:first-child):not(:last-child) {
+    display: none;
+  }
+}
