@@ -62,10 +62,10 @@ export interface Client {
 // Dados do formulário de cliente (sem IDs e timestamps)
 export interface ClientFormData {
   name: string;
-  email: string;
+  email?: string;
   phone?: string;
-  documentType: DocumentType;
-  documentNumber: string;
+  documentType?: DocumentType;
+  documentNumber?: string;
   birthDate?: Date;
   addressZipcode?: string;
   addressStreet?: string;

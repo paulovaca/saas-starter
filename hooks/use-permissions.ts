@@ -48,6 +48,38 @@ export function usePermissions() {
     return ['MASTER', 'ADMIN'].includes(user?.role || '');
   };
 
+  const canManageClients = () => {
+    return ['MASTER', 'ADMIN', 'AGENT'].includes(user?.role || '');
+  };
+
+  const canEditAllClients = () => {
+    return ['MASTER', 'ADMIN'].includes(user?.role || '');
+  };
+
+  const canEditClientFunnel = (clientUserId?: string) => {
+    if (!user) return false;
+    
+    // Master e Admin podem alterar qualquer cliente
+    if (['MASTER', 'ADMIN'].includes(user.role)) {
+      return true;
+    }
+    
+    // Agent pode alterar apenas seus próprios clientes
+    if (user.role === 'AGENT' && clientUserId) {
+      return user.id === clientUserId;
+    }
+    
+    return false;
+  };
+
+  const canDeleteClients = () => {
+    return ['MASTER', 'ADMIN'].includes(user?.role || '');
+  };
+
+  const canTransferClients = () => {
+    return ['MASTER', 'ADMIN'].includes(user?.role || '');
+  };
+
   const canAccessFinancial = () => {
     return ['MASTER', 'ADMIN'].includes(user?.role || '');
   };
@@ -72,6 +104,11 @@ export function usePermissions() {
     canManageOperators,
     canDeleteOperators,
     canViewReports,
+    canManageClients,
+    canEditAllClients,
+    canEditClientFunnel,
+    canDeleteClients,
+    canTransferClients,
     canAccessFinancial,
     hasRole,
     hasAnyRole,

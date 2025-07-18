@@ -146,6 +146,19 @@
   box-shadow: 0 0 0 2px var(--primary-alpha);
 }
 
+.selectValue {
+  flex: 1;
+  text-align: left;
+  color: var(--foreground);
+  font-size: 0.875rem;
+  font-weight: 400;
+}
+
+.selectValue:empty::before {
+  content: "Selecione uma opção";
+  color: var(--muted-foreground);
+}
+
 /* Responsividade */
 @media (min-width: 768px) {
   .searchContainer {

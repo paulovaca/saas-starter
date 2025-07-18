@@ -23,7 +23,7 @@ const clientFormSchema = z.object({
   email: z.string().email('Email inválido').optional().or(z.literal('')),
   documentType: z.enum(['cpf', 'cnpj']).optional(),
   documentNumber: z.string().optional(),
-  birthDate: z.date().optional(),
+  birthDate: z.string().optional(),
   addressZipcode: z.string().optional(),
   addressStreet: z.string().optional(),
   addressNumber: z.string().optional(),
@@ -36,10 +36,11 @@ const clientFormSchema = z.object({
 });
 
 type ClientFormValues = z.infer<typeof clientFormSchema>;
+type ProcessedClientFormData = Omit<ClientFormValues, 'birthDate'> & { birthDate?: Date };
 
 interface ClientFormProps {
   initialData?: Partial<ClientFormData>;
-  onSubmit: (data: ClientFormValues) => Promise<void>;
+  onSubmit: (data: ProcessedClientFormData) => Promise<void>;
   onCancel: () => void;
   isLoading?: boolean;
   submitLabel?: string;
@@ -76,7 +77,7 @@ export default function ClientForm({
       phone: initialData?.phone || '',
       documentType: initialData?.documentType || 'cpf',
       documentNumber: initialData?.documentNumber || '',
-      birthDate: initialData?.birthDate,
+      birthDate: initialData?.birthDate ? initialData.birthDate.toISOString().split('T')[0] : '',
       addressZipcode: initialData?.addressZipcode || '',
       addressStreet: initialData?.addressStreet || '',
       addressNumber: initialData?.addressNumber || '',
@@ -177,12 +178,19 @@ export default function ClientForm({
     
     setIsCheckingEmail(true);
     try {
-      // Aqui será implementada a validação real
-      // Simular delay da API
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Verificar se email já existe
+      const params = new URLSearchParams();
+      params.set('search', email);
       
-      // Simular validação (retorna true se email não existe)
-      const isUnique = !email.includes('teste@email.com');
+      const response = await fetch(`/api/clients?${params.toString()}`);
+      
+      if (!response.ok) {
+        console.error('Erro ao validar email');
+        return true; // Em caso de erro, permitir continuar
+      }
+      
+      const data = await response.json();
+      const isUnique = data.totalClients === 0;
       
       if (!isUnique) {
         setError('email', { message: 'Este email já está sendo usado por outro cliente' });
@@ -205,12 +213,19 @@ export default function ClientForm({
     
     setIsCheckingDocument(true);
     try {
-      // Aqui será implementada a validação real
-      // Simular delay da API
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Verificar se documento já existe
+      const params = new URLSearchParams();
+      params.set('search', documentNumber);
       
-      // Simular validação (retorna true se documento não existe)
-      const isUnique = !documentNumber.includes('123.456.789-01');
+      const response = await fetch(`/api/clients?${params.toString()}`);
+      
+      if (!response.ok) {
+        console.error('Erro ao validar documento');
+        return true; // Em caso de erro, permitir continuar
+      }
+      
+      const data = await response.json();
+      const isUnique = data.totalClients === 0;
       
       if (!isUnique) {
         setError('documentNumber', { message: 'Este documento já está sendo usado por outro cliente' });
@@ -247,7 +262,13 @@ export default function ClientForm({
         return;
       }
       
-      await onSubmit(data);
+      // Converter string de data para Date se necessário
+      const processedData = {
+        ...data,
+        birthDate: data.birthDate && data.birthDate !== '' ? new Date(data.birthDate) : undefined,
+      };
+      
+      await onSubmit(processedData);
     } catch (error) {
       console.error('Erro ao salvar cliente:', error);
     }
@@ -316,7 +337,7 @@ export default function ClientForm({
               <Input
                 id="birthDate"
                 type="date"
-                {...register('birthDate', { valueAsDate: true })}
+                {...register('birthDate')}
                 className={errors.birthDate ? styles.formInputError : ''}
               />
               {errors.birthDate && (

@@ -108,19 +108,22 @@ function validateBrazilianCEP(cep: string): boolean {
 }
 
 // Função para formatar CPF
-export function formatCPF(cpf: string): string {
+export function formatCPF(cpf: string | null | undefined): string {
+  if (!cpf) return 'Não informado';
   const cleanCPF = cpf.replace(/\D/g, '');
   return cleanCPF.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
 }
 
 // Função para formatar CNPJ
-export function formatCNPJ(cnpj: string): string {
+export function formatCNPJ(cnpj: string | null | undefined): string {
+  if (!cnpj) return 'Não informado';
   const cleanCNPJ = cnpj.replace(/\D/g, '');
   return cleanCNPJ.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
 }
 
 // Função para formatar telefone
-export function formatPhone(phone: string): string {
+export function formatPhone(phone: string | null | undefined): string {
+  if (!phone) return 'Não informado';
   const cleanPhone = phone.replace(/\D/g, '');
   if (cleanPhone.length === 10) {
     return cleanPhone.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
@@ -131,7 +134,8 @@ export function formatPhone(phone: string): string {
 }
 
 // Função para formatar CEP
-export function formatCEP(cep: string): string {
+export function formatCEP(cep: string | null | undefined): string {
+  if (!cep) return 'Não informado';
   const cleanCEP = cep.replace(/\D/g, '');
   return cleanCEP.replace(/(\d{5})(\d{3})/, '$1-$2');
 }
@@ -181,20 +185,38 @@ export const brazilianPhoneSchema = z.string()
   })
   .transform((value) => value.replace(/\D/g, ''));
 
-// Schema para validação de CEP brasileiro
+// Schema para validação de CEP brasileiro (aceita vazio)
 export const brazilianCEPSchema = z.string()
-  .min(8, 'CEP deve ter 8 dígitos')
-  .max(9, 'CEP deve ter no máximo 9 caracteres')
-  .refine((value) => validateBrazilianCEP(value), {
+  .refine((value) => {
+    if (!value || value.trim() === '') return true; // Aceita vazio
+    return value.replace(/\D/g, '').length === 8;
+  }, {
+    message: 'CEP deve ter 8 dígitos'
+  })
+  .refine((value) => {
+    if (!value || value.trim() === '') return true; // Aceita vazio
+    return validateBrazilianCEP(value);
+  }, {
     message: 'CEP deve estar no formato XXXXX-XXX'
   })
-  .transform((value) => value.replace(/\D/g, ''));
+  .transform((value) => value ? value.replace(/\D/g, '') : '');
 
-// Schema para validação de UF (estado)
+// Schema para validação de UF (estado) (aceita vazio)
 export const ufSchema = z.string()
-  .length(2, 'UF deve ter 2 caracteres')
-  .regex(/^[A-Z]{2}$/, 'UF deve conter apenas letras maiúsculas')
   .refine((value) => {
+    if (!value || value.trim() === '') return true; // Aceita vazio
+    return value.length === 2;
+  }, {
+    message: 'UF deve ter 2 caracteres'
+  })
+  .refine((value) => {
+    if (!value || value.trim() === '') return true; // Aceita vazio
+    return /^[A-Z]{2}$/.test(value);
+  }, {
+    message: 'UF deve conter apenas letras maiúsculas'
+  })
+  .refine((value) => {
+    if (!value || value.trim() === '') return true; // Aceita vazio
     const validUFs = [
       'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA',
       'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN',
@@ -227,29 +249,29 @@ export const clientSchema = z.object({
     invalid_type_error: 'Tipo de documento deve ser CPF ou CNPJ'
   }).optional(),
   
-  documentNumber: z.string().optional(),
+  documentNumber: z.string().optional().or(z.literal('')),
   
   birthDate: z.date().optional(),
   
   // Campos de endereço
-  addressZipcode: brazilianCEPSchema.optional(),
-  addressStreet: z.string().max(255, 'Logradouro deve ter no máximo 255 caracteres').optional(),
-  addressNumber: z.string().max(10, 'Número deve ter no máximo 10 caracteres').optional(),
-  addressComplement: z.string().max(100, 'Complemento deve ter no máximo 100 caracteres').optional(),
-  addressNeighborhood: z.string().max(100, 'Bairro deve ter no máximo 100 caracteres').optional(),
-  addressCity: z.string().max(100, 'Cidade deve ter no máximo 100 caracteres').optional(),
-  addressState: ufSchema.optional(),
+  addressZipcode: z.string().optional().or(z.literal('')),
+  addressStreet: z.string().max(255, 'Logradouro deve ter no máximo 255 caracteres').optional().or(z.literal('')),
+  addressNumber: z.string().max(10, 'Número deve ter no máximo 10 caracteres').optional().or(z.literal('')),
+  addressComplement: z.string().max(100, 'Complemento deve ter no máximo 100 caracteres').optional().or(z.literal('')),
+  addressNeighborhood: z.string().max(100, 'Bairro deve ter no máximo 100 caracteres').optional().or(z.literal('')),
+  addressCity: z.string().max(100, 'Cidade deve ter no máximo 100 caracteres').optional().or(z.literal('')),
+  addressState: z.string().optional().or(z.literal('')),
   
   // Campos de funil
-  funnelId: z.string().uuid('ID do funil deve ser um UUID válido').optional(),
-  funnelStageId: z.string().uuid('ID da etapa do funil deve ser um UUID válido').optional(),
+  funnelId: z.string().uuid('ID do funil deve ser um UUID válido').optional().or(z.literal('')),
+  funnelStageId: z.string().uuid('ID da etapa do funil deve ser um UUID válido').optional().or(z.literal('')),
   
-  notes: z.string().max(2000, 'Observações devem ter no máximo 2000 caracteres').optional(),
+  notes: z.string().max(2000, 'Observações devem ter no máximo 2000 caracteres').optional().or(z.literal('')),
   
   isActive: z.boolean().default(true)
 }).refine((data) => {
   // Validação específica do documento baseado no tipo (apenas se documento estiver preenchido)
-  if (data.documentType && data.documentNumber) {
+  if (data.documentType && data.documentNumber && data.documentNumber.trim() !== '') {
     if (data.documentType === 'cpf') {
       return validateCPF(data.documentNumber);
     } else {
@@ -337,6 +359,27 @@ export type ClientTaskFormData = z.infer<typeof clientTaskSchema>;
 export type ClientTransferFormData = z.infer<typeof clientTransferSchema>;
 export type ClientFilters = z.infer<typeof clientFiltersSchema>;
 export type PaginationOptions = z.infer<typeof paginationSchema>;
+
+// Schema para atualizações parciais (sem transformações)
+export const clientUpdateSchema = z.object({
+  name: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres').optional(),
+  email: z.string().email('Email inválido').optional(),
+  phone: z.string().optional(),
+  documentType: z.enum(['cpf', 'cnpj']).optional(),
+  documentNumber: z.string().optional(),
+  birthDate: z.date().optional(),
+  addressZipcode: z.string().optional(),
+  addressStreet: z.string().optional(),
+  addressNumber: z.string().optional(),
+  addressComplement: z.string().optional(),
+  addressNeighborhood: z.string().optional(),
+  addressCity: z.string().optional(),
+  addressState: z.string().optional(),
+  funnelId: z.string().uuid().optional(),
+  funnelStageId: z.string().uuid().optional(),
+  notes: z.string().optional(),
+  isActive: z.boolean().optional()
+});
 
 // Função para validar e limpar dados do cliente
 export function validateAndCleanClientData(data: unknown): { success: boolean; data?: ClientFormData; errors?: string[] } {

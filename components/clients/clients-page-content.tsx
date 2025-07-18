@@ -50,12 +50,12 @@ interface ClientData {
   funnel: {
     id: string;
     name: string;
-  };
+  } | null;
   funnelStage: {
     id: string;
     name: string;
     color: string;
-  };
+  } | null;
   user: {
     id: string;
     name: string;
@@ -124,70 +124,66 @@ export default function ClientsPageContent({ searchParams }: ClientsPageContentP
   const fetchClients = useCallback(async () => {
     setIsLoading(true);
     try {
-      // Aqui será implementada a busca real nos actions
-      // Por enquanto, dados mockados
-      const mockClients: ClientData[] = [
-        {
-          id: '1',
-          name: 'João Silva Santos',
-          email: 'joao@email.com',
-          phone: '11987654321',
-          documentType: 'cpf',
-          documentNumber: '12345678901',
-          city: 'São Paulo',
-          state: 'SP',
-          funnel: {
-            id: '1',
-            name: 'Vendas Diretas'
-          },
-          funnelStage: {
-            id: '1',
-            name: 'Novo Lead',
-            color: 'blue'
-          },
-          user: {
-            id: '1',
-            name: 'Maria Vendedora'
-          },
-          totalProposals: 2,
-          totalValue: 15000,
-          lastInteraction: new Date('2024-01-15'),
-          createdAt: new Date('2024-01-10')
-        },
-        {
-          id: '2',
-          name: 'Empresa ABC Ltda',
-          email: 'contato@empresaabc.com',
-          phone: '1133334444',
-          documentType: 'cnpj',
-          documentNumber: '12345678000199',
-          city: 'Rio de Janeiro',
-          state: 'RJ',
-          funnel: {
-            id: '2',
-            name: 'Vendas Corporativas'
-          },
-          funnelStage: {
-            id: '2',
-            name: 'Proposta Enviada',
-            color: 'orange'
-          },
-          user: {
-            id: '2',
-            name: 'Carlos Agente'
-          },
-          totalProposals: 1,
-          totalValue: 25000,
-          lastInteraction: new Date('2024-01-18'),
-          createdAt: new Date('2024-01-05')
-        }
-      ];
+      // Construir parâmetros da busca
+      const params = new URLSearchParams();
+      if (searchTerm) params.set('search', searchTerm);
+      if (selectedFunnel) params.set('funnelId', selectedFunnel);
+      if (selectedStage) params.set('funnelStageId', selectedStage);
+      if (selectedUser) params.set('userId', selectedUser);
+      params.set('page', currentPage.toString());
+      params.set('limit', '20');
+
+      // Fazer a chamada para a API
+      const response = await fetch(`/api/clients?${params.toString()}`);
       
-      setClients(mockClients);
-      setTotalClients(mockClients.length);
-      setTotalPages(Math.ceil(mockClients.length / 20));
+      if (!response.ok) {
+        throw new Error('Erro ao buscar clientes');
+      }
+
+      const data = await response.json();
+      
+      // Transformar os dados para o formato esperado
+      const transformedClients: ClientData[] = data.clients.map((client: any) => ({
+        id: client.id,
+        name: client.name,
+        email: client.email || '',
+        phone: client.phone,
+        documentType: client.documentType,
+        documentNumber: client.documentNumber || '',
+        city: client.city,
+        state: client.state,
+        funnel: client.funnel ? {
+          id: client.funnel.id,
+          name: client.funnel.name
+        } : null,
+        funnelStage: client.funnelStage ? {
+          id: client.funnelStage.id,
+          name: client.funnelStage.name,
+          color: client.funnelStage.color || 'gray'
+        } : null,
+        user: {
+          id: client.user?.id || '',
+          name: client.user?.name || 'Sem responsável'
+        },
+        totalProposals: client.totalProposals || 0,
+        totalValue: client.totalValue || 0,
+        lastInteraction: client.lastInteraction ? 
+          (typeof client.lastInteraction === 'string' ? new Date(client.lastInteraction) : client.lastInteraction) : 
+          undefined,
+        createdAt: client.createdAt ? 
+          (typeof client.createdAt === 'string' ? new Date(client.createdAt) : client.createdAt) : 
+          new Date()
+      }));
+      
+      setClients(transformedClients);
+      setTotalClients(data.totalClients);
+      setTotalPages(data.totalPages);
     } catch (error) {
       console.error('Erro ao buscar clientes:', error);
+      // Em caso de erro, manter lista vazia
+      setClients([]);
+      setTotalClients(0);
+      setTotalPages(1);
     } finally {
       setIsLoading(false);
     }
@@ -196,28 +192,29 @@ export default function ClientsPageContent({ searchParams }: ClientsPageContentP
   // Função para buscar dados de filtro
   const fetchFilterData = useCallback(async () => {
     try {
-      // Aqui será implementada a busca real nos actions
-      // Por enquanto, dados mockados
-      const mockFilterData: FilterData = {
-        funnels: [
-          { id: '1', name: 'Funil Principal' },
-          { id: '2', name: 'Funil Corporativo' }
-        ],
-        funnelStages: [
-          { id: '1', name: 'Novo Lead', funnelId: '1' },
-          { id: '2', name: 'Proposta Enviada', funnelId: '1' },
-          { id: '3', name: 'Negociação', funnelId: '1' },
-          { id: '4', name: 'Fechado', funnelId: '1' }
-        ],
-        users: [
-          { id: '1', name: 'Maria Vendedora' },
-          { id: '2', name: 'Carlos Agente' }
-        ]
-      };
+      const response = await fetch('/api/clients/filters');
       
-      setFilterData(mockFilterData);
+      if (!response.ok) {
+        throw new Error('Erro ao buscar dados de filtro');
+      }
+
+      const data = await response.json();
+      setFilterData(data);
     } catch (error) {
       console.error('Erro ao buscar dados de filtro:', error);
+      // Em caso de erro, usar dados mockados básicos
+      const fallbackData: FilterData = {
+        funnels: [
+          { id: '1', name: 'Funil Principal' }
+        ],
+        funnelStages: [
+          { id: '1', name: 'Novo Lead', funnelId: '1' }
+        ],
+        users: [
+          { id: '1', name: 'Usuário Padrão' }
+        ]
+      };
+      setFilterData(fallbackData);
     }
   }, []);
 
@@ -241,8 +238,17 @@ export default function ClientsPageContent({ searchParams }: ClientsPageContentP
   };
 
   // Função para formatar data
-  const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat('pt-BR').format(date);
+  const formatDate = (date: Date | string | null | undefined) => {
+    if (!date) return '-';
+    
+    try {
+      const dateObj = typeof date === 'string' ? new Date(date) : date;
+      if (isNaN(dateObj.getTime())) return '-';
+      
+      return new Intl.DateTimeFormat('pt-BR').format(dateObj);
+    } catch (error) {
+      return '-';
+    }
   };
 
   // Função para navegar para novo cliente
@@ -309,7 +315,11 @@ export default function ClientsPageContent({ searchParams }: ClientsPageContentP
         <div className={pageStyles.filterButtons}>
           <Select value={selectedFunnel} onValueChange={setSelectedFunnel}>
             <SelectTrigger className={pageStyles.filterSelect}>
-              <SelectValue placeholder="Todos os funis" />
+              <div className={pageStyles.selectValue}>
+                {selectedFunnel ? 
+                  filterData.funnels.find(f => f.id === selectedFunnel)?.name || 'Funil não encontrado'
+                  : 'Todos os funis'}
+              </div>
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="">Todos os funis</SelectItem>
@@ -323,7 +333,11 @@ export default function ClientsPageContent({ searchParams }: ClientsPageContentP
 
           <Select value={selectedStage} onValueChange={setSelectedStage}>
             <SelectTrigger className={pageStyles.filterSelect}>
-              <SelectValue placeholder="Todas as etapas" />
+              <div className={pageStyles.selectValue}>
+                {selectedStage ? 
+                  filterData.funnelStages.find(s => s.id === selectedStage)?.name || 'Etapa não encontrada'
+                  : 'Todas as etapas'}
+              </div>
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="">Todas as etapas</SelectItem>
@@ -340,7 +354,11 @@ export default function ClientsPageContent({ searchParams }: ClientsPageContentP
           {canEditUsers() && (
             <Select value={selectedUser} onValueChange={setSelectedUser}>
               <SelectTrigger className={pageStyles.filterSelect}>
-                <SelectValue placeholder="Todos os agentes" />
+                <div className={pageStyles.selectValue}>
+                  {selectedUser ? 
+                    filterData.users.find(u => u.id === selectedUser)?.name || 'Usuário não encontrado'
+                    : 'Todos os agentes'}
+                </div>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="">Todos os agentes</SelectItem>
@@ -388,12 +406,12 @@ export default function ClientsPageContent({ searchParams }: ClientsPageContentP
               </td>
               <td className={styles.clientsTableCell}>
                 <Badge variant="secondary" className={pageStyles.funnelBadge}>
-                  {client.funnel.name}
+                  {client.funnel?.name || 'Sem funil'}
                 </Badge>
               </td>
               <td className={styles.clientsTableCell}>
                 <Badge variant="outline" className={`${styles.clientStatus} ${styles.active}`}>
-                  {client.funnelStage.name}
+                  {client.funnelStage?.name || 'Sem etapa'}
                 </Badge>
               </td>
               <td className={styles.clientsTableCell}>

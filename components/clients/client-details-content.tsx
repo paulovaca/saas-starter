@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 import { formatCPF, formatCNPJ, formatPhone } from '@/lib/validations/clients/client.schema';
 import { Client } from '@/lib/types/clients';
+import ClientFunnelStageEditor from './client-funnel-stage-editor';
 import styles from './client-details-content.module.css';
 
 interface ClientDetailsContentProps {
@@ -91,161 +92,41 @@ export default function ClientDetailsContent({ clientId }: ClientDetailsContentP
     const fetchClient = async () => {
       setIsLoading(true);
       try {
-        // Aqui será implementada a busca real do cliente
-        // Por enquanto, dados mockados
-        const mockClient: ClientWithDetails = {
-          id: clientId,
-          agencyId: 'agency-1',
-          userId: 'user-1',
-          name: 'João Silva Santos',
-          email: 'joao@email.com',
-          phone: '11987654321',
-          documentType: 'cpf',
-          documentNumber: '12345678901',
-          birthDate: new Date('1985-05-15'),
-          addressZipcode: '01234567',
-          addressStreet: 'Rua das Flores',
-          addressNumber: '123',
-          addressComplement: 'Apt 45',
-          addressNeighborhood: 'Centro',
-          addressCity: 'São Paulo',
-          addressState: 'SP',
-          funnelId: 'funnel-1',
-          funnelStageId: 'stage-1',
-          notes: 'Cliente em potencial para pacotes corporativos. Demonstrou interesse em viagens para Europa.',
-          isActive: true,
-          createdAt: new Date('2024-01-10'),
-          updatedAt: new Date('2024-01-20'),
-          totalProposals: 3,
-          totalValue: 45000,
-          lastInteraction: new Date('2024-01-18'),
-          
-          // Dados relacionados
-          funnel: {
-            id: 'funnel-1',
-            name: 'Funil Principal'
-          },
-          funnelStage: {
-            id: 'stage-1',
-            name: 'Proposta Enviada',
-            instructions: 'Aguardar retorno do cliente'
-          },
-          user: {
-            id: 'user-1',
-            name: 'Maria Vendedora',
-            email: 'maria@agencia.com'
-          },
-          
-          interactions: [
-            {
-              id: '1',
-              type: 'call',
-              description: 'Ligação para apresentar nova proposta de viagem para Europa. Cliente demonstrou interesse.',
-              contactDate: new Date('2024-01-18'),
-              user: {
-                name: 'Maria Vendedora',
-                email: 'maria@agencia.com'
-              },
-              durationMinutes: 45
-            },
-            {
-              id: '2',
-              type: 'email',
-              description: 'Enviado catálogo de hotéis em Paris e Roma conforme solicitado.',
-              contactDate: new Date('2024-01-15'),
-              user: {
-                name: 'Maria Vendedora',
-                email: 'maria@agencia.com'
-              }
-            },
-            {
-              id: '3',
-              type: 'whatsapp',
-              description: 'Cliente perguntou sobre documentação necessária para viagem.',
-              contactDate: new Date('2024-01-12'),
-              user: {
-                name: 'Maria Vendedora',
-                email: 'maria@agencia.com'
-              }
-            }
-          ],
-          
-          tasks: [
-            {
-              id: '1',
-              title: 'Enviar cotação final',
-              description: 'Preparar proposta final com valores negociados',
-              priority: 'high',
-              status: 'pending',
-              dueDate: new Date('2024-01-25'),
-              assignedUser: {
-                name: 'Maria Vendedora'
-              }
-            },
-            {
-              id: '2',
-              title: 'Agendar reunião',
-              description: 'Marcar reunião presencial para apresentação',
-              priority: 'medium',
-              status: 'in_progress',
-              dueDate: new Date('2024-01-22'),
-              assignedUser: {
-                name: 'Maria Vendedora'
-              }
-            }
-          ],
-          
-          proposals: [
-            {
-              id: '1',
-              proposalNumber: '2024/001',
-              status: 'sent',
-              totalAmount: 25000,
-              createdAt: new Date('2024-01-15'),
-              operator: {
-                name: 'TravelCorp'
-              }
-            },
-            {
-              id: '2',
-              proposalNumber: '2024/002',
-              status: 'accepted',
-              totalAmount: 18000,
-              createdAt: new Date('2024-01-05'),
-              operator: {
-                name: 'EuroTravel'
-              }
-            }
-          ],
-          
-          transfers: [
-            {
-              id: '1',
-              fromUser: {
-                name: 'João Antigo'
-              },
-              toUser: {
-                name: 'Maria Vendedora'
-              },
-              reason: 'Realocação por especialização em viagens corporativas',
-              transferredAt: new Date('2024-01-08'),
-              transferredByUser: {
-                name: 'Admin Sistema'
-              }
-            }
-          ]
-        };
+        const response = await fetch(`/api/clients/${clientId}`);
         
-        setClient(mockClient);
+        if (!response.ok) {
+          if (response.status === 404) {
+            router.push('/clients?error=cliente-nao-encontrado');
+            return;
+          }
+          throw new Error('Erro ao buscar cliente');
+        }
+
+        const clientData = await response.json();
+        
+        // Transformar dados para incluir relacionamentos mockados
+        // TODO: Implementar busca real de interações, tarefas, propostas e transferências
+        const transformedClient: ClientWithDetails = {
+          ...clientData,
+          interactions: [], // Será implementado
+          tasks: [], // Será implementado
+          proposals: [], // Será implementado
+          transfers: [] // Será implementado
+        };
+
+        setClient(transformedClient);
       } catch (error) {
         console.error('Erro ao buscar cliente:', error);
+        router.push('/clients?error=erro-ao-carregar-cliente');
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchClient();
-  }, [clientId]);
+    if (clientId) {
+      fetchClient();
+    }
+  }, [clientId, router]);
 
   // Funções de navegação
   const handleEdit = () => {
@@ -271,8 +152,32 @@ export default function ClientDetailsContent({ clientId }: ClientDetailsContentP
     console.log('Transferir cliente');
   };
 
+  // Função para atualizar dados do cliente após mudança de funil/etapa
+  const handleFunnelStageUpdate = async (funnelId: string, stageId: string) => {
+    if (!client) return;
+
+    try {
+      // Recarregar dados completos do cliente
+      const response = await fetch(`/api/clients/${clientId}`);
+      if (response.ok) {
+        const clientData = await response.json();
+        const transformedClient: ClientWithDetails = {
+          ...clientData,
+          interactions: [],
+          tasks: [],
+          proposals: [],
+          transfers: []
+        };
+        setClient(transformedClient);
+      }
+    } catch (error) {
+      console.error('Erro ao recarregar dados do cliente:', error);
+    }
+  };
+
   // Formatação de dados
-  const formatDocument = (type: 'cpf' | 'cnpj', number: string) => {
+  const formatDocument = (type: 'cpf' | 'cnpj', number: string | null) => {
+    if (!number) return 'Não informado';
     return type === 'cpf' ? formatCPF(number) : formatCNPJ(number);
   };
 
@@ -283,22 +188,40 @@ export default function ClientDetailsContent({ clientId }: ClientDetailsContentP
     }).format(value);
   };
 
-  const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
-    }).format(date);
+  const formatDate = (date: Date | string | null | undefined) => {
+    if (!date) return '-';
+    
+    try {
+      const dateObj = typeof date === 'string' ? new Date(date) : date;
+      if (isNaN(dateObj.getTime())) return '-';
+      
+      return new Intl.DateTimeFormat('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      }).format(dateObj);
+    } catch (error) {
+      return '-';
+    }
   };
 
-  const formatDateTime = (date: Date) => {
-    return new Intl.DateTimeFormat('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    }).format(date);
+  const formatDateTime = (date: Date | string | null | undefined) => {
+    if (!date) return '-';
+    
+    try {
+      const dateObj = typeof date === 'string' ? new Date(date) : date;
+      if (isNaN(dateObj.getTime())) return '-';
+      
+      return new Intl.DateTimeFormat('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      }).format(dateObj);
+    } catch (error) {
+      return '-';
+    }
   };
 
   // Ícones para tipos de interação
@@ -551,6 +474,14 @@ export default function ClientDetailsContent({ clientId }: ClientDetailsContentP
                   </div>
                 </CardContent>
               </Card>
+
+              <ClientFunnelStageEditor
+                clientId={client.id}
+                currentFunnel={client.funnel}
+                currentStage={client.funnelStage}
+                clientUserId={client.userId}
+                onUpdate={handleFunnelStageUpdate}
+              />
 
               {client.notes && (
                 <Card>

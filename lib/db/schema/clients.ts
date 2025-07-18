@@ -28,10 +28,10 @@ export const clientsNew = pgTable('clients_new', {
   agencyId: uuid('agency_id').notNull(),
   userId: uuid('user_id').notNull(),
   name: varchar('name', { length: 255 }).notNull(),
-  email: varchar('email', { length: 255 }).notNull(),
+  email: varchar('email', { length: 255 }),
   phone: varchar('phone', { length: 20 }),
-  documentType: clientDocumentTypeEnum('document_type').notNull(),
-  documentNumber: varchar('document_number', { length: 18 }).notNull(),
+  documentType: clientDocumentTypeEnum('document_type'),
+  documentNumber: varchar('document_number', { length: 18 }),
   birthDate: date('birth_date'),
   addressZipcode: varchar('address_zipcode', { length: 9 }),
   addressStreet: varchar('address_street', { length: 255 }),
@@ -48,7 +48,7 @@ export const clientsNew = pgTable('clients_new', {
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
   deletedAt: timestamp('deleted_at'),
 }, (table) => ({
-  // Índices únicos
+  // Índices únicos - email único apenas quando não for null
   emailUniqueIdx: unique('clients_agency_email_unique').on(table.agencyId, table.email),
   documentUniqueIdx: unique('clients_agency_document_unique').on(table.agencyId, table.documentNumber),
   
