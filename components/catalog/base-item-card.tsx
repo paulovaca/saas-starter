@@ -40,11 +40,16 @@ export function BaseItemCard({ item }: BaseItemCardProps) {
     <div className={styles.card}>
       <div className={styles.header}>
         <div className={styles.headerContent}>
-          <h3 className={styles.title}>
-            <Link href={`/catalog/${item.id}`} className={styles.titleLink}>
-              {item.name}
-            </Link>
-          </h3>
+          <div className={styles.titleRow}>
+            <h3 className={styles.title}>
+              <Link href={`/catalog/${item.id}`} className={styles.titleLink}>
+                {item.name}
+              </Link>
+            </h3>
+            {!item.isActive && (
+              <span className={styles.inactiveBadge}>Inativo</span>
+            )}
+          </div>
           {item.description && (
             <p className={styles.description}>{item.description}</p>
           )}

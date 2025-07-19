@@ -102,7 +102,7 @@ export function CommissionModal({ isOpen, onClose, item: initialItem, onSuccess 
 
   return (
     <Dialog open={isOpen} onOpenChange={() => {}}>
-      <DialogContent className={`sm:max-w-[600px] max-h-[80vh] overflow-y-auto ${styles.modal}`}>
+      <DialogContent className={styles.modal}>
         <DialogHeader>
           <DialogTitle>Gerenciar Comissões</DialogTitle>
           <p className={styles.itemId}>

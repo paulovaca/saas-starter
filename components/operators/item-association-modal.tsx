@@ -41,6 +41,7 @@ export function ItemAssociationModal({ isOpen, onClose, operatorId, operatorName
   const [catalogItems, setCatalogItems] = useState<CatalogItem[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedItem, setSelectedItem] = useState<CatalogItem | null>(null);
+  const [duplicateNameError, setDuplicateNameError] = useState<string>('');
 
   const form = useForm({
     resolver: zodResolver(associateItemsSchema),
@@ -62,6 +63,27 @@ export function ItemAssociationModal({ isOpen, onClose, operatorId, operatorName
   useEffect(() => {
     if (isOpen) {
       loadCatalogItems();
+      // Reset all states when modal opens
+      setDuplicateNameError('');
+      setSelectedItem(null);
+      setSearchTerm('');
+      form.reset({
+        operatorId: operatorId,
+        catalogItemId: '',
+        customName: '',
+        commissionType: 'percentage' as const,
+        isActive: true,
+      });
+    }
+  }, [isOpen, operatorId, form]);
+
+  // Clean up when modal closes
+  useEffect(() => {
+    if (!isOpen) {
+      setDuplicateNameError('');
+      setSelectedItem(null);
+      setSearchTerm('');
+      setIsLoading(false);
     }
   }, [isOpen]);
 
@@ -99,6 +121,8 @@ export function ItemAssociationModal({ isOpen, onClose, operatorId, operatorName
     }
 
     setIsLoading(true);
+    setDuplicateNameError(''); // Limpar erro anterior
+    
     try {
       const associationData: AssociateItemsInput = {
         operatorId: operatorId, // Use the prop directly
@@ -115,25 +139,42 @@ export function ItemAssociationModal({ isOpen, onClose, operatorId, operatorName
         handleCancel();
         router.refresh();
       } else {
-        toast.error(result.error);
+        // Verificar se é erro de nome duplicado
+        if (result.error && result.error.includes('Já existe um item com o nome')) {
+          setDuplicateNameError('O nome customizado já existe nessa operadora');
+        } else {
+          toast.error(result.error);
+        }
       }
     } catch (error) {
       console.error('Error associating item:', error);
       toast.error('Erro ao associar item');
+      // Reset states on error to prevent corruption
+      setDuplicateNameError('');
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleCancel = () => {
-    form.reset();
+    // Reset form with default values
+    form.reset({
+      operatorId: operatorId,
+      catalogItemId: '',
+      customName: '',
+      commissionType: 'percentage' as const,
+      isActive: true,
+    });
     setSelectedItem(null);
     setSearchTerm('');
+    setDuplicateNameError('');
+    setIsLoading(false); // Garantir que loading seja falso
     onClose();
   };
 
   const handleItemSelect = (item: CatalogItem) => {
     setSelectedItem(item);
+    setDuplicateNameError(''); // Limpar erro ao selecionar novo item
     form.setValue('catalogItemId', item.id);
     if (!form.getValues('customName')) {
       form.setValue('customName', item.name);
@@ -186,11 +227,18 @@ export function ItemAssociationModal({ isOpen, onClose, operatorId, operatorName
                       key={item.id}
                       className={`${styles.itemCard} ${
                         selectedItem?.id === item.id ? styles.itemCardSelected : ''
-                      }`}
+                      } ${!item.isActive ? styles.itemCardInactive : ''}`}
                       onClick={() => handleItemSelect(item)}
                     >
                       <div className={styles.itemInfo}>
-                        <h5 className={styles.itemName}>{item.name}</h5>
+                        <h5 className={styles.itemName}>
+                          {item.name}
+                          {!item.isActive && (
+                            <span className={styles.inactiveIndicator}>
+                              {' '}(inativo)
+                            </span>
+                          )}
+                        </h5>
                         {item.description && (
                           <p className={styles.itemDescription}>{item.description}</p>
                         )}
@@ -216,6 +264,10 @@ export function ItemAssociationModal({ isOpen, onClose, operatorId, operatorName
                     placeholder="Nome que aparecerá para esta operadora"
                     {...form.register('customName')}
                     className={styles.formInput}
+                    onChange={(e) => {
+                      form.setValue('customName', e.target.value);
+                      setDuplicateNameError(''); // Limpar erro ao digitar
+                    }}
                   />
                   <p className={styles.formDescription}>
                     Deixe em branco para usar o nome padrão: {selectedItem.name}
@@ -223,6 +275,11 @@ export function ItemAssociationModal({ isOpen, onClose, operatorId, operatorName
                   {form.formState.errors.customName && (
                     <p className={styles.formMessage}>
                       {form.formState.errors.customName.message}
+                    </p>
+                  )}
+                  {duplicateNameError && (
+                    <p className={styles.errorMessage}>
+                      {duplicateNameError}
                     </p>
                   )}
                 </div>

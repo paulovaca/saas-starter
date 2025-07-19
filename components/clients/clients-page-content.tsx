@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { Plus, Search, Filter, MoreHorizontal, Edit, Trash2, UserCheck, Phone, MessageCircle, Calendar, Eye, ChevronDown, ChevronUp, X } from 'lucide-react';
+import { Plus, Search, Filter, MoreHorizontal, Trash2, UserCheck, Phone, MessageCircle, Calendar, Eye, ChevronDown, ChevronUp, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -261,11 +261,6 @@ export default function ClientsPageContent({ searchParams }: ClientsPageContentP
     router.push(`/clients/${clientId}`);
   };
 
-  // Função para editar cliente
-  const handleEditClient = (clientId: string) => {
-    router.push(`/clients/${clientId}/edit`);
-  };
-
   // Render do cabeçalho
   const renderHeader = () => (
     <div className={styles.clientsHeader}>
@@ -437,10 +432,6 @@ export default function ClientsPageContent({ searchParams }: ClientsPageContentP
                     <DropdownMenuItem onClick={() => handleViewClient(client.id)}>
                       <Eye className={pageStyles.actionMenuIcon} />
                       Visualizar
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleEditClient(client.id)}>
-                      <Edit className={pageStyles.actionMenuIcon} />
-                      Editar
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem>

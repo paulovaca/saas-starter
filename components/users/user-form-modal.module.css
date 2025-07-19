@@ -303,7 +303,8 @@
 
 .actions {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
   gap: 0.75rem;
   padding: 1.5rem;
   border-top: 2px solid var(--border) !important;
@@ -313,6 +314,12 @@
   margin-left: -1.5rem;
   margin-right: -1.5rem;
   margin-bottom: -1.5rem;
+}
+
+/* Container para os botões */
+.buttonsContainer {
+  display: flex;
+  gap: 0.75rem;
 }
 
 .cancelButton {

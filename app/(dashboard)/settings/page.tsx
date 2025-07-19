@@ -14,6 +14,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { getAgencyForUser } from '@/lib/db/queries/agency';
 import { EditAgencyModal } from './edit-agency-modal';
+import { AppearanceCard } from './appearance-card';
 import styles from './settings.module.css';
 
 export const metadata: Metadata = {
@@ -191,31 +192,7 @@ export default async function SettingsPage({ searchParams }: {
         </Card>
 
         {/* Card de Aparência */}
-        <Card>
-          <CardHeader>
-            <CardTitle className={styles.cardTitle}>
-              <Palette className={styles.cardIcon} />
-              Aparência
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className={styles.infoSection}>
-              <div className={styles.infoGroup}>
-                <p className={styles.label}>Tema:</p>
-                <p className={styles.value}>Claro</p>
-              </div>
-              <div className={styles.infoGroup}>
-                <p className={styles.label}>Idioma:</p>
-                <p className={styles.value}>Português (BR)</p>
-              </div>
-            </div>
-          </CardContent>
-          <CardFooter>
-            <Button variant="outline">
-              Personalizar
-            </Button>
-          </CardFooter>
-        </Card>
+        <AppearanceCard />
 
         {/* Card de Sistema - Apenas para roles específicos */}
         {canManageAgency && (

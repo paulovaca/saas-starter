@@ -316,19 +316,19 @@ export function OperatorDetailsContent({ operator }: OperatorDetailsContentProps
           ) : (
             <div className={styles.itemsGrid}>
               {operator.items.map((item) => (
-                <Card key={item.id}>
-                  <CardHeader>
+                <Card key={item.id} className={styles.compactCard}>
+                  <CardHeader className={styles.compactCardHeader}>
                     <div className={styles.itemHeader}>
                       <CardTitle className={styles.itemTitle}>
                         {item.customName || `Item ${item.catalogItemId.slice(-8)}`}
                       </CardTitle>
                       <div className={styles.itemActions}>
-                        <Badge variant={item.isActive ? 'default' : 'secondary'}>
+                        <Badge 
+                          variant={item.isActive ? 'default' : 'secondary'}
+                          className={`${!item.isActive ? styles.inactiveBadge : styles.activeBadge}`}
+                          key={`${item.id}-${item.isActive}`}
+                        >
                           {item.isActive ? 'Ativo' : 'Inativo'}
-                        </Badge>
-                        <Badge variant="outline">
-                          {item.commissionType === 'percentage' ? 'Percentual' :
-                           item.commissionType === 'fixed' ? 'Valor Fixo' : 'Escalonado'}
                         </Badge>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
@@ -363,12 +363,9 @@ export function OperatorDetailsContent({ operator }: OperatorDetailsContentProps
                       </div>
                     </div>
                   </CardHeader>
-                  <CardContent>
-                    <div className={styles.itemContent}>
-                      <p className={styles.itemCatalogId}>
-                        ID do Catálogo: {item.catalogItemId}
-                      </p>
-                      {item.commissionRules.length > 0 && (
+                  <CardContent className={styles.compactCardContent}>
+                    {item.commissionRules.length > 0 ? (
+                      <div className={styles.itemContent}>
                         <div className={styles.commissionRules}>
                           <p className={styles.commissionRuleTitle}>Regras de Comissão:</p>
                           {item.commissionRules.map((rule) => (
@@ -379,8 +376,14 @@ export function OperatorDetailsContent({ operator }: OperatorDetailsContentProps
                             </div>
                           ))}
                         </div>
-                      )}
-                    </div>
+                      </div>
+                    ) : (
+                      <div className={styles.emptyCommissionRules}>
+                        <p className={styles.emptyCommissionText}>
+                          Nenhuma regra de comissão configurada
+                        </p>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               ))}
@@ -487,6 +490,7 @@ export function OperatorDetailsContent({ operator }: OperatorDetailsContentProps
         isOpen={isEditItemModalOpen}
         onClose={() => setIsEditItemModalOpen(false)}
         item={editingItem}
+        operatorId={operator.id}
         onSuccess={() => router.refresh()}
       />
 

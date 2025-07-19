@@ -121,7 +121,7 @@ export function CreateCommissionRuleModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={() => {}}>
-      <DialogContent className={`sm:max-w-[600px] max-h-[90vh] overflow-y-auto ${styles.modal}`}>
+      <DialogContent className={styles.modal}>
         <DialogHeader>
           <DialogTitle>Nova Regra de Comissão</DialogTitle>
         </DialogHeader>

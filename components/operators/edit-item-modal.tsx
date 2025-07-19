@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { 
   Dialog, 
@@ -11,43 +11,53 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
 import { Loader2 } from 'lucide-react';
+import { updateOperatorItem } from '@/lib/actions/operators/update-operator-item';
 import styles from './edit-item-modal.module.css';
 
 interface EditItemModalProps {
   isOpen: boolean;
   onClose: () => void;
   item: any;
+  operatorId: string;
   onSuccess: () => void;
 }
 
-export function EditItemModal({ isOpen, onClose, item, onSuccess }: EditItemModalProps) {
+export function EditItemModal({ isOpen, onClose, item, operatorId, onSuccess }: EditItemModalProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
-    customName: item?.customName || '',
+    customName: '',
   });
+
+  // Update form data when item changes
+  useEffect(() => {
+    if (item) {
+      setFormData({
+        customName: item.customName || '',
+      });
+    }
+  }, [item]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
-      // Aqui você implementará a action para atualizar o item
-      // Por enquanto, apenas simula o processo
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const result = await updateOperatorItem({
+        operatorItemId: item.id,
+        operatorId: operatorId,
+        customName: formData.customName.trim() || undefined,
+      });
       
-      toast.success('Item atualizado com sucesso!');
-      onSuccess();
-      onClose();
+      if (result.success) {
+        toast.success(result.message);
+        onSuccess();
+        onClose();
+      } else {
+        toast.error(result.error);
+      }
     } catch (error) {
+      console.error('Error updating operator item:', error);
       toast.error('Erro ao atualizar item');
     } finally {
       setIsLoading(false);
@@ -56,7 +66,7 @@ export function EditItemModal({ isOpen, onClose, item, onSuccess }: EditItemModa
 
   return (
     <Dialog open={isOpen} onOpenChange={() => {}}>
-      <DialogContent className={`sm:max-w-[500px] ${styles.modal}`}>
+      <DialogContent className={styles.modal}>
         <DialogHeader>
           <DialogTitle>Editar Item da Operadora</DialogTitle>
         </DialogHeader>

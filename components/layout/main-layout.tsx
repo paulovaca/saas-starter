@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useState, Suspense } from 'react';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
+import { ToastProvider } from '@/components/ui/toast';
 import { 
   CircleIcon, 
   Home, 
@@ -156,13 +157,13 @@ function UserMenu() {
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className={styles.dropdownContent}>
-        <DropdownMenuItem className={styles.dropdownItem}>
+        <DropdownMenuItem className={styles.dropdownItem} onClick={() => setIsMenuOpen(false)}>
           <Link href="/profile" className={styles.dropdownLink}>
             <User className={styles.dropdownIcon} />
             <span>Meu Perfil</span>
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem className={styles.dropdownItem}>
+        <DropdownMenuItem className={styles.dropdownItem} onClick={() => setIsMenuOpen(false)}>
           <Link href="/settings" className={styles.dropdownLink}>
             <Settings className={styles.dropdownIcon} />
             <span>Configurações</span>
@@ -329,16 +330,18 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
   };
 
   return (
-    <div className={styles.layoutContainer}>
-      <Sidebar isOpen={sidebarOpen} onToggle={toggleSidebar} />
-      
-      <div className={styles.mainContent}>
-        <Header onMenuToggle={toggleSidebar} />
+    <ToastProvider>
+      <div className={styles.layoutContainer}>
+        <Sidebar isOpen={sidebarOpen} onToggle={toggleSidebar} />
         
-        <main className={styles.pageContent}>
-          {children}
-        </main>
+        <div className={styles.mainContent}>
+          <Header onMenuToggle={toggleSidebar} />
+          
+          <main className={styles.pageContent}>
+            {children}
+          </main>
+        </div>
       </div>
-    </div>
+    </ToastProvider>
   );
 }

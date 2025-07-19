@@ -31,6 +31,31 @@ export function UserFormModal({ children, user, currentUserRole, onSuccess }: Us
   const isEditing = !!user;
   const schema = isEditing ? updateUserSchema : createUserSchema;
 
+  // LIMPAR qualquer cache de formulário no localStorage/sessionStorage
+  useEffect(() => {
+    // Limpar qualquer cache relacionado a formulários de usuário
+    if (typeof window !== 'undefined') {
+      const keysToRemove = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && (key.includes('user-form') || key.includes('react-hook-form'))) {
+          keysToRemove.push(key);
+        }
+      }
+      keysToRemove.forEach(key => localStorage.removeItem(key));
+      
+      // Fazer o mesmo para sessionStorage
+      const sessionKeysToRemove = [];
+      for (let i = 0; i < sessionStorage.length; i++) {
+        const key = sessionStorage.key(i);
+        if (key && (key.includes('user-form') || key.includes('react-hook-form'))) {
+          sessionKeysToRemove.push(key);
+        }
+      }
+      sessionKeysToRemove.forEach(key => sessionStorage.removeItem(key));
+    }
+  }, []);
+
   // Definir quais roles o usuário atual pode criar
   const getAvailableRoles = () => {
     switch (currentUserRole) {
@@ -82,12 +107,9 @@ export function UserFormModal({ children, user, currentUserRole, onSuccess }: Us
   };
 
   // Estado para valor do telefone formatado
-  const [phoneValue, setPhoneValue] = useState(() => {
-    const initialPhone = isEditing ? (user.phone || '') : '';
-    return formatPhone(initialPhone);
-  });
+  const [phoneValue, setPhoneValue] = useState('');
   
-  // Usar formulário sem tipagem estrita para evitar conflitos
+  // Usar formulário sem qualquer valor padrão para evitar cache
   const {
     register,
     handleSubmit,
@@ -95,32 +117,67 @@ export function UserFormModal({ children, user, currentUserRole, onSuccess }: Us
     reset,
     watch,
     setValue,
+    setError: setFormError,
   } = useForm({
-    defaultValues: isEditing ? {
-      name: user.name,
-      email: user.email,
-      phone: user.phone || '',
-      role: user.role,
-      isActive: user.isActive,
-    } : {
-      name: '',
-      email: '',
-      phone: '',
-      password: '',
-      confirmPassword: '',
-      role: 'AGENT',
-      isActive: true,
-    },
+    // SEM defaultValues para evitar qualquer cache ou persistência
   });
 
-  // Atualizar valor do telefone quando o usuário mudar (para edição)
+  // FORÇAR reset completo a cada abertura do modal
   useEffect(() => {
-    if (isEditing && user?.phone) {
-      const formatted = formatPhone(user.phone);
-      setPhoneValue(formatted);
-      setValue('phone', user.phone);
+    if (isOpen) {
+      // SEMPRE resetar primeiro para limpar qualquer estado anterior
+      reset({
+        name: '',
+        email: '',
+        phone: '',
+        password: '',
+        confirmPassword: '',
+        role: 'AGENT',
+        isActive: true,
+      });
+      
+      // Limpar estados locais
+      setPhoneValue('');
+      setAvatarPreview(null);
+      setError(null);
+      
+      // SE estiver editando, então preencher (mas sempre começar vazio)
+      if (isEditing && user) {
+        // Usar setTimeout para garantir que o reset aconteça primeiro
+        setTimeout(() => {
+          reset({
+            name: user.name,
+            email: user.email,
+            phone: user.phone || '',
+            role: user.role,
+            isActive: user.isActive,
+          });
+          
+          const formatted = formatPhone(user.phone || '');
+          setPhoneValue(formatted);
+          setAvatarPreview(user.avatar || null);
+        }, 0);
+      }
     }
-  }, [isEditing, user?.phone, setValue]);
+  }, [isOpen, isEditing, user, reset]);
+
+  // FORÇAR limpeza quando o modal fecha
+  useEffect(() => {
+    if (!isOpen) {
+      reset({
+        name: '',
+        email: '',
+        phone: '',
+        password: '',
+        confirmPassword: '',
+        role: 'AGENT',
+        isActive: true,
+      });
+      setPhoneValue('');
+      setAvatarPreview(null);
+      setError(null);
+    }
+  }, [isOpen, reset]);
 
   // Registrar campo phone manualmente para funcionar com formatação
   useEffect(() => {
@@ -137,7 +194,8 @@ export function UserFormModal({ children, user, currentUserRole, onSuccess }: Us
     setValue('phone', numbersOnly);
   };
 
-  const password = watch('password') as string;
+  const password = watch('password') || '';
+  const confirmPassword = watch('confirmPassword') || '';
 
   const getPasswordStrength = (password: string) => {
     if (!password) return { strength: 0, label: '' };
@@ -169,6 +227,49 @@ export function UserFormModal({ children, user, currentUserRole, onSuccess }: Us
   const onSubmit = async (data: any) => {
     setError(null);
     
+    // Validação manual para senhas (quando criando usuário)
+    if (!isEditing) {
+      if (!data.password) {
+        setError('A senha é obrigatória.');
+        return;
+      }
+      
+      if (data.password.length < 8) {
+        setError('A senha deve ter pelo menos 8 caracteres.');
+        return;
+      }
+      
+      if (!/[a-z]/.test(data.password)) {
+        setError('A senha deve conter pelo menos uma letra minúscula.');
+        return;
+      }
+      
+      if (!/[A-Z]/.test(data.password)) {
+        setError('A senha deve conter pelo menos uma letra maiúscula.');
+        return;
+      }
+      
+      if (!/\d/.test(data.password)) {
+        setError('A senha deve conter pelo menos um número.');
+        return;
+      }
+      
+      if (!/[!@#$%^&*(),.?":{}|<>]/.test(data.password)) {
+        setError('A senha deve conter pelo menos um caractere especial (!@#$%^&*(),.?":{}|<>).');
+        return;
+      }
+      
+      if (!data.confirmPassword) {
+        setError('A confirmação da senha é obrigatória.');
+        return;
+      }
+      
+      if (data.password !== data.confirmPassword) {
+        setError('As senhas não coincidem. Verifique se digitou corretamente nos dois campos.');
+        return;
+      }
+    }
+    
     startTransition(async () => {
       try {
         let result;
@@ -185,20 +286,63 @@ export function UserFormModal({ children, user, currentUserRole, onSuccess }: Us
         }
 
         setIsOpen(false);
-        reset();
+        
+        // Limpar formulário após sucesso
+        if (isEditing) {
+          // Para edição, resetar com dados atualizados se necessário
+          reset();
+        } else {
+          // Para criação, limpar completamente
+          reset({
+            name: '',
+            email: '',
+            phone: '',
+            password: '',
+            confirmPassword: '',
+            role: 'AGENT',
+            isActive: true,
+          });
+        }
+        
         setAvatarPreview(null);
+        setPhoneValue('');
+        setError(null);
         onSuccess?.();
       } catch (error) {
-        setError('Erro inesperado. Tente novamente.');
+        setError('Erro inesperado. Verifique os dados e tente novamente.');
       }
     });
   };
 
   const handleClose = () => {
     setIsOpen(false);
-    reset();
     setError(null);
-    setAvatarPreview(user?.avatar || null);
+    
+    if (isEditing) {
+      // Para edição, resetar com os dados originais do usuário
+      reset({
+        name: user.name,
+        email: user.email,
+        phone: user.phone || '',
+        role: user.role,
+        isActive: user.isActive,
+      });
+      setAvatarPreview(user?.avatar || null);
+      setPhoneValue(user?.phone ? formatPhone(user.phone) : '');
+    } else {
+      // Para criação, resetar com valores vazios
+      reset({
+        name: '',
+        email: '',
+        phone: '',
+        password: '',
+        confirmPassword: '',
+        role: 'AGENT',
+        isActive: true,
+      });
+      setAvatarPreview(null);
+      setPhoneValue('');
+    }
   };
 
   // Permitir fechar o modal com a tecla ESC
@@ -243,13 +387,38 @@ export function UserFormModal({ children, user, currentUserRole, onSuccess }: Us
               </button>
             </div>
 
-            <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
-              {error && (
-                <div className={styles.error}>
-                  {error}
-                </div>
-              )}
-
+            <form 
+              onSubmit={handleSubmit(onSubmit)} 
+              className={styles.form}
+              autoComplete="off"
+              noValidate
+            >
+              {/* Campo oculto para confundir o autocomplete */}
+              <input
+                type="email"
+                autoComplete="email"
+                style={{
+                  opacity: 0,
+                  position: 'absolute',
+                  left: '-9999px',
+                  width: '1px',
+                  height: '1px'
+                }}
+                tabIndex={-1}
+              />
+              <input
+                type="password"
+                autoComplete="current-password"
+                style={{
+                  opacity: 0,
+                  position: 'absolute',
+                  left: '-9999px',
+                  width: '1px',
+                  height: '1px'
+                }}
+                tabIndex={-1}
+              />
+              
               {/* Avatar Upload */}
               <div className={styles.avatarSection}>
                 <Label htmlFor="avatar" className={styles.avatarLabel}>
@@ -306,6 +475,12 @@ export function UserFormModal({ children, user, currentUserRole, onSuccess }: Us
                   {...register('email')}
                   placeholder="usuario@exemplo.com"
                   className={errors.email ? styles.inputError : styles.input}
+                  autoComplete="new-email"
+                  autoCorrect="off"
+                  autoCapitalize="off"
+                  spellCheck={false}
+                  data-form-type="other"
+                  data-lpignore="true"
                 />
                 {errors.email && (
                   <span className={styles.fieldError}>{errors.email.message}</span>
@@ -367,7 +542,13 @@ export function UserFormModal({ children, user, currentUserRole, onSuccess }: Us
                         type={showPassword ? 'text' : 'password'}
                         {...register('password')}
                         placeholder="Digite uma senha forte"
-                        className={errors.password ? styles.inputError : styles.input}
+                        className={password && password !== confirmPassword && confirmPassword ? styles.inputError : styles.input}
+                        autoComplete="new-password"
+                        autoCorrect="off"
+                        autoCapitalize="off"
+                        spellCheck={false}
+                        data-form-type="other"
+                        data-lpignore="true"
                       />
                       <button
                         type="button"
@@ -405,7 +586,13 @@ export function UserFormModal({ children, user, currentUserRole, onSuccess }: Us
                         type={showConfirmPassword ? 'text' : 'password'}
                         {...register('confirmPassword')}
                         placeholder="Confirme a senha"
-                        className={errors.confirmPassword ? styles.inputError : styles.input}
+                        className={password && password !== confirmPassword && confirmPassword ? styles.inputError : styles.input}
+                        autoComplete="new-password"
+                        autoCorrect="off"
+                        autoCapitalize="off"
+                        spellCheck={false}
+                        data-form-type="other"
+                        data-lpignore="true"
                       />
                       <button
                         type="button"
@@ -415,8 +602,8 @@ export function UserFormModal({ children, user, currentUserRole, onSuccess }: Us
                         {showConfirmPassword ? <EyeOff /> : <Eye />}
                       </button>
                     </div>
-                    {errors.confirmPassword && (
-                      <span className={styles.fieldError}>{errors.confirmPassword.message}</span>
+                    {password && password !== confirmPassword && confirmPassword && (
+                      <span className={styles.fieldError}>As senhas não coincidem</span>
                     )}
                   </div>
                 </>
@@ -435,29 +622,36 @@ export function UserFormModal({ children, user, currentUserRole, onSuccess }: Us
               </div>
 
               <div className={styles.actions}>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={handleClose}
-                  disabled={isPending}
-                  className={styles.cancelButton}
-                >
-                  Cancelar
-                </Button>
-                <Button
-                  type="submit"
-                  disabled={isPending}
-                  className={styles.submitButton}
-                >
-                  {isPending ? (
-                    <>
-                      <div className={styles.spinner} />
-                      {isEditing ? 'Salvando...' : 'Criando...'}
-                    </>
-                  ) : (
-                    isEditing ? 'Salvar Alterações' : 'Criar Usuário'
-                  )}
-                </Button>
+                {error && (
+                  <div className={styles.error}>
+                    {error}
+                  </div>
+                )}
+                <div className={styles.buttonsContainer}>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleClose}
+                    disabled={isPending}
+                    className={styles.cancelButton}
+                  >
+                    Cancelar
+                  </Button>
+                  <Button
+                    type="submit"
+                    disabled={isPending}
+                    className={styles.submitButton}
+                  >
+                    {isPending ? (
+                      <>
+                        <div className={styles.spinner} />
+                        {isEditing ? 'Salvando...' : 'Criando...'}
+                      </>
+                    ) : (
+                      isEditing ? 'Salvar Alterações' : 'Criar Usuário'
+                    )}
+                  </Button>
+                </div>
               </div>
             </form>
           </div>

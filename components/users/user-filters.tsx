@@ -65,24 +65,35 @@ export function UserFilters({ defaultSearch, defaultRole, defaultStatus }: UserF
 
   const hasFilters = search || role || status;
 
-  const handleSearchKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      updateFilters();
-    }
-  };
-
   return (
     <div className={styles.filters}>
       <div className={styles.searchContainer}>
-        <Search className={styles.searchIcon} />
-        <Input
-          placeholder="Buscar por nome ou email..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          onKeyPress={handleSearchKeyPress}
-          className={styles.searchInput}
-          disabled={isPending}
-        />
+        <div className={styles.searchInputWrapper}>
+          <Search className={styles.searchIcon} />
+          <Input 
+            placeholder="Buscar por nome ou email..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className={styles.searchInput}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                updateFilters();
+              }
+            }}
+            disabled={isPending}
+          />
+          {search && (
+            <button
+              className={styles.clearButton}
+              onClick={() => {
+                setSearch('');
+                updateFilters();
+              }}
+            >
+              <X className={styles.clearIcon} size={16} />
+            </button>
+          )}
+        </div>
       </div>
       
       <div className={styles.filterControls}>
@@ -124,9 +135,10 @@ export function UserFilters({ defaultSearch, defaultRole, defaultStatus }: UserF
             onClick={clearFilters}
             className={styles.clearButton}
             disabled={isPending}
+            title="Limpar todos os filtros"
           >
             <X className={styles.buttonIcon} />
-            Limpar
+            Limpar Filtros
           </Button>
         )}
       </div>

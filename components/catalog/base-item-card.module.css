@@ -31,11 +31,30 @@
   min-width: 0;
 }
 
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 8px;
+}
+
 .title {
-  margin: 0 0 8px 0;
+  margin: 0;
   font-size: 1.25rem;
   font-weight: 600;
   color: var(--foreground);
+}
+
+.inactiveBadge {
+  background-color: transparent !important;
+  color: var(--destructive) !important;
+  border: 1px solid var(--destructive) !important;
+  font-weight: 600 !important;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
 }
 
 .titleLink {

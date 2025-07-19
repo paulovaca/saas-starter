@@ -21,7 +21,38 @@ export async function associateItems(data: AssociateItemsInput) {
     }
 
     // Validate input data
-    const validatedData = associateItemsSchema.parse(data);
+    let validatedData;
+    try {
+      validatedData = associateItemsSchema.parse(data);
+    } catch (error) {
+      if (error instanceof Error) {
+        return {
+          success: false,
+          error: `Dados inválidos: ${error.message}`,
+        };
+      }
+      return {
+        success: false,
+        error: 'Dados fornecidos são inválidos.',
+      };
+    }
+
+    // Check for duplicate custom names within the same operator
+    if (validatedData.customName && validatedData.customName.trim()) {
+      const existingItems = await db
+        .select()
+        .from(operatorItems)
+        .where(
+          and(
+            eq(operatorItems.operatorId, validatedData.operatorId),
+            eq(operatorItems.customName, validatedData.customName.trim())
+          )
+        );
+
+      if (existingItems.length > 0) {
+        throw new Error(`Já existe um item com o nome "${validatedData.customName}" associado a esta operadora.`);
+      }
+    }
 
     // Create association (permitindo múltiplas associações do mesmo item com regras diferentes)
     const [newAssociation] = await db
@@ -41,6 +72,17 @@ export async function associateItems(data: AssociateItemsInput) {
   } catch (error) {
     console.error('Error associating item:', error);
     
+    // Handle Zod validation errors
+    if (error && typeof error === 'object' && 'issues' in error) {
+      const zodError = error as any;
+      const errorMessage = zodError.issues?.[0]?.message || 'Dados inválidos';
+      return {
+        success: false,
+        error: errorMessage,
+      };
+    }
+    
+    // Handle regular errors
     if (error instanceof Error) {
       return {
         success: false,
