@@ -1,0 +1,396 @@
+.modal {
+  max-width: 600px;
+  width: 100%;
+}
+
+.title {
+  color: var(--text-primary);
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1rem 0;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.sectionTitle {
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.clientInfo {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+}
+
+.infoRow:not(:last-child) {
+  border-bottom: 1px solid var(--border-light);
+}
+
+.infoLabel {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.infoValue {
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.labelIcon {
+  width: 16px;
+  height: 16px;
+  color: var(--text-muted);
+}
+
+.select {
+  min-height: 44px;
+}
+
+.noUsers {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  padding: 1rem;
+  text-align: center;
+}
+
+.userOption {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.5rem 0;
+}
+
+.userName {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.userEmail {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.userRole {
+  color: var(--primary);
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.error {
+  color: var(--error);
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.charCount {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  text-align: right;
+  margin-top: 0.25rem;
+}
+
+.checkboxField {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: var(--muted);
+  border-radius: 8px;
+}
+
+.checkbox {
+  width: 18px;
+  height: 18px;
+}
+
+.checkboxLabel {
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-light);
+  margin-top: 1rem;
+}
+
+.cancelButton {
+  min-width: 100px;
+}
+
+.submitButton {
+  min-width: 120px;
+  background: var(--primary);
+  color: white;
+}
+
+.submitButton:hover {
+  background: var(--primary-hover);
+}
+
+.submitButton:disabled {
+  background: var(--muted);
+  color: var(--text-muted);
+}
+
+/* Confirmation Step */
+.confirmation {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 2rem 1rem;
+  text-align: center;
+}
+
+.confirmationIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  background: var(--warning-light);
+  border-radius: 50%;
+}
+
+.warningIcon {
+  width: 32px;
+  height: 32px;
+  color: var(--warning);
+}
+
+.confirmationTitle {
+  color: var(--text-primary);
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.confirmationText {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.transferPreview {
+  width: 100%;
+  max-width: 400px;
+}
+
+.transferCard {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+}
+
+.transferFrom,
+.transferTo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.transferLabel {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.userCard {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.userCardName {
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.userCardEmail {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+.transferArrow {
+  width: 24px;
+  height: 24px;
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.reasonPreview {
+  width: 100%;
+  max-width: 400px;
+  padding: 1rem;
+  background: var(--muted);
+  border-radius: 8px;
+  text-align: left;
+}
+
+.reasonLabel {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.reasonText {
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  margin: 0.5rem 0 0 0;
+  line-height: 1.4;
+}
+
+.notificationInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--success);
+  font-size: 0.875rem;
+}
+
+.notificationIcon {
+  width: 16px;
+  height: 16px;
+}
+
+.confirmButton {
+  min-width: 150px;
+  background: var(--warning);
+  color: white;
+}
+
+.confirmButton:hover {
+  background: var(--warning-hover);
+}
+
+.confirmButton:disabled {
+  background: var(--muted);
+  color: var(--text-muted);
+}
+
+/* Success Step */
+.success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 2rem 1rem;
+  text-align: center;
+}
+
+.successIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  background: var(--success-light);
+  border-radius: 50%;
+}
+
+.checkIcon {
+  width: 32px;
+  height: 32px;
+  color: var(--success);
+}
+
+.successTitle {
+  color: var(--text-primary);
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.successText {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.successNotification {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .modal {
+    max-width: 100%;
+    margin: 0;
+  }
+  
+  .transferCard {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .transferArrow {
+    transform: rotate(90deg);
+  }
+  
+  .footer {
+    flex-direction: column-reverse;
+    gap: 0.5rem;
+  }
+  
+  .cancelButton,
+  .submitButton,
+  .confirmButton {
+    width: 100%;
+  }
+}

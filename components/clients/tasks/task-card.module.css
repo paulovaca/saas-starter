@@ -1,0 +1,327 @@
+/* Task Card Styles */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: all 0.2s ease;
+  height: fit-content;
+}
+
+.card:hover {
+  border-color: var(--ring);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.compact {
+  border-radius: 0.375rem;
+}
+
+.overdue {
+  border-color: var(--destructive);
+  background: var(--destructive-bg, var(--card));
+}
+
+.header {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.headerLeft {
+  flex: 1;
+  min-width: 0;
+}
+
+.headerRight {
+  flex-shrink: 0;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--foreground);
+  margin: 0;
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+.overdueIcon {
+  font-size: 0.875rem;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+}
+
+.badges {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.statusBadge,
+.priorityBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.125rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: 1px solid transparent;
+}
+
+.badgeIcon {
+  font-size: 0.75rem;
+}
+
+/* Status colors */
+.statusgray {
+  background: var(--muted);
+  color: var(--muted-foreground);
+  border-color: var(--border);
+}
+
+.statusblue {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.statusgreen {
+  background: var(--success);
+  color: white;
+}
+
+.statusred {
+  background: var(--destructive);
+  color: white;
+}
+
+/* Priority colors */
+.prioritygreen {
+  background: var(--success);
+  color: white;
+}
+
+.priorityyellow {
+  background: var(--warning);
+  color: black;
+}
+
+.priorityred {
+  background: var(--destructive);
+  color: white;
+}
+
+.actions {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.actionButton {
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid var(--border);
+  background: var(--background);
+  color: var(--foreground);
+  border-radius: 0.375rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.875rem;
+}
+
+.actionButton:hover {
+  background: var(--muted);
+  border-color: var(--ring);
+}
+
+.actionButton:active {
+  transform: scale(0.95);
+}
+
+.editButton:hover {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-color: var(--primary);
+}
+
+.deleteButton:hover {
+  background: var(--destructive);
+  color: var(--destructive-foreground);
+  border-color: var(--destructive);
+}
+
+.content {
+  padding: 1rem;
+}
+
+.description {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  line-height: 1.5;
+  margin: 0 0 1rem 0;
+  word-break: break-word;
+}
+
+.metadata {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.metadataItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.metadataIcon {
+  font-size: 0.875rem;
+  width: 1rem;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.metadataLabel {
+  color: var(--muted-foreground);
+  font-weight: 500;
+  min-width: fit-content;
+}
+
+.metadataValue {
+  color: var(--foreground);
+  word-break: break-word;
+}
+
+.overdueText {
+  color: var(--destructive);
+  font-weight: 600;
+}
+
+.footer {
+  padding: 0.75rem 1rem;
+  border-top: 1px solid var(--border);
+  background: var(--muted);
+}
+
+.statusActions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.statusLabel {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+  font-weight: 500;
+}
+
+.statusButtons {
+  display: flex;
+  gap: 0.375rem;
+  flex-wrap: wrap;
+}
+
+.statusButton {
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid var(--border);
+  background: var(--background);
+  border-radius: 0.375rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 1rem;
+}
+
+.statusButton:hover:not(:disabled) {
+  background: var(--muted);
+  border-color: var(--ring);
+  transform: scale(1.05);
+}
+
+.statusButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.activeStatus {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-color: var(--primary);
+}
+
+/* Compact mode adjustments */
+.compact .header {
+  padding: 0.75rem;
+}
+
+.compact .title {
+  font-size: 0.875rem;
+}
+
+.compact .badges {
+  gap: 0.25rem;
+}
+
+.compact .statusBadge,
+.compact .priorityBadge {
+  padding: 0.125rem 0.375rem;
+  font-size: 0.625rem;
+}
+
+.compact .actions {
+  gap: 0.125rem;
+}
+
+.compact .actionButton {
+  width: 1.5rem;
+  height: 1.5rem;
+  font-size: 0.75rem;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .titleRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .headerRight {
+    align-self: flex-end;
+  }
+
+  .statusButtons {
+    justify-content: center;
+  }
+
+  .metadata {
+    gap: 0.375rem;
+  }
+
+  .metadataItem {
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+}

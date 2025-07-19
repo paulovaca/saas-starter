@@ -1,0 +1,242 @@
+/* Interaction Form Styles */
+.container {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.header {
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1rem;
+}
+
+.title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--foreground);
+  margin: 0 0 0.5rem 0;
+}
+
+.subtitle {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  margin: 0;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--foreground);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.labelIcon {
+  width: 1rem;
+  height: 1rem;
+  color: var(--muted-foreground);
+}
+
+.select {
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.selectItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.selectIcon {
+  font-size: 1rem;
+}
+
+.input {
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  color: var(--foreground);
+  transition: border-color 0.2s;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px var(--ring);
+}
+
+.textarea {
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.75rem;
+  font-size: 0.875rem;
+  color: var(--foreground);
+  resize: vertical;
+  min-height: 5rem;
+  transition: border-color 0.2s;
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px var(--ring);
+}
+
+.dateTimeContainer {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1rem;
+  align-items: end;
+}
+
+.dateButton {
+  width: 100%;
+  justify-content: flex-start;
+  background: var(--background);
+  border: 1px solid var(--border);
+  color: var(--foreground);
+}
+
+.datePlaceholder {
+  color: var(--muted-foreground);
+}
+
+.dateIcon {
+  width: 1rem;
+  height: 1rem;
+  margin-right: 0.5rem;
+}
+
+.calendarPopover {
+  width: auto;
+  padding: 0;
+}
+
+.timeContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.timeInputs {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.timeInput {
+  width: 3rem;
+  text-align: center;
+  padding: 0.5rem 0.25rem;
+}
+
+.timeSeparator {
+  font-weight: 600;
+  color: var(--foreground);
+  font-size: 1.125rem;
+}
+
+.error {
+  font-size: 0.75rem;
+  color: var(--destructive);
+  margin-top: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.cancelButton {
+  background: var(--secondary);
+  color: var(--secondary-foreground);
+  border: 1px solid var(--border);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cancelButton:hover {
+  background: var(--muted);
+}
+
+.cancelButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.submitButton {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border: 1px solid var(--primary);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.submitButton:hover {
+  background: var(--primary);
+  opacity: 0.9;
+}
+
+.submitButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+  
+  .dateTimeContainer {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .actions {
+    flex-direction: column-reverse;
+    gap: 0.5rem;
+  }
+  
+  .cancelButton,
+  .submitButton {
+    width: 100%;
+    justify-content: center;
+  }
+}

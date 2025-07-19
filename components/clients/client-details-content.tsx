@@ -26,6 +26,10 @@ import {
 import { formatCPF, formatCNPJ, formatPhone } from '@/lib/validations/clients/client.schema';
 import { Client } from '@/lib/types/clients';
 import ClientFunnelStageEditor from './client-funnel-stage-editor';
+import { InteractionForm } from './interactions/interaction-form';
+import { TaskForm } from './tasks/task-form';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import type { InteractionFormInput, TaskFormInput } from '@/lib/validations/clients';
 import styles from './client-details-content.module.css';
 
 interface ClientDetailsContentProps {
@@ -33,6 +37,29 @@ interface ClientDetailsContentProps {
 }
 
 interface ClientWithDetails extends Client {
+  // Relacionamentos obrigatórios
+  user: {
+    id: string;
+    name: string;
+    email: string;
+  };
+  funnel: {
+    id: string;
+    name: string;
+  };
+  funnelStage: {
+    id: string;
+    name: string;
+    color: string;
+    order: number;
+  };
+  
+  // Dados computados
+  totalProposals: number;
+  totalValue: number;
+  lastInteraction?: Date;
+  
+  // Arrays de relacionamentos
   interactions: Array<{
     id: string;
     type: 'call' | 'email' | 'whatsapp' | 'meeting' | 'note';
@@ -86,43 +113,49 @@ export default function ClientDetailsContent({ clientId }: ClientDetailsContentP
   const [client, setClient] = useState<ClientWithDetails | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
+  
+  // Estados para modais
+  const [showInteractionModal, setShowInteractionModal] = useState(false);
+  const [showTaskModal, setShowTaskModal] = useState(false);
+  const [isSubmittingInteraction, setIsSubmittingInteraction] = useState(false);
+  const [isSubmittingTask, setIsSubmittingTask] = useState(false);
 
   // Buscar dados do cliente
-  useEffect(() => {
-    const fetchClient = async () => {
-      setIsLoading(true);
-      try {
-        const response = await fetch(`/api/clients/${clientId}`);
-        
-        if (!response.ok) {
-          if (response.status === 404) {
-            router.push('/clients?error=cliente-nao-encontrado');
-            return;
-          }
-          throw new Error('Erro ao buscar cliente');
+  const fetchClient = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(`/api/clients/${clientId}`);
+      
+      if (!response.ok) {
+        if (response.status === 404) {
+          router.push('/clients?error=cliente-nao-encontrado');
+          return;
         }
-
-        const clientData = await response.json();
-        
-        // Transformar dados para incluir relacionamentos mockados
-        // TODO: Implementar busca real de interações, tarefas, propostas e transferências
-        const transformedClient: ClientWithDetails = {
-          ...clientData,
-          interactions: [], // Será implementado
-          tasks: [], // Será implementado
-          proposals: [], // Será implementado
-          transfers: [] // Será implementado
-        };
-
-        setClient(transformedClient);
-      } catch (error) {
-        console.error('Erro ao buscar cliente:', error);
-        router.push('/clients?error=erro-ao-carregar-cliente');
-      } finally {
-        setIsLoading(false);
+        throw new Error('Erro ao buscar cliente');
       }
-    };
 
+      const clientData = await response.json();
+      
+      // Transformar dados para incluir relacionamentos mockados
+      // TODO: Implementar busca real de interações, tarefas, propostas e transferências
+      const transformedClient: ClientWithDetails = {
+        ...clientData,
+        interactions: [], // Será implementado
+        tasks: [], // Será implementado
+        proposals: [], // Será implementado
+        transfers: [] // Será implementado
+      };
+
+      setClient(transformedClient);
+    } catch (error) {
+      console.error('Erro ao buscar cliente:', error);
+      router.push('/clients?error=erro-ao-carregar-cliente');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
     if (clientId) {
       fetchClient();
     }
@@ -134,13 +167,65 @@ export default function ClientDetailsContent({ clientId }: ClientDetailsContentP
   };
 
   const handleNewInteraction = () => {
-    // Implementar modal ou página de nova interação
-    console.log('Nova interação');
+    setShowInteractionModal(true);
   };
 
   const handleNewTask = () => {
-    // Implementar modal ou página de nova tarefa
-    console.log('Nova tarefa');
+    setShowTaskModal(true);
+  };
+
+  const handleInteractionSubmit = async (data: InteractionFormInput & { clientId: string }) => {
+    setIsSubmittingInteraction(true);
+    try {
+      const response = await fetch('/api/interactions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        throw new Error('Erro ao criar interação');
+      }
+
+      // Recarregar dados do cliente
+      await fetchClient();
+      setShowInteractionModal(false);
+      setActiveTab('interactions'); // Navegar para a aba de interações
+    } catch (error) {
+      console.error('Erro ao criar interação:', error);
+      // TODO: Mostrar notificação de erro
+    } finally {
+      setIsSubmittingInteraction(false);
+    }
+  };
+
+  const handleTaskSubmit = async (data: TaskFormInput & { clientId: string }) => {
+    setIsSubmittingTask(true);
+    try {
+      const response = await fetch('/api/tasks', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        throw new Error('Erro ao criar tarefa');
+      }
+
+      // Recarregar dados do cliente
+      await fetchClient();
+      setShowTaskModal(false);
+      setActiveTab('tasks'); // Navegar para a aba de tarefas
+    } catch (error) {
+      console.error('Erro ao criar tarefa:', error);
+      // TODO: Mostrar notificação de erro
+    } finally {
+      setIsSubmittingTask(false);
+    }
   };
 
   const handleNewProposal = () => {
@@ -635,6 +720,42 @@ export default function ClientDetailsContent({ clientId }: ClientDetailsContentP
           </Tabs>
         </div>
       </div>
+
+      {/* Modal de Nova Interação */}
+      <Dialog open={showInteractionModal} onOpenChange={setShowInteractionModal}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Nova Interação - {client?.name}</DialogTitle>
+          </DialogHeader>
+          <InteractionForm
+            clientId={clientId}
+            onSubmit={handleInteractionSubmit}
+            onCancel={() => setShowInteractionModal(false)}
+            isLoading={isSubmittingInteraction}
+          />
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal de Nova Tarefa */}
+      <Dialog open={showTaskModal} onOpenChange={setShowTaskModal}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Nova Tarefa - {client?.name}</DialogTitle>
+          </DialogHeader>
+          <TaskForm
+            clientId={clientId}
+            users={[
+              { id: '1', name: 'João Silva', email: 'joao@example.com' },
+              { id: '2', name: 'Maria Santos', email: 'maria@example.com' },
+            ]} // TODO: Buscar lista real de usuários
+            currentUserId="1" // TODO: Buscar usuário atual
+            isAdmin={true} // TODO: Verificar se é admin
+            onSubmit={handleTaskSubmit}
+            onCancel={() => setShowTaskModal(false)}
+            isLoading={isSubmittingTask}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
