@@ -18,6 +18,7 @@ import { formatCPF, formatCNPJ, formatPhone } from '@/lib/validations/clients/cl
 import { useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
 import { usePermissions } from '@/hooks/use-permissions';
+import { SearchFilters } from '@/components/shared/search-filters';
 import Link from 'next/link';
 import styles from '../../app/(dashboard)/clients/clients.module.css';
 import pageStyles from './clients-page-content.module.css';
@@ -277,98 +278,58 @@ export default function ClientsPageContent({ searchParams }: ClientsPageContentP
     </div>
   );
 
-  // Render dos filtros (estilo operadoras)
-  const renderFilters = () => (
-    <div className={pageStyles.filtersSection}>
-      <div className={pageStyles.searchContainer}>
-        <div className={pageStyles.searchInputWrapper}>
-          <Search className={pageStyles.searchIcon} />
-          <Input
-            placeholder="Buscar por nome, email, telefone ou documento..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className={pageStyles.searchInput}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                applyFilters();
-              }
-            }}
-          />
-          {searchTerm && (
-            <button
-              className={pageStyles.clearButton}
-              onClick={() => {
-                setSearchTerm('');
-                applyFilters();
-              }}
-            >
-              <X className={pageStyles.clearIcon} size={16} />
-            </button>
-          )}
-        </div>
-        
-        <div className={pageStyles.filterButtons}>
-          <Select value={selectedFunnel} onValueChange={setSelectedFunnel}>
-            <SelectTrigger className={pageStyles.filterSelect}>
-              <div className={pageStyles.selectValue}>
-                {selectedFunnel ? 
-                  filterData.funnels.find(f => f.id === selectedFunnel)?.name || 'Funil não encontrado'
-                  : 'Todos os funis'}
-              </div>
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="">Todos os funis</SelectItem>
-              {filterData.funnels.map((funnel) => (
-                <SelectItem key={funnel.id} value={funnel.id}>
-                  {funnel.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+  // Render dos filtros usando SearchFilters
+  const renderFilters = () => {
+    const dynamicFilters = [
+      {
+        key: 'funnelId',
+        label: 'Todos os funis',
+        options: filterData.funnels.map(funnel => ({
+          value: funnel.id,
+          label: funnel.name
+        })),
+        defaultValue: selectedFunnel
+      },
+      {
+        key: 'funnelStageId',
+        label: 'Todas as etapas',
+        options: filterData.funnelStages
+          .filter(stage => !selectedFunnel || stage.funnelId === selectedFunnel)
+          .map(stage => ({
+            value: stage.id,
+            label: stage.name
+          })),
+        defaultValue: selectedStage
+      }
+    ];
 
-          <Select value={selectedStage} onValueChange={setSelectedStage}>
-            <SelectTrigger className={pageStyles.filterSelect}>
-              <div className={pageStyles.selectValue}>
-                {selectedStage ? 
-                  filterData.funnelStages.find(s => s.id === selectedStage)?.name || 'Etapa não encontrada'
-                  : 'Todas as etapas'}
-              </div>
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="">Todas as etapas</SelectItem>
-              {filterData.funnelStages
-                .filter(stage => !selectedFunnel || stage.funnelId === selectedFunnel)
-                .map((stage) => (
-                  <SelectItem key={stage.id} value={stage.id}>
-                    {stage.name}
-                  </SelectItem>
-                ))}
-            </SelectContent>
-          </Select>
+    // Adicionar filtro de usuário apenas se o usuário tem permissão
+    if (canEditUsers()) {
+      dynamicFilters.push({
+        key: 'userId',
+        label: 'Todos os agentes',
+        options: filterData.users.map(user => ({
+          value: user.id,
+          label: user.name
+        })),
+        defaultValue: selectedUser
+      });
+    }
 
-          {canEditUsers() && (
-            <Select value={selectedUser} onValueChange={setSelectedUser}>
-              <SelectTrigger className={pageStyles.filterSelect}>
-                <div className={pageStyles.selectValue}>
-                  {selectedUser ? 
-                    filterData.users.find(u => u.id === selectedUser)?.name || 'Usuário não encontrado'
-                    : 'Todos os agentes'}
-                </div>
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="">Todos os agentes</SelectItem>
-                {filterData.users.map((user) => (
-                  <SelectItem key={user.id} value={user.id}>
-                    {user.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
-        </div>
-      </div>
-    </div>
-  );
+    return (
+      <SearchFilters
+        searchPlaceholder="Buscar por nome, email, telefone ou documento..."
+        defaultSearch={searchTerm}
+        filters={dynamicFilters}
+        onFiltersChange={(filters) => {
+          setSelectedFunnel(filters.funnelId || '');
+          setSelectedStage(filters.funnelStageId || '');
+          setSelectedUser(filters.userId || '');
+          setSearchTerm(filters.search || '');
+        }}
+      />
+    );
+  };
 
   // Render da visualização em tabela
   const renderTableView = () => (

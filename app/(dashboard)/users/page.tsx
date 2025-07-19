@@ -7,7 +7,8 @@ import { getUsersWithPagination } from '@/lib/actions/users/get-users';
 import { Button } from '@/components/ui/button';
 import { UserTable } from '@/components/users/user-table';
 import { UserFormModal } from '@/components/users/user-form-modal';
-import { UserFilters } from '@/components/users/user-filters';
+import { SearchFilters } from '@/components/shared/search-filters';
+import { userFiltersConfig } from '@/components/shared/search-filters.config';
 import styles from './users.module.css';
 
 type PageProps = {
@@ -60,10 +61,13 @@ export default async function UsersPage({ searchParams }: PageProps) {
       </div>
 
       <div className={styles.content}>
-        <UserFilters
+        <SearchFilters
+          searchPlaceholder={userFiltersConfig.searchPlaceholder}
           defaultSearch={search}
-          defaultRole={role || ''}
-          defaultStatus={status || ''}
+          filters={userFiltersConfig.filters.map(filter => ({
+            ...filter,
+            defaultValue: (params as Record<string, string | undefined>)[filter.key] || ''
+          }))}
         />
 
         <div className={styles.tableContainer}>

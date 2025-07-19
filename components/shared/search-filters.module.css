@@ -1,0 +1,293 @@
+/* Search Filters Component - Reutilizável */
+.filters {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 1.5rem;
+  transition: all 0.2s ease;
+}
+
+@media (min-width: 768px) {
+  .filters {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+/* Search Container */
+.searchContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.searchInputWrapper {
+  position: relative;
+  flex: 1;
+  min-width: 400px;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1rem;
+  height: 1rem;
+  color: var(--muted-foreground);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.clearSearchButton {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--muted-foreground);
+  padding: 0.25rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  z-index: 2;
+}
+
+.clearSearchButton:hover:not(:disabled) {
+  background: var(--muted);
+  color: var(--foreground);
+}
+
+.clearSearchButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.clearIcon {
+  height: 1rem;
+  width: 1rem;
+}
+
+.searchInput {
+  padding-left: 2.75rem;
+  padding-right: 2.25rem;
+  background: var(--background);
+  border: 1px solid var(--border);
+  color: var(--foreground);
+  transition: all 0.2s ease;
+}
+
+.searchInput:focus {
+  border-color: var(--ring);
+  box-shadow: 0 0 0 2px rgb(from var(--ring) r g b / 0.1);
+}
+
+.searchInput:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Filter Controls */
+.filterControls {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.select {
+  padding: 0.5rem 0.75rem;
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 0.875rem;
+  color: var(--foreground);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 150px;
+}
+
+.select:focus {
+  outline: none;
+  border-color: var(--ring);
+  box-shadow: 0 0 0 2px rgb(from var(--ring) r g b / 0.1);
+}
+
+.select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.select option {
+  background: var(--background);
+  color: var(--foreground);
+  padding: 0.5rem;
+}
+
+/* Buttons */
+.filterButton,
+.clearButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: var(--radius);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  cursor: pointer;
+  border: 1px solid;
+}
+
+.filterButton {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-color: var(--primary);
+}
+
+.filterButton:hover:not(:disabled) {
+  background: rgb(from var(--primary) r g b / 0.9);
+  border-color: rgb(from var(--primary) r g b / 0.9);
+}
+
+.filterButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.clearButton {
+  background: var(--background);
+  color: var(--muted-foreground);
+  border-color: var(--border);
+}
+
+.clearButton:hover:not(:disabled) {
+  background: var(--muted);
+  color: var(--foreground);
+  border-color: var(--border);
+}
+
+.clearButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.buttonIcon {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 767px) {
+  .filterControls {
+    width: 100%;
+    justify-content: stretch;
+  }
+  
+  .select {
+    flex: 1;
+    min-width: 0;
+  }
+  
+  .filterButton,
+  .clearButton {
+    flex: 1;
+    justify-content: center;
+  }
+}
+
+/* Loading state */
+.filters[data-loading="true"] {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.filters[data-loading="true"]::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--background);
+  opacity: 0.1;
+  border-radius: var(--radius);
+  pointer-events: none;
+}
+
+/* Animation for filter changes */
+@keyframes filterUpdate {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.filters.updating {
+  animation: filterUpdate 0.3s ease-in-out;
+}
+
+/* Focus states for accessibility */
+.filters:focus-within {
+  box-shadow: 0 0 0 2px rgb(from var(--ring) r g b / 0.1);
+}
+
+/* Dark theme adjustments */
+@media (prefers-color-scheme: dark) {
+  .filters {
+    background: var(--card);
+    border-color: var(--border);
+  }
+  
+  .select,
+  .searchInput {
+    background: var(--background);
+    border-color: var(--border);
+    color: var(--foreground);
+  }
+  
+  .select option {
+    background: var(--background);
+    color: var(--foreground);
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .filters {
+    border-width: 2px;
+  }
+  
+  .select,
+  .searchInput,
+  .filterButton,
+  .clearButton {
+    border-width: 2px;
+  }
+  
+  .filterButton {
+    background: var(--primary);
+    color: var(--primary-foreground);
+  }
+  
+  .clearButton {
+    background: var(--background);
+    color: var(--foreground);
+  }
+}

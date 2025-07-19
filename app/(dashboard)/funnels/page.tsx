@@ -6,6 +6,8 @@ import { Plus, Search, Star, Users, Settings, Copy, Trash2 } from 'lucide-react'
 import { getFunnels, setDefaultFunnel, duplicateFunnel, deleteFunnel } from '@/lib/actions/funnels';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { SearchFilters } from '@/components/shared/search-filters';
+import { funnelFiltersConfig } from '@/components/shared/search-filters.config';
 import CreateFunnelModal from '@/components/funnels/create-funnel-modal';
 import { usePermissions } from '@/hooks/use-permissions';
 import styles from './page.module.css';
@@ -221,39 +223,31 @@ export default function FunnelsPage() {
         </div>
       )}
 
-      <div className={styles.filters}>
-        <div className={styles.searchContainer}>
-          <Search size={20} className={styles.searchIcon} />
-          <Input
-            type="text"
-            placeholder="Buscar funis..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className={styles.searchInput}
-          />
-        </div>
-
-        <div className={styles.filterButtons}>
-          <button
-            className={`${styles.filterButton} ${filterDefault === null ? styles.active : ''}`}
-            onClick={() => setFilterDefault(null)}
-          >
-            Todos
-          </button>
-          <button
-            className={`${styles.filterButton} ${filterDefault === true ? styles.active : ''}`}
-            onClick={() => setFilterDefault(true)}
-          >
-            Padrão
-          </button>
-          <button
-            className={`${styles.filterButton} ${filterDefault === false ? styles.active : ''}`}
-            onClick={() => setFilterDefault(false)}
-          >
-            Personalizados
-          </button>
-        </div>
-      </div>
+      <SearchFilters
+        searchPlaceholder={funnelFiltersConfig.searchPlaceholder}
+        defaultSearch={searchTerm}
+        filters={[
+          {
+            key: 'status',
+            label: 'Todos os funis',
+            options: [
+              { value: 'default', label: 'Padrão' },
+              { value: 'custom', label: 'Personalizado' }
+            ],
+            defaultValue: filterDefault === true ? 'default' : filterDefault === false ? 'custom' : ''
+          }
+        ]}
+        onFiltersChange={(filters) => {
+          setSearchTerm(filters.search || '');
+          if (filters.status === 'default') {
+            setFilterDefault(true);
+          } else if (filters.status === 'custom') {
+            setFilterDefault(false);
+          } else {
+            setFilterDefault(null);
+          }
+        }}
+      />
 
       <div className={styles.content}>
         {filteredFunnels.length === 0 ? (

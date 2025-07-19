@@ -5,6 +5,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { SearchFilters } from '@/components/shared/search-filters';
+import { operatorFiltersConfig } from '@/components/shared/search-filters.config';
 import styles from './operators-page-content.module.css';
 import {
   Select,
@@ -137,71 +139,45 @@ export function OperatorsPageContent({ operators, pagination, filters }: Operato
 
   return (
     <div className={styles.operatorsContainer}>
-      <div className={styles.filtersSection}>
-        <div className={styles.searchContainer}>
-          <div className={styles.searchInputWrapper}>
-            <Search className={styles.searchIcon} />
-            <Input
-              placeholder="Buscar por nome, CNPJ ou contato..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className={styles.searchInput}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  handleSearch();
-                }
-              }}
-            />
-            {searchTerm && (
-              <button
-                className={styles.clearButton}
-                onClick={() => {
-                  setSearchTerm('');
-                  handleSearch();
-                }}
-              >
-                <X className={styles.clearIcon} size={16} />
-              </button>
-            )}
-          </div>
+      <SearchFilters
+        searchPlaceholder={operatorFiltersConfig.searchPlaceholder}
+        defaultSearch={searchTerm}
+        filters={[
+          {
+            key: 'status',
+            label: 'Todos os status',
+            options: [
+              { value: 'active', label: 'Ativas' },
+              { value: 'inactive', label: 'Inativas' }
+            ],
+            defaultValue: activeFilter === 'all' ? '' : activeFilter
+          },
+          {
+            key: 'hasProducts',
+            label: 'Todos os produtos',
+            options: [
+              { value: 'with-products', label: 'Com produtos' },
+              { value: 'without-products', label: 'Sem produtos' }
+            ],
+            defaultValue: productsFilter === 'all' ? '' : productsFilter
+          }
+        ]}
+        onFiltersChange={(filters) => {
+          if (searchTimeout) clearTimeout(searchTimeout);
           
-          <div className={styles.filterButtons}>
-            <Select 
-              value={activeFilter} 
-              onValueChange={(value) => {
-                setActiveFilter(value);
-                handleSearch();
-              }}
-            >
-              <SelectTrigger className={styles.filterSelect}>
-                <SelectValue placeholder="Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todos status</SelectItem>
-                <SelectItem value="active">Ativas</SelectItem>
-                <SelectItem value="inactive">Inativas</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Select 
-              value={productsFilter} 
-              onValueChange={(value) => {
-                setProductsFilter(value);
-                handleSearch();
-              }}
-            >
-              <SelectTrigger className={styles.productsFilterSelect}>
-                <SelectValue placeholder="Produtos" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todos produtos</SelectItem>
-                <SelectItem value="with-products">Com produtos</SelectItem>
-                <SelectItem value="without-products">Sem produtos</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
+          setSearchTerm(filters.search || '');
+          setActiveFilter(filters.status || 'all');
+          setProductsFilter(filters.hasProducts || 'all');
+          
+          const timeout = setTimeout(() => {
+            handleSearch();
+          }, 300);
+          
+          setSearchTimeout(timeout);
+        }}
+      />
        
+      <div className={styles.actionsSection}>
         <Button onClick={() => setIsModalOpen(true)}>
           <Plus className={styles.plusIcon} />
           Nova Operadora

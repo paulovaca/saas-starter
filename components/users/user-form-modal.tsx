@@ -397,25 +397,13 @@ export function UserFormModal({ children, user, currentUserRole, onSuccess }: Us
               <input
                 type="email"
                 autoComplete="email"
-                style={{
-                  opacity: 0,
-                  position: 'absolute',
-                  left: '-9999px',
-                  width: '1px',
-                  height: '1px'
-                }}
+                className={styles.hiddenField}
                 tabIndex={-1}
               />
               <input
                 type="password"
                 autoComplete="current-password"
-                style={{
-                  opacity: 0,
-                  position: 'absolute',
-                  left: '-9999px',
-                  width: '1px',
-                  height: '1px'
-                }}
+                className={styles.hiddenField}
                 tabIndex={-1}
               />
               
@@ -459,7 +447,7 @@ export function UserFormModal({ children, user, currentUserRole, onSuccess }: Us
                   className={errors.name ? styles.inputError : styles.input}
                 />
                 {errors.name && (
-                  <span className={styles.fieldError}>{errors.name.message}</span>
+                  <span className={styles.fieldError}>{String(errors.name.message)}</span>
                 )}
               </div>
 
@@ -483,7 +471,7 @@ export function UserFormModal({ children, user, currentUserRole, onSuccess }: Us
                   data-lpignore="true"
                 />
                 {errors.email && (
-                  <span className={styles.fieldError}>{errors.email.message}</span>
+                  <span className={styles.fieldError}>{String(errors.email.message)}</span>
                 )}
               </div>
 
@@ -503,7 +491,7 @@ export function UserFormModal({ children, user, currentUserRole, onSuccess }: Us
                   maxLength={15}
                 />
                 {errors.phone && (
-                  <span className={styles.fieldError}>{errors.phone.message}</span>
+                  <span className={styles.fieldError}>{String(errors.phone.message)}</span>
                 )}
               </div>
 
@@ -525,7 +513,7 @@ export function UserFormModal({ children, user, currentUserRole, onSuccess }: Us
                   ))}
                 </select>
                 {errors.role && (
-                  <span className={styles.fieldError}>{errors.role.message}</span>
+                  <span className={styles.fieldError}>{String(errors.role.message)}</span>
                 )}
               </div>
 
@@ -572,7 +560,7 @@ export function UserFormModal({ children, user, currentUserRole, onSuccess }: Us
                       </div>
                     )}
                     {errors.password && (
-                      <span className={styles.fieldError}>{errors.password.message}</span>
+                      <span className={styles.fieldError}>{String(errors.password.message)}</span>
                     )}
                   </div>
 
