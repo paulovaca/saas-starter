@@ -5,13 +5,13 @@ import {
   passwordResetTokens, 
   emailVerificationTokens, 
   userInvitations, 
-  userSessions,
+  activeSessions,
   type User,
   type NewUser,
   type NewPasswordResetToken,
   type NewEmailVerificationToken,
   type NewUserInvitation,
-  type NewUserSession
+  type NewActiveSession
 } from '../schema/auth';
 import { agencies } from '../schema/agency';
 import { cookies } from 'next/headers';
@@ -297,27 +297,27 @@ export async function getPendingInvitationsByAgency(agencyId: string) {
     .orderBy(userInvitations.createdAt);
 }
 
-// User Session functions
+// Active Session functions
 
 /**
- * Create user session
+ * Create active session
  */
-export async function createUserSession(sessionData: NewUserSession) {
-  const result = await db.insert(userSessions).values(sessionData).returning();
+export async function createActiveSession(sessionData: NewActiveSession) {
+  const result = await db.insert(activeSessions).values(sessionData).returning();
   return result[0];
 }
 
 /**
- * Get valid user session
+ * Get valid active session
  */
-export async function getValidUserSession(sessionToken: string) {
+export async function getValidActiveSession(sessionToken: string) {
   const result = await db
     .select()
-    .from(userSessions)
+    .from(activeSessions)
     .where(
       and(
-        eq(userSessions.sessionToken, sessionToken),
-        gt(userSessions.expiresAt, new Date())
+        eq(activeSessions.sessionToken, sessionToken),
+        gt(activeSessions.expiresAt, new Date())
       )
     )
     .limit(1);
@@ -326,34 +326,34 @@ export async function getValidUserSession(sessionToken: string) {
 }
 
 /**
- * Update session last active time
+ * Update session last accessed time
  */
-export async function updateSessionLastActive(sessionToken: string) {
+export async function updateSessionLastAccessed(sessionToken: string) {
   await db
-    .update(userSessions)
-    .set({ lastActiveAt: new Date() })
-    .where(eq(userSessions.sessionToken, sessionToken));
+    .update(activeSessions)
+    .set({ lastAccessedAt: new Date() })
+    .where(eq(activeSessions.sessionToken, sessionToken));
 }
 
 /**
- * Delete user session
+ * Delete active session
  */
-export async function deleteUserSession(sessionToken: string) {
-  await db.delete(userSessions).where(eq(userSessions.sessionToken, sessionToken));
+export async function deleteActiveSession(sessionToken: string) {
+  await db.delete(activeSessions).where(eq(activeSessions.sessionToken, sessionToken));
 }
 
 /**
  * Delete all sessions for user
  */
-export async function deleteAllUserSessions(userId: string) {
-  await db.delete(userSessions).where(eq(userSessions.userId, userId));
+export async function deleteAllUserActiveSessions(userId: string) {
+  await db.delete(activeSessions).where(eq(activeSessions.userId, userId));
 }
 
 /**
  * Clean expired sessions
  */
-export async function cleanExpiredSessions() {
-  await db.delete(userSessions).where(lt(userSessions.expiresAt, new Date()));
+export async function cleanExpiredActiveSessions() {
+  await db.delete(activeSessions).where(lt(activeSessions.expiresAt, new Date()));
 }
 
 /**

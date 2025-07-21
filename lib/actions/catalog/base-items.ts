@@ -22,26 +22,64 @@ export async function getBaseItems(): Promise<(BaseItem & { customFields: BaseIt
     throw new Error('Agência não encontrada');
   }
 
-  const items = await db
-    .select()
+  // OPTIMIZED: Single query with JOIN to avoid N+1 problem
+  const itemsWithFieldsQuery = await db
+    .select({
+      // Base item fields
+      itemId: baseItems.id,
+      itemName: baseItems.name,
+      itemDescription: baseItems.description,
+      itemAgencyId: baseItems.agencyId,
+      itemCreatedAt: baseItems.createdAt,
+      itemUpdatedAt: baseItems.updatedAt,
+      
+      // Custom field fields
+      fieldId: baseItemFields.id,
+      fieldName: baseItemFields.name,
+      fieldType: baseItemFields.type,
+      fieldOptions: baseItemFields.options,
+      fieldIsRequired: baseItemFields.isRequired,
+      fieldCreatedAt: baseItemFields.createdAt,
+      fieldUpdatedAt: baseItemFields.updatedAt
+    })
     .from(baseItems)
+    .leftJoin(baseItemFields, eq(baseItems.id, baseItemFields.baseItemId))
     .where(eq(baseItems.agencyId, session.user.agencyId))
     .orderBy(desc(baseItems.createdAt));
 
-  // Get custom fields for each item
-  const itemsWithFields = await Promise.all(
-    items.map(async (item) => {
-      const customFields = await db
-        .select()
-        .from(baseItemFields)
-        .where(eq(baseItemFields.baseItemId, item.id));
-
-      return {
-        ...item,
-        customFields,
+  // Group results to reconstruct the nested structure
+  const itemsWithFields = itemsWithFieldsQuery.reduce((acc: any[], row) => {
+    let item = acc.find(i => i.id === row.itemId);
+    
+    if (!item) {
+      item = {
+        id: row.itemId,
+        name: row.itemName,
+        description: row.itemDescription,
+        agencyId: row.itemAgencyId,
+        createdAt: row.itemCreatedAt,
+        updatedAt: row.itemUpdatedAt,
+        customFields: []
       };
-    })
-  );
+      acc.push(item);
+    }
+
+    // Add custom field if it exists
+    if (row.fieldId) {
+      item.customFields.push({
+        id: row.fieldId,
+        name: row.fieldName,
+        type: row.fieldType,
+        options: row.fieldOptions,
+        isRequired: row.fieldIsRequired,
+        createdAt: row.fieldCreatedAt,
+        baseItemId: row.itemId,
+        updatedAt: row.fieldUpdatedAt
+      });
+    }
+
+    return acc;
+  }, []);
 
   return itemsWithFields;
 }

@@ -78,6 +78,8 @@ export const signIn = withFormAction(
     }
 
     // Set session with validated user - only need the user object from DB
+    // Note: Not passing request here since server actions don't have direct access to Request
+    // The session will be created in cookie form, database tracking happens in middleware
     await setSession(foundUser);
 
     // Log activity with proper null checks

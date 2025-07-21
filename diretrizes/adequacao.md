@@ -4,7 +4,7 @@ Este documento fornece um plano de implementa��o completo e detalhado para t
 
 ## =4 **IMPLEMENTA��O CR�TICA - Prioridade M�xima**
 
-### 1. **Prote��o CSRF**
+<!-- ### 1. **Prote��o CSRF**
 
 #### Implementa��o Passo a Passo:
 
@@ -94,9 +94,9 @@ export async function GET() {
   const token = generateCSRFToken();
   return Response.json({ token });
 }
-```
+``` -->
 
-### 2. **Headers de Seguran�a**
+<!-- ### 2. **Headers de Seguran�a**
 
 **2.1. Configurar Headers no Middleware**
 ```typescript
@@ -158,7 +158,7 @@ const nextConfig = {
     ];
   }
 };
-```
+``` -->
 
 ### 3. **Autentica��o 2FA**
 
@@ -321,7 +321,7 @@ export function TwoFactorSetup() {
 }
 ```
 
-### 4. **Gest�o de Sess�es**
+<!-- ### 4. **Gest�o de Sess�es**
 
 **4.1. Criar Tabela de Sess�es Ativas**
 ```sql
@@ -425,11 +425,11 @@ export class SessionManager {
       .where(lt(activeSessions.expiresAt, new Date()));
   }
 }
-```
+``` -->
 
 ## =� **ALTA PRIORIDADE - Implementa��o Estrutural**
 
-### 5. **Corre��o N+1 Queries**
+<!-- ### 5. **Corre��o N+1 Queries**
 
 **5.1. Otimizar getOperatorDetails**
 ```typescript
@@ -545,7 +545,7 @@ export class OperatorQueryBuilder {
     return this.where(eq(operators.agencyId, agencyId));
   }
 }
-```
+``` -->
 
 ### 6. **Sistema de Permiss�es Centralizado**
 

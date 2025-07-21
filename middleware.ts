@@ -2,9 +2,28 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { signToken, verifyToken } from '@/lib/auth/session';
 import { validateCSRFToken, getCSRFToken } from '@/lib/auth/csrf';
+import { SessionManager } from '@/lib/auth/session-manager';
 
 const protectedRoutes = ['/users', '/funnels', '/catalog', '/operators', '/clients', '/proposals', '/reports', '/profile', '/settings'];
 const publicRoutes = ['/sign-in', '/sign-up', '/pricing'];
+
+const securityHeaders = {
+  'X-DNS-Prefetch-Control': 'on',
+  'X-XSS-Protection': '1; mode=block',
+  'X-Frame-Options': 'SAMEORIGIN',
+  'X-Content-Type-Options': 'nosniff',
+  'Referrer-Policy': 'origin-when-cross-origin',
+  'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
+  'Content-Security-Policy': [
+    "default-src 'self'",
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com",
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+    "font-src 'self' https://fonts.gstatic.com",
+    "img-src 'self' data: blob: https:",
+    "connect-src 'self' https://api.stripe.com",
+    "frame-src https://js.stripe.com"
+  ].join('; ')
+};
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -43,29 +62,103 @@ export async function middleware(request: NextRequest) {
   }
 
   let res = NextResponse.next();
+  
+  // Apply security headers
+  Object.entries(securityHeaders).forEach(([key, value]) => {
+    res.headers.set(key, value);
+  });
 
   // Refresh session on GET requests if valid
   if (sessionCookie && request.method === 'GET') {
     try {
       const parsed = await verifyToken(sessionCookie.value);
       
-      // Check if session is still valid
+      // Check if session is still valid and exists in database
       if (parsed && new Date(parsed.expires) > new Date()) {
-        const expiresInOneDay = new Date(Date.now() + 24 * 60 * 60 * 1000);
+        try {
+          const isValidInDB = await SessionManager.isSessionValid(sessionCookie.value);
+          
+          if (isValidInDB) {
+            // Update last accessed time in database (non-blocking)
+            SessionManager.updateLastAccessed(sessionCookie.value).catch(console.error);
+            
+            const expiresInOneDay = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
-        res.cookies.set({
-          name: 'session',
-          value: await signToken({
-            ...parsed,
-            expires: expiresInOneDay.toISOString()
-          }),
-          httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
-          sameSite: 'lax',
-          expires: expiresInOneDay
-        });
+            res.cookies.set({
+              name: 'session',
+              value: await signToken({
+                ...parsed,
+                expires: expiresInOneDay.toISOString()
+              }),
+              httpOnly: true,
+              secure: process.env.NODE_ENV === 'production',
+              sameSite: 'lax',
+              expires: expiresInOneDay
+            });
+          } else {
+            // Session not in database - create it (happens after server action login)
+            try {
+              await SessionManager.createSession(parsed.user.id, sessionCookie.value, request);
+              console.log('Created database session for existing JWT token');
+              
+              // Update last accessed time
+              SessionManager.updateLastAccessed(sessionCookie.value).catch(console.error);
+              
+              const expiresInOneDay = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+              res.cookies.set({
+                name: 'session',
+                value: await signToken({
+                  ...parsed,
+                  expires: expiresInOneDay.toISOString()
+                }),
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'lax',
+                expires: expiresInOneDay
+              });
+            } catch (createError) {
+              console.error('Failed to create database session:', createError);
+              // Continue with JWT-only session
+              const expiresInOneDay = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+              res.cookies.set({
+                name: 'session',
+                value: await signToken({
+                  ...parsed,
+                  expires: expiresInOneDay.toISOString()
+                }),
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'lax',
+                expires: expiresInOneDay
+              });
+            }
+          }
+        } catch (dbError) {
+          // Database error - continue without DB validation but log the error
+          console.error('Database session validation failed:', dbError);
+          // Still refresh the JWT session
+          const expiresInOneDay = new Date(Date.now() + 24 * 60 * 60 * 1000);
+          res.cookies.set({
+            name: 'session',
+            value: await signToken({
+              ...parsed,
+              expires: expiresInOneDay.toISOString()
+            }),
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            expires: expiresInOneDay
+          });
+        }
       } else {
-        // Session expired
+        // Session expired or invalid
+        try {
+          await SessionManager.revokeSessionByToken(sessionCookie.value);
+        } catch (dbError) {
+          console.error('Failed to revoke session from database:', dbError);
+        }
         res.cookies.delete('session');
         if (isProtectedRoute || isDashboardRoot) {
           return NextResponse.redirect(new URL('/sign-in', request.url));

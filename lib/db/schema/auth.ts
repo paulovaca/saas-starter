@@ -6,6 +6,8 @@ import {
   timestamp,
   boolean,
   pgEnum,
+  jsonb,
+  inet,
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
@@ -65,16 +67,17 @@ export const userInvitations = pgTable('user_invitations', {
   createdAt: timestamp('created_at').notNull().defaultNow(),
 });
 
-// User Sessions (opcional, para controle de sessões)
-export const userSessions = pgTable('user_sessions', {
+// Active Sessions (comprehensive session management)
+export const activeSessions = pgTable('active_sessions', {
   id: uuid('id').primaryKey().defaultRandom(),
-  userId: uuid('user_id').notNull().references(() => users.id),
+  userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
   sessionToken: text('session_token').notNull().unique(),
+  deviceInfo: jsonb('device_info'),
+  ipAddress: inet('ip_address'),
   userAgent: text('user_agent'),
-  ipAddress: varchar('ip_address', { length: 45 }),
-  expiresAt: timestamp('expires_at').notNull(),
-  lastActiveAt: timestamp('last_active_at').notNull().defaultNow(),
-  createdAt: timestamp('created_at').notNull().defaultNow(),
+  lastAccessedAt: timestamp('last_accessed_at', { withTimezone: true }).defaultNow(),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+  expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
 });
 
 // Types
@@ -86,5 +89,5 @@ export type EmailVerificationToken = typeof emailVerificationTokens.$inferSelect
 export type NewEmailVerificationToken = typeof emailVerificationTokens.$inferInsert;
 export type UserInvitation = typeof userInvitations.$inferSelect;
 export type NewUserInvitation = typeof userInvitations.$inferInsert;
-export type UserSession = typeof userSessions.$inferSelect;
-export type NewUserSession = typeof userSessions.$inferInsert;
+export type ActiveSession = typeof activeSessions.$inferSelect;
+export type NewActiveSession = typeof activeSessions.$inferInsert;

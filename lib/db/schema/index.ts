@@ -9,7 +9,7 @@ export * from './operators';
 export * from './clients';
 
 // Import tables for relations
-import { users, passwordResetTokens, emailVerificationTokens, userInvitations, userSessions } from './auth';
+import { users, passwordResetTokens, emailVerificationTokens, userInvitations, activeSessions } from './auth';
 import { 
   agencies, 
   agencySettings, 
@@ -43,7 +43,7 @@ export const usersRelations = relations(users, ({ one, many }) => ({
   passwordResetTokens: many(passwordResetTokens),
   emailVerificationTokens: many(emailVerificationTokens),
   sentInvitations: many(userInvitations),
-  sessions: many(userSessions),
+  sessions: many(activeSessions),
   activities: many(activityLog),
   notifications: many(systemNotifications),
 }));
@@ -191,9 +191,9 @@ export const userInvitationsRelations = relations(userInvitations, ({ one }) => 
   }),
 }));
 
-export const userSessionsRelations = relations(userSessions, ({ one }) => ({
+export const activeSessionsRelations = relations(activeSessions, ({ one }) => ({
   user: one(users, {
-    fields: [userSessions.userId],
+    fields: [activeSessions.userId],
     references: [users.id],
   }),
 }));

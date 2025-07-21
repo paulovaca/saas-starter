@@ -1,10 +1,11 @@
 'use server';
 
 import { db } from '@/lib/db/drizzle';
-import { operators, operatorItems, commissionRules, operatorDocuments } from '@/lib/db/schema';
-import { eq, and } from 'drizzle-orm';
+import { operatorDocuments } from '@/lib/db/schema';
+import { eq } from 'drizzle-orm';
 import { getUser } from '@/lib/db/queries/auth';
 import { redirect } from 'next/navigation';
+import { OperatorQueryBuilder } from '@/lib/db/query-builders/operators';
 
 export interface OperatorDetails {
   id: string;
@@ -53,47 +54,19 @@ export async function getOperatorDetails(operatorId: string) {
       redirect('/sign-in');
     }
 
-    // Get operator basic info
-    const operator = await db
-      .select()
-      .from(operators)
-      .where(and(
-        eq(operators.id, operatorId),
-        eq(operators.agencyId, user.agencyId)
-      ))
-      .limit(1);
-
-    if (operator.length === 0) {
+    // OPTIMIZED: Single query to get operator with all items and commission rules
+    const operatorWithItemsQuery = await OperatorQueryBuilder.withItemsAndRules(operatorId, user.agencyId);
+    
+    if (operatorWithItemsQuery.length === 0) {
       throw new Error('Operadora não encontrada.');
     }
 
-    // Get operator items with commission rules
-    const items = await db
-      .select({
-        id: operatorItems.id,
-        catalogItemId: operatorItems.catalogItemId,
-        customName: operatorItems.customName,
-        customValues: operatorItems.customValues,
-        commissionType: operatorItems.commissionType,
-        isActive: operatorItems.isActive,
-      })
-      .from(operatorItems)
-      .where(eq(operatorItems.operatorId, operatorId));
-
-    // Get commission rules for each item
-    const itemsWithRules = await Promise.all(
-      items.map(async (item) => {
-        const rules = await db
-          .select()
-          .from(commissionRules)
-          .where(eq(commissionRules.operatorItemId, item.id));
-
-        return {
-          ...item,
-          commissionRules: rules,
-        };
-      })
-    );
+    // Group flat results into nested structure
+    const grouped = OperatorQueryBuilder.groupOperatorWithItems(operatorWithItemsQuery);
+    
+    if (!grouped.operator) {
+      throw new Error('Operadora não encontrada.');
+    }
 
     // Get operator documents
     const documents = await db
@@ -102,8 +75,7 @@ export async function getOperatorDetails(operatorId: string) {
       .where(eq(operatorDocuments.operatorId, operatorId));
 
     const operatorDetails: OperatorDetails = {
-      ...operator[0],
-      items: itemsWithRules,
+      ...grouped.operator,
       documents,
     };
 
