@@ -711,7 +711,7 @@ export function withPermission(permission: Permission) {
   };
 }
 ``` -->
-
+<!-- 
 ### 7. **Padroniza��o de Server Actions**
 
 **7.1. Action Wrapper Universal**
@@ -842,7 +842,7 @@ export const createUser = createAction(
     activityType: 'USER_CREATED'
   }
 );
-```
+``` -->
 
 ## =� **M�DIA PRIORIDADE - Melhorias de Experi�ncia**
 
