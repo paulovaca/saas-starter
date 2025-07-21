@@ -1,27 +1,19 @@
 'use server';
 
-import { auth } from '@/lib/auth/auth';
 import { db } from '@/lib/db/drizzle';
 import { users } from '@/lib/db/schema';
 import { eq, and } from 'drizzle-orm';
-import { logActivity } from '@/lib/actions/activity/log-activity';
+import { deleteUserSchema, type DeleteUserData } from '@/lib/validations/users/delete-user.schema';
+import { createPermissionAction, createAction } from '@/lib/actions/action-wrapper';
+import { Permission, UserRole } from '@/lib/auth/permissions';
 import { revalidatePath } from 'next/cache';
+import { NotFoundError, AuthorizationError } from '@/lib/services/error-handler';
 
-type DeleteUserResponse = {
-  success: true;
-  error?: never;
-} | {
-  success?: never;
-  error: string;
-};
-
-export async function deleteUser(userId: string): Promise<DeleteUserResponse> {
-  try {
-    // Verificar autenticação
-    const session = await auth();
-    if (!session) {
-      return { error: 'Não autorizado' };
-    }
+export const deleteUser = createPermissionAction(
+  deleteUserSchema,
+  Permission.USER_DELETE,
+  async (input: DeleteUserData, currentUser) => {
+    const { userId } = input;
 
     // Buscar usuário existente
     const existingUser = await db
@@ -36,24 +28,24 @@ export async function deleteUser(userId: string): Promise<DeleteUserResponse> {
       .where(
         and(
           eq(users.id, userId),
-          eq(users.agencyId, session.user.agencyId)
+          eq(users.agencyId, currentUser.agencyId)
         )
       )
       .then(rows => rows[0]);
 
     if (!existingUser) {
-      return { error: 'Usuário não encontrado' };
+      throw new NotFoundError('Usuário');
     }
 
     // Verificar permissões baseadas no role
     const canDelete = (() => {
       // MASTER pode deletar ADMIN e AGENT, mas não outros MASTER
-      if (session.user.role === 'MASTER') {
+      if (currentUser.role === 'MASTER') {
         return ['ADMIN', 'AGENT'].includes(existingUser.role);
       }
 
       // ADMIN pode deletar apenas AGENT
-      if (session.user.role === 'ADMIN') {
+      if (currentUser.role === 'ADMIN') {
         return existingUser.role === 'AGENT';
       }
 
@@ -62,12 +54,12 @@ export async function deleteUser(userId: string): Promise<DeleteUserResponse> {
     })();
 
     if (!canDelete) {
-      return { error: 'Sem permissão para deletar este usuário' };
+      throw new AuthorizationError('Sem permissão para deletar este usuário');
     }
 
     // Não permitir deletar o próprio usuário
-    if (existingUser.id === session.user.id) {
-      return { error: 'Você não pode deletar sua própria conta' };
+    if (existingUser.id === currentUser.id) {
+      throw new AuthorizationError('Você não pode deletar sua própria conta');
     }
 
     // Realizar hard delete (remoção completa do banco de dados)
@@ -75,47 +67,33 @@ export async function deleteUser(userId: string): Promise<DeleteUserResponse> {
       .delete(users)
       .where(eq(users.id, userId));
 
-    // Log da atividade
-    await logActivity({
-      userId: session.user.id,
-      agencyId: session.user.agencyId,
-      type: 'DELETE_ACCOUNT' as any,
-      description: `Deletou permanentemente usuário ${existingUser.name}`,
-      entityType: 'USER',
-      entityId: userId,
-      metadata: {
-        targetUserName: existingUser.name,
-        targetUserEmail: existingUser.email,
-        targetUserRole: existingUser.role,
-        deletionType: 'hard_delete',
-      },
-      ipAddress: null,
-    });
-
     // Revalidar cache das páginas relacionadas
     revalidatePath('/users');
     revalidatePath('/dashboard/users');
 
-    return {
-      success: true,
-    };
-  } catch (error) {
-    console.error('Error deleting user:', error);
-    return { error: 'Erro interno do servidor' };
+    return { deleted: true };
+  },
+  {
+    rateLimitKey: 'delete-user',
+    rateLimitAttempts: 3,
+    rateLimitWindow: 60000,
+    logActivity: true,
+    activityType: 'USER_DELETED'
   }
-}
+);
 
-export async function hardDeleteUser(userId: string): Promise<DeleteUserResponse> {
-  try {
-    // Verificar autenticação
-    const session = await auth();
-    if (!session) {
-      return { error: 'Não autorizado' };
+export const hardDeleteUser = createAction(
+  deleteUserSchema,
+  async (input: DeleteUserData, currentUser) => {
+    const { userId } = input;
+
+    if (!currentUser) {
+      throw new AuthorizationError('Usuário não autenticado');
     }
 
     // Apenas MASTER pode fazer hard delete
-    if (session.user.role !== 'MASTER') {
-      return { error: 'Apenas Master pode deletar permanentemente usuários' };
+    if (currentUser.role !== UserRole.MASTER) {
+      throw new AuthorizationError('Apenas Master pode deletar permanentemente usuários');
     }
 
     // Buscar usuário existente
@@ -130,18 +108,18 @@ export async function hardDeleteUser(userId: string): Promise<DeleteUserResponse
       .where(
         and(
           eq(users.id, userId),
-          eq(users.agencyId, session.user.agencyId)
+          eq(users.agencyId, currentUser.agencyId)
         )
       )
       .then(rows => rows[0]);
 
     if (!existingUser) {
-      return { error: 'Usuário não encontrado' };
+      throw new NotFoundError('Usuário');
     }
 
     // Não permitir deletar o próprio usuário
-    if (existingUser.id === session.user.id) {
-      return { error: 'Você não pode deletar sua própria conta' };
+    if (existingUser.id === currentUser.id) {
+      throw new AuthorizationError('Você não pode deletar sua própria conta');
     }
 
     // TODO: Verificar e transferir dados relacionados antes de deletar
@@ -151,32 +129,18 @@ export async function hardDeleteUser(userId: string): Promise<DeleteUserResponse
       .delete(users)
       .where(eq(users.id, userId));
 
-    // Log da atividade
-    await logActivity({
-      userId: session.user.id,
-      agencyId: session.user.agencyId,
-      type: 'DELETE_ACCOUNT' as any,
-      description: `Deletou permanentemente usuário ${existingUser.name}`,
-      entityType: 'USER',
-      entityId: userId,
-      metadata: {
-        targetUserName: existingUser.name,
-        targetUserEmail: existingUser.email,
-        targetUserRole: existingUser.role,
-        deletionType: 'hard_delete',
-      },
-      ipAddress: null,
-    });
-
     // Revalidar cache das páginas relacionadas
     revalidatePath('/users');
     revalidatePath('/dashboard/users');
 
-    return {
-      success: true,
-    };
-  } catch (error) {
-    console.error('Error hard deleting user:', error);
-    return { error: 'Erro interno do servidor' };
+    return { deleted: true };
+  },
+  {
+    requireAuth: true,
+    rateLimitKey: 'hard-delete-user',
+    rateLimitAttempts: 2,
+    rateLimitWindow: 300000, // 5 minutes
+    logActivity: true,
+    activityType: 'USER_HARD_DELETED'
   }
-}
+);

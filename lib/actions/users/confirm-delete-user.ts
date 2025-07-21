@@ -32,9 +32,9 @@ export async function confirmDeleteUser(formData: FormData): Promise<ConfirmDele
     const validatedData = confirmDeleteSchema.parse(rawData);
 
     // Executar a deleção
-    const result = await deleteUser(validatedData.userId);
+    const result = await deleteUser(validatedData);
 
-    if (result.error) {
+    if (!result.success) {
       return { error: result.error };
     }
 

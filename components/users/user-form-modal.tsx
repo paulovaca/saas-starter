@@ -275,12 +275,12 @@ export function UserFormModal({ children, user, currentUserRole, onSuccess }: Us
         let result;
         
         if (isEditing) {
-          result = await updateUser(user.id, data);
+          result = await updateUser({ userId: user.id, ...data });
         } else {
           result = await createUser(data);
         }
 
-        if (result.error) {
+        if (!result.success) {
           setError(result.error);
           return;
         }

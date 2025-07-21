@@ -111,7 +111,7 @@ export const updatePassword = withFormAction(
       context.user.agencyId,
       context.user.id,
       'UPDATE_PASSWORD' as any,
-      'Senha atualizada'
+      { description: 'Senha atualizada' }
     );
 
     return { success: 'Password updated successfully' };
@@ -156,7 +156,7 @@ export const updateAccount = withFormAction(
       context.user.agencyId,
       context.user.id,
       'UPDATE_ACCOUNT' as any,
-      'Conta atualizada'
+      { description: 'Conta atualizada' }
     );
 
     return { success: 'Account updated successfully' };
@@ -188,7 +188,7 @@ export const deleteAccount = withFormAction(
       context.user.agencyId,
       context.user.id,
       'DELETE_ACCOUNT' as any,
-      'Conta excluída'
+      { description: 'Conta excluída' }
     );
 
     // Delete the user account

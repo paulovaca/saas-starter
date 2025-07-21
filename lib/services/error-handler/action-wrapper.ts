@@ -73,10 +73,7 @@ export function withActionWrapper<T extends any[], R>(
                   headersList.get('x-real-ip') || 
                   'anonymous';
         
-        await rateLimiter.check(ip, options.rateLimit.action || 'general', {
-          limit: options.rateLimit.limit,
-          window: options.rateLimit.window
-        });
+        await rateLimiter.check(ip, options.rateLimit.action || 'general');
       }
 
       // Authentication check

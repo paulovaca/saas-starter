@@ -2,30 +2,19 @@
 
 import { db } from '@/lib/db/drizzle';
 import { operators } from '@/lib/db/schema';
-import { getUser } from '@/lib/db/queries/auth';
-import { redirect } from 'next/navigation';
 import { createOperatorSchema, type CreateOperatorInput } from '@/lib/validations/operators/operator.schema';
+import { createPermissionAction } from '@/lib/actions/action-wrapper';
+import { Permission } from '@/lib/auth/permissions';
 import { revalidatePath } from 'next/cache';
 
-export async function createOperator(data: CreateOperatorInput) {
-  try {
-    const user = await getUser();
-    if (!user?.agencyId) {
-      redirect('/sign-in');
-    }
-
-    // Check permissions (only master and admin can create operators)
-    if (!['MASTER', 'ADMIN'].includes(user.role)) {
-      throw new Error('Permissão negada. Apenas Master e Admin podem criar operadoras.');
-    }
-
-    // Validate input data
-    const validatedData = createOperatorSchema.parse(data);
-
+export const createOperator = createPermissionAction(
+  createOperatorSchema,
+  Permission.OPERATOR_CREATE,
+  async (input: CreateOperatorInput, user) => {
     // Convert address object to string if it exists
     let addressString = '';
-    if (validatedData.address) {
-      const addr = validatedData.address;
+    if (input.address) {
+      const addr = input.address;
       const parts = [
         addr.street,
         addr.number,
@@ -41,16 +30,16 @@ export async function createOperator(data: CreateOperatorInput) {
     const [newOperator] = await db
       .insert(operators)
       .values({
-        name: validatedData.name,
-        logo: validatedData.logo || null,
-        cnpj: validatedData.cnpj || null,
-        description: validatedData.description || null,
-        contactName: validatedData.contactName || null,
-        contactEmail: validatedData.contactEmail || null,
-        contactPhone: validatedData.contactPhone || null,
-        website: validatedData.website || null,
+        name: input.name,
+        logo: input.logo || null,
+        cnpj: input.cnpj || null,
+        description: input.description || null,
+        contactName: input.contactName || null,
+        contactEmail: input.contactEmail || null,
+        contactPhone: input.contactPhone || null,
+        website: input.website || null,
         address: addressString || null,
-        notes: validatedData.notes || null,
+        notes: input.notes || null,
         agencyId: user.agencyId,
       })
       .returning();
@@ -58,24 +47,13 @@ export async function createOperator(data: CreateOperatorInput) {
     // Revalidate the operators page
     revalidatePath('/operators');
 
-    return {
-      success: true,
-      data: newOperator,
-      message: 'Operadora criada com sucesso!',
-    };
-  } catch (error) {
-    console.error('Error creating operator:', error);
-    
-    if (error instanceof Error) {
-      return {
-        success: false,
-        error: error.message,
-      };
-    }
-
-    return {
-      success: false,
-      error: 'Erro interno do servidor. Tente novamente.',
-    };
+    return newOperator;
+  },
+  {
+    rateLimitKey: 'create-operator',
+    rateLimitAttempts: 5,
+    rateLimitWindow: 60000,
+    logActivity: true,
+    activityType: 'OPERATOR_CREATED'
   }
-}
+);

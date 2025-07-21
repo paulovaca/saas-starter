@@ -122,7 +122,7 @@ export function OperatorFormModal({ isOpen, onClose, operator }: OperatorFormMod
         console.log('📥 Resultado do update:', result);
         
         if (result.success) {
-          toast.success(result.message);
+          toast.success('Operadora atualizada com sucesso!');
           handleCancel();
           router.refresh();
         } else {
@@ -147,7 +147,7 @@ export function OperatorFormModal({ isOpen, onClose, operator }: OperatorFormMod
         console.log('📥 Resultado do create:', result);
         
         if (result.success) {
-          toast.success(result.message);
+          toast.success('Operadora criada com sucesso!');
           handleCancel();
           router.refresh();
         } else {
