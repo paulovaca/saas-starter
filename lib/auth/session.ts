@@ -1,8 +1,10 @@
 import { compare, hash } from 'bcryptjs';
 import { SignJWT, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
-import { NewUser } from '@/lib/db/schema';
+import { NewUser, users } from '@/lib/db/schema';
 import { SessionManager } from './session-manager';
+import { db } from '@/lib/db/drizzle';
+import { eq } from 'drizzle-orm';
 
 const key = new TextEncoder().encode(process.env.AUTH_SECRET);
 const SALT_ROUNDS = 10;
@@ -98,13 +100,30 @@ export async function getCurrentUser() {
     const sessionData = await getSession();
     if (!sessionData) return null;
 
+    // Get full user data from database
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, sessionData.user.id),
+      columns: {
+        id: true,
+        email: true,
+        name: true,
+        role: true,
+        agencyId: true,
+        isActive: true,
+      }
+    });
+
+    if (!user || !user.isActive) {
+      return null;
+    }
+
     // Update last accessed time in database
     const session = (await cookies()).get('session')?.value;
     if (session) {
       await SessionManager.updateLastAccessed(session);
     }
 
-    return sessionData.user;
+    return user;
   } catch (error) {
     console.error('Error getting current user:', error);
     return null;

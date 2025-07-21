@@ -547,7 +547,7 @@ export class OperatorQueryBuilder {
 }
 ``` -->
 
-### 6. **Sistema de Permiss�es Centralizado**
+<!-- ### 6. **Sistema de Permiss�es Centralizado**
 
 **6.1. Enum de Permiss�es**
 ```typescript
@@ -710,7 +710,7 @@ export function withPermission(permission: Permission) {
     return descriptor;
   };
 }
-```
+``` -->
 
 ### 7. **Padroniza��o de Server Actions**
 
