@@ -89,6 +89,10 @@ npm test -- path/to/test.test.ts
 4. **Server Components**: Default to server components; use "use client" only when needed
 5. **Caching**: Optional Redis cache via Upstash, falls back to in-memory cache
 
+### Code Style and Best Practices
+
+- Never use inline styles, always use CSS files
+
 ### Current Feature Modules
 
 - **Clients**: Customer management with sales funnel integration

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { signToken, verifyToken } from '@/lib/auth/session';
+import { validateCSRFToken, getCSRFToken } from '@/lib/auth/csrf';
 
 const protectedRoutes = ['/users', '/funnels', '/catalog', '/operators', '/clients', '/proposals', '/reports', '/profile', '/settings'];
 const publicRoutes = ['/sign-in', '/sign-up', '/pricing'];
@@ -11,6 +12,25 @@ export async function middleware(request: NextRequest) {
   const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route));
   const isPublicRoute = publicRoutes.some(route => pathname.startsWith(route));
   const isDashboardRoot = pathname === '/';
+  
+  // CSRF Protection for mutation methods
+  if (['POST', 'PUT', 'DELETE', 'PATCH'].includes(request.method)) {
+    // Skip CSRF check for API routes that don't need it
+    const skipCSRFRoutes = ['/api/stripe/webhook', '/api/csrf-token'];
+    const shouldSkipCSRF = skipCSRFRoutes.some(route => pathname.startsWith(route));
+    
+    // Skip CSRF check for Server Actions (they have built-in CSRF protection)
+    const isServerAction = request.headers.get('next-action') !== null || 
+                          request.headers.get('content-type') === 'text/plain;charset=UTF-8';
+    
+    if (!shouldSkipCSRF && !isServerAction && sessionCookie) {
+      const csrfToken = getCSRFToken(request);
+      
+      if (!csrfToken || !validateCSRFToken(csrfToken, sessionCookie.value)) {
+        return new Response('CSRF token invalid', { status: 403 });
+      }
+    }
+  }
 
   // Redirect authenticated users away from auth pages
   if (sessionCookie && (pathname.startsWith('/sign-in') || pathname.startsWith('/sign-up'))) {
