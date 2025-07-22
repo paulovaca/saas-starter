@@ -21,7 +21,9 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { Loader2 } from 'lucide-react';
 import { updateCommissionRule } from '@/lib/actions/operators/create-commission-rule';
+import { useToast } from '@/components/ui/toast';
 import styles from './edit-commission-rule-modal.module.css';
+import loadingStyles from '../ui/loading-icon.module.css';
 
 interface EditCommissionRuleModalProps {
   isOpen: boolean;
@@ -37,6 +39,7 @@ export function EditCommissionRuleModal({
   onSuccess 
 }: EditCommissionRuleModalProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const { showSuccess, showError } = useToast();
   const [formData, setFormData] = useState({
     ruleType: 'percentage_fixed' as 'percentage_fixed' | 'value_fixed' | 'tiered' | 'custom',
     percentage: '',
@@ -102,7 +105,7 @@ export function EditCommissionRuleModal({
         try {
           data.conditions = JSON.parse(formData.conditions);
         } catch {
-          toast.error('Formato JSON inválido nas condições');
+          showError('Formato JSON inválido nas condições');
           setIsLoading(false);
           return;
         }
@@ -111,28 +114,28 @@ export function EditCommissionRuleModal({
       const result = await updateCommissionRule(data);
       
       if (result.success) {
-        toast.success(result.message);
+        showSuccess(result.message || 'Regra atualizada com sucesso!');
         onSuccess();
         onClose();
       } else {
-        toast.error(result.error);
+        showError(result.error || 'Erro ao atualizar regra');
       }
     } catch (error) {
       console.error('Error updating commission rule:', error);
-      toast.error('Erro ao atualizar regra de comissão');
+      showError('Erro ao atualizar regra de comissão');
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={() => {}}>
-      <DialogContent className={styles.modal}>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className={styles.dialogContent}>
         <DialogHeader>
           <DialogTitle>Editar Regra de Comissão</DialogTitle>
         </DialogHeader>
         
-        <form onSubmit={handleSubmit} className={styles.formContainer}>
+        <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.formField}>
             <Label htmlFor="ruleType">Tipo de Regra</Label>
             <Select
@@ -142,7 +145,7 @@ export function EditCommissionRuleModal({
               }
             >
               <SelectTrigger>
-                <span className={styles.selectValueCustom}>
+                <span>
                   {formData.ruleType ? getRuleTypeLabel(formData.ruleType) : "Selecione o tipo de regra"}
                 </span>
               </SelectTrigger>
@@ -190,18 +193,18 @@ export function EditCommissionRuleModal({
           )}
 
           {formData.ruleType === 'tiered' && (
-            <div className={styles.tiersSection}>
+            <div className={styles.formSection}>
               <div className={styles.formField}>
                 <Label>Escalonamento de Comissão</Label>
-                <p className={styles.helpText}>
+                <p className={styles.formHelp}>
                   Configure diferentes faixas de valor com comissões específicas
                 </p>
               </div>
               
               {formData.tiers.map((tier, index) => (
                 <div key={index} className={styles.tierItem}>
-                  <div className={styles.tiersHeader}>
-                    <h4 className={styles.tiersTitle}>Faixa {index + 1}</h4>
+                  <div className={styles.tierHeader}>
+                    <h4 className={styles.tierTitle}>Faixa {index + 1}</h4>
                     <Button
                       type="button"
                       variant="outline"
@@ -215,8 +218,8 @@ export function EditCommissionRuleModal({
                     </Button>
                   </div>
                   
-                  <div className={styles.gridContainer}>
-                    <div>
+                  <div className={styles.formGroup}>
+                    <div className={styles.formField}>
                       <Label>Valor Mínimo (R$)</Label>
                       <Input
                         type="number"
@@ -248,8 +251,8 @@ export function EditCommissionRuleModal({
                     </div>
                   </div>
                   
-                  <div className={styles.gridContainer}>
-                    <div>
+                  <div className={styles.formGroup}>
+                    <div className={styles.formField}>
                       <Label>Percentual (%)</Label>
                       <Input
                         type="number"
@@ -310,7 +313,7 @@ export function EditCommissionRuleModal({
                 placeholder='{"type": "custom", "formula": "value * 0.1 + base", "base": 50}'
                 rows={5}
               />
-              <p className={styles.helpText}>
+              <p className={styles.formHelp}>
                 Configure uma regra personalizada em formato JSON com fórmulas específicas
               </p>
             </div>
@@ -326,7 +329,7 @@ export function EditCommissionRuleModal({
               Cancelar
             </Button>
             <Button type="submit" disabled={isLoading}>
-              {isLoading && <Loader2 className={styles.loadingIcon} />}
+              {isLoading && <Loader2 className={loadingStyles.loadingIcon} />}
               Atualizar Regra
             </Button>
           </div>

@@ -3,20 +3,17 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { FormModal } from '@/components/ui/form-modal';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { associateItemsSchema, type AssociateItemsInput } from '@/lib/validations/operators/association.schema';
 import { associateItems } from '@/lib/actions/operators/associate-items';
 import { getBaseItems } from '@/lib/actions/catalog/base-items';
-import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { Loader2, Package, Search } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { toast } from 'sonner';
 import styles from './item-association-modal.module.css';
 
 interface ItemAssociationModalProps {
@@ -135,7 +132,7 @@ export function ItemAssociationModal({ isOpen, onClose, operatorId, operatorName
       const result = await associateItems(associationData);
       
       if (result.success) {
-        toast.success(result.message);
+        toast.success(result.message || 'Item associado com sucesso!');
         handleCancel();
         router.refresh();
       } else {
@@ -143,7 +140,7 @@ export function ItemAssociationModal({ isOpen, onClose, operatorId, operatorName
         if (result.error && result.error.includes('Já existe um item com o nome')) {
           setDuplicateNameError('O nome customizado já existe nessa operadora');
         } else {
-          toast.error(result.error);
+          toast.error(result.error || 'Erro ao associar item');
         }
       }
     } catch (error) {
@@ -182,7 +179,7 @@ export function ItemAssociationModal({ isOpen, onClose, operatorId, operatorName
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={() => {}}>
+    <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className={styles.modalContent}>
         <DialogHeader>
           <DialogTitle>Associar Item Base</DialogTitle>
@@ -285,14 +282,17 @@ export function ItemAssociationModal({ isOpen, onClose, operatorId, operatorName
                 </div>
 
                 <div className={styles.formField}>
-                  <label className={styles.checkboxContainer}>
+                  <div className={styles.checkboxContainer}>
                     <input
                       type="checkbox"
                       {...form.register('isActive')}
                       className={styles.checkbox}
+                      id="isActive"
                     />
-                    <span className={styles.checkboxLabel}>Item ativo</span>
-                  </label>
+                    <label htmlFor="isActive" className={styles.checkboxLabel}>
+                      Item ativo
+                    </label>
+                  </div>
                 </div>
               </div>
             )}

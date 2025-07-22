@@ -1,0 +1,41 @@
+.container {
+  max-width: 64rem;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.cardContent {
+  margin-top: 1rem;
+}
+
+.cardContent > * + * {
+  margin-top: 1rem;
+}
+
+.buttonGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .buttonGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.modalContent {
+  margin-top: 1rem;
+}
+
+.modalContent > * + * {
+  margin-top: 1rem;
+}
+
+.formField {
+  margin-top: 1rem;
+}
+
+.formField > * + * {
+  margin-top: 1rem;
+}

@@ -1,0 +1,6 @@
+/* Common Form Styles */
+.formContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}

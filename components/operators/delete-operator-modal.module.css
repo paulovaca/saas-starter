@@ -178,3 +178,50 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* Additional styles for description formatting */
+.description {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  text-align: left;
+}
+
+.operatorDetails {
+  font-weight: 500;
+}
+
+.dangerBox {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 0.25rem;
+}
+
+[data-theme="dark"] .dangerBox {
+  background-color: rgba(127, 29, 29, 0.2);
+  border-color: #991b1b;
+}
+
+.dangerTitle {
+  color: #991b1b;
+  font-weight: 500;
+}
+
+[data-theme="dark"] .dangerTitle {
+  color: #fecaca;
+}
+
+.dangerList {
+  color: #b91c1c;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+[data-theme="dark"] .dangerList {
+  color: #fca5a5;
+}

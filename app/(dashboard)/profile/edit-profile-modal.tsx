@@ -2,13 +2,11 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { FormModal } from '@/components/ui/form-modal';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { X, User } from 'lucide-react';
-import styles from './profile.module.css';
 import { updateProfile } from './actions';
+import modalStyles from './edit-profile-modal.module.css';
 
 interface EditProfileModalProps {
   user: {
@@ -28,107 +26,82 @@ export function EditProfileModal({ user }: EditProfileModalProps) {
     router.push('/profile');
   };
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setIsSubmitting(true);
+  const handleSubmit = async () => {
     setMessage(null);
-
-    const formData = new FormData(event.currentTarget);
+    const form = document.querySelector('form') as HTMLFormElement;
+    const formData = new FormData(form);
     
-    try {
-      const result = await updateProfile(formData);
-      
-      if (result.success) {
-        setMessage({ type: 'success', text: result.success });
-        setTimeout(() => {
-          closeModal();
-        }, 2000);
-      } else {
-        setMessage({ type: 'error', text: result.error || 'Erro desconhecido' });
-      }
-    } catch (error) {
-      setMessage({ type: 'error', text: 'Erro interno do servidor' });
-    } finally {
-      setIsSubmitting(false);
+    const result = await updateProfile(formData);
+    
+    if (result.success) {
+      setMessage({ type: 'success', text: result.success });
+      setTimeout(() => {
+        closeModal();
+      }, 2000);
+    } else {
+      setMessage({ type: 'error', text: result.error || 'Erro desconhecido' });
+      throw new Error(result.error || 'Erro desconhecido');
     }
   };
 
   return (
-    <div className={styles.modalOverlay}>
-      <div className={styles.modalContent}>
-        <Card className={styles.modalCard}>
-          <CardHeader className={styles.modalHeader}>
-            <div className={styles.modalTitleContainer}>
-              <CardTitle className={styles.modalTitle}>
-                <User className={styles.modalIcon} />
-                Editar Perfil
-              </CardTitle>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={closeModal}
-                className={styles.closeButton}
-              >
-                <X className={styles.closeIcon} />
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent className={styles.modalBody}>
-            <form onSubmit={handleSubmit} className={styles.profileForm}>
-              <div className={styles.formField}>
-                <Label htmlFor="name" className={styles.fieldLabel}>
-                  Nome Completo
-                </Label>
-                <Input
-                  id="name"
-                  name="name"
-                  type="text"
-                  defaultValue={user.name}
-                  placeholder="Digite seu nome completo"
-                  required
-                />
-              </div>
+    <FormModal
+      isOpen={true}
+      onClose={closeModal}
+      title="Editar Perfil"
+      onSubmit={handleSubmit}
+      isSubmitting={isSubmitting}
+      submitLabel={isSubmitting ? 'Salvando...' : 'Salvar Alterações'}
+      size="md"
+    >
+      <div className={modalStyles.formContainer}>
+        <div>
+          <Label htmlFor="name">
+            Nome Completo
+          </Label>
+          <Input
+            id="name"
+            name="name"
+            type="text"
+            defaultValue={user.name}
+            placeholder="Digite seu nome completo"
+            required
+          />
+        </div>
 
-              <div className={styles.formField}>
-                <Label htmlFor="email" className={styles.fieldLabel}>
-                  E-mail
-                </Label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  defaultValue={user.email}
-                  placeholder="Digite seu e-mail"
-                  required
-                />
-              </div>
+        <div>
+          <Label htmlFor="email">
+            E-mail
+          </Label>
+          <Input
+            id="email"
+            name="email"
+            type="email"
+            defaultValue={user.email}
+            placeholder="Digite seu e-mail"
+            required
+          />
+        </div>
 
-              {message && (
-                <div className={`${styles.message} ${styles[message.type]}`}>
-                  {message.text}
-                </div>
-              )}
+        <div>
+          <Label htmlFor="phone">
+            Telefone
+          </Label>
+          <Input
+            id="phone"
+            name="phone"
+            type="tel"
+            defaultValue={user.phone || ''}
+            placeholder="Digite seu telefone"
+          />
+        </div>
 
-              <div className={styles.modalActions}>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={closeModal}
-                  disabled={isSubmitting}
-                >
-                  Cancelar
-                </Button>
-                <Button
-                  type="submit"
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? 'Salvando...' : 'Salvar Alterações'}
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
+        {message && (
+          <div className={message.type === 'success' ? modalStyles.messageSuccess : modalStyles.messageError}>
+            {message.text}
+          </div>
+        )}
       </div>
-    </div>
+    </FormModal>
   );
 }

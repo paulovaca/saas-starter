@@ -579,3 +579,23 @@
     width: 100%;
   }
 }
+
+/* Additional styles for change avatar modal */
+.centerContainer {
+  display: flex;
+  justify-content: center;
+}
+
+.previewAvatar {
+  width: 6rem;
+  height: 6rem;
+}
+
+.helpText {
+  font-size: 0.875rem;
+  color: #4b5563;
+}
+
+[data-theme="dark"] .helpText {
+  color: #9ca3af;
+}

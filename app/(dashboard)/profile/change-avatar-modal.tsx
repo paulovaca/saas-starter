@@ -2,14 +2,14 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { FormModal } from '@/components/ui/form-modal';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { X, Camera } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import styles from './profile.module.css';
+import { useToast } from '@/components/ui/toast';
 import { updateAvatar } from './actions';
+import styles from './profile.module.css';
+import modalStyles from './change-avatar-modal.module.css';
 
 interface ChangeAvatarModalProps {
   user: {
@@ -34,12 +34,12 @@ export function ChangeAvatarModal({ user }: ChangeAvatarModalProps) {
     setPreviewUrl(event.target.value);
   };
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleSubmit = async () => {
     setIsSubmitting(true);
     setMessage(null);
 
-    const formData = new FormData(event.currentTarget);
+    const formData = new FormData();
+    formData.append('avatarUrl', previewUrl);
     
     try {
       const result = await updateAvatar(formData);
@@ -51,94 +51,65 @@ export function ChangeAvatarModal({ user }: ChangeAvatarModalProps) {
         }, 2000);
       } else {
         setMessage({ type: 'error', text: result.error || 'Erro desconhecido' });
+        throw new Error(result.error || 'Erro desconhecido');
       }
     } catch (error) {
       setMessage({ type: 'error', text: 'Erro interno do servidor' });
+      throw error;
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className={styles.modalOverlay}>
-      <div className={styles.modalContent}>
-        <Card className={styles.modalCard}>
-          <CardHeader className={styles.modalHeader}>
-            <div className={styles.modalTitleContainer}>
-              <CardTitle className={styles.modalTitle}>
-                <Camera className={styles.modalIcon} />
-                Alterar Foto do Perfil
-              </CardTitle>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={closeModal}
-                className={styles.closeButton}
-              >
-                <X className={styles.closeIcon} />
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent className={styles.modalBody}>
-            <form onSubmit={handleSubmit} className={styles.avatarForm}>
-              <div className={styles.avatarPreviewContainer}>
-                <Avatar className={styles.avatarPreview}>
-                  <AvatarImage 
-                    src={previewUrl || user.avatar || ''} 
-                    alt={user.name} 
-                  />
-                  <AvatarFallback>
-                    {user.name
-                      .split(' ')
-                      .map((n: string) => n[0])
-                      .join('')
-                      .toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-              </div>
-              
-              <div className={styles.uploadSection}>
-                <Label htmlFor="avatarUrl">URL da Nova Foto</Label>
-                <Input
-                  id="avatarUrl"
-                  name="avatarUrl"
-                  type="url"
-                  placeholder="https://exemplo.com/minha-foto.jpg"
-                  value={previewUrl}
-                  onChange={handleUrlChange}
-                  required
-                />
-                <p className={styles.uploadHelp}>
-                  Insira a URL de uma imagem para usar como avatar
-                </p>
-              </div>
+    <FormModal
+      isOpen={true}
+      onClose={closeModal}
+      title="Alterar Foto do Perfil"
+      onSubmit={handleSubmit}
+      isSubmitting={isSubmitting}
+      submitLabel={isSubmitting ? 'Salvando...' : 'Salvar Foto'}
+      size="md"
+    >
+      <div className={modalStyles.formContainer}>
+        <div className={styles.centerContainer}>
+          <Avatar className={styles.previewAvatar}>
+            <AvatarImage 
+              src={previewUrl || user.avatar || ''} 
+              alt={user.name} 
+            />
+            <AvatarFallback className={modalStyles.avatarFallback}>
+              {user.name
+                .split(' ')
+                .map((n: string) => n[0])
+                .join('')
+                .toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+        </div>
+        
+        <div className={modalStyles.fieldContainer}>
+          <Label htmlFor="avatarUrl">URL da Nova Foto</Label>
+          <Input
+            id="avatarUrl"
+            name="avatarUrl"
+            type="url"
+            placeholder="https://exemplo.com/minha-foto.jpg"
+            value={previewUrl}
+            onChange={handleUrlChange}
+            required
+          />
+          <p className={styles.helpText}>
+            Insira a URL de uma imagem para usar como avatar
+          </p>
+        </div>
 
-              {message && (
-                <div className={`${styles.message} ${styles[message.type]}`}>
-                  {message.text}
-                </div>
-              )}
-
-              <div className={styles.modalActions}>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={closeModal}
-                  disabled={isSubmitting}
-                >
-                  Cancelar
-                </Button>
-                <Button
-                  type="submit"
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? 'Salvando...' : 'Salvar Foto'}
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
+        {message && (
+          <div className={message.type === 'success' ? modalStyles.messageSuccess : modalStyles.messageError}>
+            {message.text}
+          </div>
+        )}
       </div>
-    </div>
+    </FormModal>
   );
 }

@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { X, Plus, Copy, Zap } from 'lucide-react';
+import { Plus, Copy, Zap } from 'lucide-react';
 import { createFunnel, createFunnelFromTemplate } from '@/lib/actions/funnels';
+import { FormModal } from '@/components/ui/form-modal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { toast } from 'sonner';
 import ColorPicker from './color-picker';
 import styles from './create-funnel-modal.module.css';
 
@@ -112,199 +114,157 @@ export default function CreateFunnelModal({ isOpen, onClose, onSuccess }: Create
     }
   };
 
-  if (!isOpen) return null;
+  const handleSubmitWrapper = async () => {
+    const mockEvent = { preventDefault: () => {} } as React.FormEvent;
+    await handleSubmit(mockEvent);
+  };
 
   return (
-    <div className={styles.overlay}>
-      <div className={styles.modal}>
-        <div className={styles.header}>
-          <h2 className={styles.title}>Criar Novo Funil</h2>
+    <FormModal
+      isOpen={isOpen}
+      onClose={handleClose}
+      title="Criar Novo Funil"
+      onSubmit={handleSubmitWrapper}
+      isSubmitting={isLoading}
+      submitLabel="Criar Funil"
+      size="lg"
+    >
+      <div className={styles.form}>
+        {/* Seleção do modo */}
+        <div className={styles.modeSelector}>
           <button
             type="button"
-            className={styles.closeButton}
-            onClick={handleClose}
-            disabled={isLoading}
+            className={`${styles.modeButton} ${mode === 'template' ? styles.active : ''}`}
+            onClick={() => setMode('template')}
           >
-            <X size={20} />
+            <Zap size={20} />
+            <span>Usar Template</span>
+          </button>
+          <button
+            type="button"
+            className={`${styles.modeButton} ${mode === 'blank' ? styles.active : ''}`}
+            onClick={() => setMode('blank')}
+          >
+            <Plus size={20} />
+            <span>Criar do Zero</span>
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className={styles.form}>
-          {/* Seleção do modo */}
-          <div className={styles.modeSelector}>
-            <button
-              type="button"
-              className={`${styles.modeButton} ${mode === 'template' ? styles.active : ''}`}
-              onClick={() => setMode('template')}
-            >
-              <Zap size={20} />
-              <span>Usar Template</span>
-            </button>
-            <button
-              type="button"
-              className={`${styles.modeButton} ${mode === 'blank' ? styles.active : ''}`}
-              onClick={() => setMode('blank')}
-            >
-              <Plus size={20} />
-              <span>Criar do Zero</span>
-            </button>
+        {error && (
+          <div className={styles.error}>
+            <p>{error}</p>
           </div>
+        )}
 
-          {error && (
-            <div className={styles.error}>
-              {error}
+        {mode === 'template' && (
+          <div className={styles.templateSection}>
+            <Label className={styles.label}>Selecione um Template</Label>
+            <div className={styles.templateGrid}>
+              <div 
+                className={`${styles.templateCard} ${selectedTemplate === 'b2c' ? styles.selected : ''}`}
+                onClick={() => setSelectedTemplate('b2c')}
+              >
+                <h4 className={styles.templateName}>B2C - Vendas Diretas</h4>
+                <p className={styles.templateDescription}>Para vendas diretas ao consumidor final</p>
+              </div>
             </div>
-          )}
+          </div>
+        )}
 
-          {mode === 'template' && (
-            <div className={styles.templateSection}>
-              <Label className={styles.label}>Selecione um Template</Label>
-              <div className={styles.templateGrid}>
-                {[
-                  { key: 'b2c', name: 'Funil B2C - Padrão', description: 'Funil otimizado para vendas diretas ao consumidor', stages: 6 },
-                  { key: 'b2b', name: 'Funil B2B - Empresarial', description: 'Funil estruturado para vendas corporativas', stages: 7 },
-                  { key: 'support', name: 'Funil de Suporte', description: 'Gestão de tickets e atendimento ao cliente', stages: 6 }
-                ].map((template) => (
-                  <div
-                    key={template.key}
-                    className={`${styles.templateCard} ${
-                      selectedTemplate === template.key ? styles.selected : ''
-                    }`}
-                    onClick={() => setSelectedTemplate(template.key as 'b2c' | 'b2b' | 'support')}
-                  >
-                    <h4 className={styles.templateName}>{template.name}</h4>
-                    <p className={styles.templateDescription}>{template.description}</p>
-                    <div className={styles.templateStages}>
-                      {template.stages} etapas
+        {mode === 'blank' && (
+          <div className={styles.customSection}>
+            <div className={styles.basicInfo}>
+              <div className={styles.formGroup}>
+                <Label htmlFor="funnelName">Nome do Funil *</Label>
+                <Input
+                  id="funnelName"
+                  value={funnelName}
+                  onChange={(e) => setFunnelName(e.target.value)}
+                  placeholder="Ex: Vendas B2B, Atendimento..."
+                  required
+                />
+              </div>
+              
+              <div className={styles.formGroup}>
+                <Label htmlFor="funnelDescription">Descrição</Label>
+                <Input
+                  id="funnelDescription"
+                  value={funnelDescription}
+                  onChange={(e) => setFunnelDescription(e.target.value)}
+                  placeholder="Descrição opcional do funil"
+                />
+              </div>
+
+              <label className={styles.checkboxLabel}>
+                <input
+                  type="checkbox"
+                  id="isDefault"
+                  checked={isDefault}
+                  onChange={(e) => setIsDefault(e.target.checked)}
+                />
+                <span>Definir como funil padrão</span>
+              </label>
+            </div>
+
+            <div className={styles.stagesSection}>
+              <h3 className={styles.label}>Etapas do Funil</h3>
+              <div className={styles.stagesList}>
+                {stages.map((stage, index) => (
+                  <div key={index} className={styles.stageItem}>
+                    <div className={styles.stageNumber}>
+                      {index + 1}
                     </div>
+                    
+                    <div className={styles.stageInputs}>
+                      <Input
+                        type="text"
+                        value={stage.name}
+                        onChange={(e) => updateStage(index, 'name', e.target.value)}
+                        placeholder="Nome da etapa"
+                        required
+                        maxLength={255}
+                      />
+                      <Input
+                        type="text"
+                        value={stage.description}
+                        onChange={(e) => updateStage(index, 'description', e.target.value)}
+                        placeholder="Descrição (opcional)"
+                        maxLength={500}
+                      />
+                    </div>
+
+                    <ColorPicker
+                      value={stage.color}
+                      onChange={(color) => updateStage(index, 'color', color)}
+                    />
+
+                    {stages.length > 2 && (
+                      <button
+                        type="button"
+                        onClick={() => removeStage(index)}
+                        className={styles.removeStageButton}
+                        title="Remover etapa"
+                      >
+                        ×
+                      </button>
+                    )}
                   </div>
                 ))}
               </div>
+              
+              <Button
+                type="button"
+                variant="outline"
+                onClick={addStage}
+                disabled={stages.length >= 10}
+              >
+                <Plus size={16} />
+                Adicionar Etapa
+              </Button>
             </div>
-          )}
-
-          {mode === 'blank' && (
-            <div className={styles.customSection}>
-              <div className={styles.basicInfo}>
-                <div className={styles.formGroup}>
-                  <Label htmlFor="funnelName" className={styles.label}>
-                    Nome do Funil *
-                  </Label>
-                  <Input
-                    id="funnelName"
-                    type="text"
-                    value={funnelName}
-                    onChange={(e) => setFunnelName(e.target.value)}
-                    placeholder="Ex: Funil de Vendas B2C"
-                    required
-                    maxLength={255}
-                  />
-                </div>
-
-                <div className={styles.formGroup}>
-                  <Label htmlFor="funnelDescription" className={styles.label}>
-                    Descrição
-                  </Label>
-                  <Input
-                    id="funnelDescription"
-                    type="text"
-                    value={funnelDescription}
-                    onChange={(e) => setFunnelDescription(e.target.value)}
-                    placeholder="Descrição opcional do funil"
-                    maxLength={1000}
-                  />
-                </div>
-
-                <div className={styles.formGroup}>
-                  <label className={styles.checkboxLabel}>
-                    <input
-                      type="checkbox"
-                      checked={isDefault}
-                      onChange={(e) => setIsDefault(e.target.checked)}
-                    />
-                    <span>Definir como funil padrão</span>
-                  </label>
-                </div>
-              </div>
-
-              <div className={styles.stagesSection}>
-                <div className={styles.stagesHeader}>
-                  <Label className={styles.label}>Etapas do Funil</Label>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={addStage}
-                    disabled={stages.length >= 10}
-                  >
-                    <Plus size={16} />
-                    Adicionar Etapa
-                  </Button>
-                </div>
-
-                <div className={styles.stagesList}>
-                  {stages.map((stage, index) => (
-                    <div key={index} className={styles.stageItem}>
-                      <div className={styles.stageNumber}>{index + 1}</div>
-                      
-                      <div className={styles.stageInputs}>
-                        <Input
-                          type="text"
-                          value={stage.name}
-                          onChange={(e) => updateStage(index, 'name', e.target.value)}
-                          placeholder="Nome da etapa"
-                          required
-                          maxLength={255}
-                        />
-                        <Input
-                          type="text"
-                          value={stage.description}
-                          onChange={(e) => updateStage(index, 'description', e.target.value)}
-                          placeholder="Descrição (opcional)"
-                          maxLength={500}
-                        />
-                      </div>
-
-                      <ColorPicker
-                        value={stage.color}
-                        onChange={(color) => updateStage(index, 'color', color)}
-                      />
-
-                      {stages.length > 2 && (
-                        <button
-                          type="button"
-                          className={styles.removeStageButton}
-                          onClick={() => removeStage(index)}
-                          title="Remover etapa"
-                        >
-                          <X size={16} />
-                        </button>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-
-          <div className={styles.footer}>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleClose}
-              disabled={isLoading}
-            >
-              Cancelar
-            </Button>
-            <Button
-              type="submit"
-              disabled={isLoading || (mode === 'blank' && !funnelName.trim())}
-            >
-              {isLoading ? 'Criando...' : 'Criar Funil'}
-            </Button>
           </div>
-        </form>
+        )}
       </div>
-    </div>
+    </FormModal>
   );
 }

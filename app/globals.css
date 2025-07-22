@@ -1,5 +1,8 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+/* Import our custom CSS modules */
+@import "../styles/components.css";
+@import "../styles/forms.css";
+@import "../styles/buttons.css";
+@import "../styles/modals.css";
 
 /* Variáveis CSS para temas - Paleta aprimorada com maior contraste */
 @layer base {

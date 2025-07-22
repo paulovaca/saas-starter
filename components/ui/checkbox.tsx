@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Check } from 'lucide-react';
+import styles from './checkbox.module.css';
 
 interface CheckboxProps {
   id?: string;
@@ -24,21 +25,13 @@ export function Checkbox({
     }
   };
 
-  const baseClasses = `
-    inline-flex
-    items-center
-    justify-center
-    w-4
-    h-4
-    border
-    border-gray-300
-    rounded
-    cursor-pointer
-    transition-colors
-    ${checked ? 'bg-blue-600 border-blue-600' : 'bg-white'}
-    ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:border-blue-400'}
-    ${className}
-  `;
+  const baseClasses = [
+    styles.checkbox,
+    checked && styles.checkboxChecked,
+    disabled && styles.checkboxDisabled,
+    !disabled && styles.checkboxHover,
+    className
+  ].filter(Boolean).join(' ');
 
   return (
     <div
@@ -56,7 +49,7 @@ export function Checkbox({
       }}
     >
       {checked && (
-        <Check className="w-3 h-3 text-white" />
+        <Check className={styles.checkIcon} />
       )}
     </div>
   );

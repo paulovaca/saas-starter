@@ -31,6 +31,7 @@ import { TaskForm } from './tasks/task-form';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import type { InteractionFormInput, TaskFormInput } from '@/lib/validations/clients';
 import styles from './client-details-content.module.css';
+import badgeStyles from './client-details-content-badges.module.css';
 
 interface ClientDetailsContentProps {
   clientId: string;
@@ -331,13 +332,13 @@ export default function ClientDetailsContent({ clientId }: ClientDetailsContentP
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'high':
-        return 'bg-destructive text-destructive-foreground';
+        return badgeStyles.priorityHigh;
       case 'medium':
-        return 'bg-warning text-warning-foreground';
+        return badgeStyles.priorityMedium;
       case 'low':
-        return 'bg-muted text-muted-foreground';
+        return badgeStyles.priorityLow;
       default:
-        return 'bg-muted text-muted-foreground';
+        return badgeStyles.priorityDefault;
     }
   };
 
@@ -345,23 +346,23 @@ export default function ClientDetailsContent({ clientId }: ClientDetailsContentP
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'pending':
-        return 'bg-orange-100 text-orange-800';
+        return badgeStyles.statusPending;
       case 'in_progress':
-        return 'bg-blue-100 text-blue-800';
+        return badgeStyles.statusInProgress;
       case 'completed':
-        return 'bg-green-100 text-green-800';
+        return badgeStyles.statusCompleted;
       case 'cancelled':
-        return 'bg-red-100 text-red-800';
+        return badgeStyles.statusCancelled;
       case 'sent':
-        return 'bg-blue-100 text-blue-800';
+        return badgeStyles.statusSent;
       case 'accepted':
-        return 'bg-green-100 text-green-800';
+        return badgeStyles.statusAccepted;
       case 'rejected':
-        return 'bg-red-100 text-red-800';
+        return badgeStyles.statusRejected;
       case 'expired':
-        return 'bg-gray-100 text-gray-800';
+        return badgeStyles.statusExpired;
       default:
-        return 'bg-gray-100 text-gray-800';
+        return badgeStyles.statusDefault;
     }
   };
 
@@ -595,7 +596,7 @@ export default function ClientDetailsContent({ clientId }: ClientDetailsContentP
                         <div className={styles.clientInteractionContent}>
                           <div className={styles.clientInteractionHeader}>
                             <span className={styles.clientInteractionUser}>{interaction.user.name}</span>
-                            <Badge variant="outline" className={styles.badgeSmall}>
+                            <Badge variant="outline" className={badgeStyles.badgeSmall}>
                               {interaction.type}
                             </Badge>
                             <span className={styles.clientInteractionTime}>
@@ -628,10 +629,10 @@ export default function ClientDetailsContent({ clientId }: ClientDetailsContentP
                         <div className={styles.clientTaskContent}>
                           <div className={styles.clientTaskHeader}>
                             <h4 className={styles.clientTaskTitle}>{task.title}</h4>
-                            <Badge className={getPriorityColor(task.priority)}>
+                            <Badge className={`${badgeStyles[`priority${task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}`] || badgeStyles.priorityLow}`}>
                               {task.priority}
                             </Badge>
-                            <Badge variant="outline" className={getStatusColor(task.status)}>
+                            <Badge variant="outline" className={`${badgeStyles[`status${task.status.charAt(0).toUpperCase() + task.status.slice(1).replace('_', '')}`] || badgeStyles.statusPending}`}>
                               {task.status}
                             </Badge>
                           </div>
@@ -662,7 +663,7 @@ export default function ClientDetailsContent({ clientId }: ClientDetailsContentP
                         <div className={styles.clientProposalContent}>
                           <div className={styles.clientProposalHeader}>
                             <h4 className={styles.clientProposalTitle}>Proposta {proposal.proposalNumber}</h4>
-                            <Badge variant="outline" className={getStatusColor(proposal.status)}>
+                            <Badge variant="outline" className={`${badgeStyles[`status${proposal.status.charAt(0).toUpperCase() + proposal.status.slice(1)}`] || badgeStyles.statusPending}`}>
                               {proposal.status}
                             </Badge>
                           </div>
@@ -723,7 +724,7 @@ export default function ClientDetailsContent({ clientId }: ClientDetailsContentP
 
       {/* Modal de Nova Interação */}
       <Dialog open={showInteractionModal} onOpenChange={setShowInteractionModal}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className={badgeStyles.dialogContent}>
           <DialogHeader>
             <DialogTitle>Nova Interação - {client?.name}</DialogTitle>
           </DialogHeader>
@@ -738,7 +739,7 @@ export default function ClientDetailsContent({ clientId }: ClientDetailsContentP
 
       {/* Modal de Nova Tarefa */}
       <Dialog open={showTaskModal} onOpenChange={setShowTaskModal}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className={badgeStyles.dialogContent}>
           <DialogHeader>
             <DialogTitle>Nova Tarefa - {client?.name}</DialogTitle>
           </DialogHeader>

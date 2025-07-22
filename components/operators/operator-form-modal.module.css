@@ -8,6 +8,43 @@
   border-radius: var(--radius);
 }
 
+/* Generic form classes that replace inline strings */
+.dialogContent {
+  max-width: 56rem; /* dialog-xl */
+  width: 100%;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.formTabs {
+  width: 100%;
+}
+
+.formTabsList {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.formTabsContent {
+  padding: 1rem 0;
+}
+
+.formGroup {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.formGroupSingle {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
 .formContainer {
   display: flex;
   flex-direction: column;
@@ -196,6 +233,10 @@
   
   .fieldGroup,
   .fieldGroupThree {
+    grid-template-columns: 1fr;
+  }
+  
+  .formGroup {
     grid-template-columns: 1fr;
   }
 }

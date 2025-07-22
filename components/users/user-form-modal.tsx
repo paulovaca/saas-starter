@@ -7,9 +7,12 @@ import { Eye, EyeOff, Upload, UserIcon, Mail, Phone, Shield } from 'lucide-react
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { FormModal } from '@/components/ui/form-modal';
+import { useModal } from '@/lib/hooks/use-modal';
 import { createUserSchema, updateUserSchema, type CreateUserData, type UpdateUserData } from '@/lib/validations/users/user.schema';
 import { createUser } from '@/lib/actions/users/create-user';
 import { updateUser } from '@/lib/actions/users/update-user';
+import { toast } from 'sonner';
 import type { User, UserListItem } from '@/lib/db/schema';
 import styles from './user-form-modal.module.css';
 
@@ -21,7 +24,7 @@ type UserFormModalProps = {
 };
 
 export function UserFormModal({ children, user, currentUserRole, onSuccess }: UserFormModalProps) {
-  const [isOpen, setIsOpen] = useState(false);
+  const modal = useModal();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(user?.avatar || null);
@@ -124,7 +127,7 @@ export function UserFormModal({ children, user, currentUserRole, onSuccess }: Us
 
   // FORÇAR reset completo a cada abertura do modal
   useEffect(() => {
-    if (isOpen) {
+    if (modal.isOpen) {
       // SEMPRE resetar primeiro para limpar qualquer estado anterior
       reset({
         name: '',
@@ -159,11 +162,11 @@ export function UserFormModal({ children, user, currentUserRole, onSuccess }: Us
         }, 0);
       }
     }
-  }, [isOpen, isEditing, user, reset]);
+  }, [modal.isOpen, isEditing, user, reset]);
 
   // FORÇAR limpeza quando o modal fecha
   useEffect(() => {
-    if (!isOpen) {
+    if (!modal.isOpen) {
       reset({
         name: '',
         email: '',
@@ -177,7 +180,7 @@ export function UserFormModal({ children, user, currentUserRole, onSuccess }: Us
       setAvatarPreview(null);
       setError(null);
     }
-  }, [isOpen, reset]);
+  }, [modal.isOpen, reset]);
 
   // Registrar campo phone manualmente para funcionar com formatação
   useEffect(() => {
@@ -282,10 +285,10 @@ export function UserFormModal({ children, user, currentUserRole, onSuccess }: Us
 
         if (!result.success) {
           setError(result.error);
-          return;
+          throw new Error(result.error);
         }
 
-        setIsOpen(false);
+        toast.success(isEditing ? 'Usuário atualizado com sucesso!' : 'Usuário criado com sucesso!');
         
         // Limpar formulário após sucesso
         if (isEditing) {
@@ -310,12 +313,18 @@ export function UserFormModal({ children, user, currentUserRole, onSuccess }: Us
         onSuccess?.();
       } catch (error) {
         setError('Erro inesperado. Verifique os dados e tente novamente.');
+        throw error;
       }
     });
   };
 
+  const handleSubmitWrapper = () => {
+    return new Promise<void>((resolve, reject) => {
+      handleSubmit(onSubmit)().then(resolve).catch(reject);
+    });
+  };
+
   const handleClose = () => {
-    setIsOpen(false);
     setError(null);
     
     if (isEditing) {
@@ -343,56 +352,34 @@ export function UserFormModal({ children, user, currentUserRole, onSuccess }: Us
       setAvatarPreview(null);
       setPhoneValue('');
     }
+    
+    // Actually close the modal
+    modal.close();
   };
 
-  // Permitir fechar o modal com a tecla ESC
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && isOpen) {
-        handleClose();
-      }
-    };
-
-    if (isOpen) {
-      document.addEventListener('keydown', handleKeyDown);
-      // Prevenir scroll da página quando o modal estiver aberto
-      document.body.style.overflow = 'hidden';
-    }
-
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = 'unset';
-    };
-  }, [isOpen]);
 
   return (
     <>
-      <div onClick={() => setIsOpen(true)}>
+      <div onClick={modal.open}>
         {children}
       </div>
 
-      {isOpen && (
-        <div className={styles.overlay}>
-          <div className={styles.modal}>
-            <div className={styles.header}>
-              <h2 className={styles.title}>
-                {isEditing ? 'Editar Usuário' : 'Criar Novo Usuário'}
-              </h2>
-              <button
-                onClick={handleClose}
-                className={styles.closeButton}
-                type="button"
-              >
-                ×
-              </button>
-            </div>
-
-            <form 
-              onSubmit={handleSubmit(onSubmit)} 
-              className={styles.form}
-              autoComplete="off"
-              noValidate
-            >
+      <FormModal
+        isOpen={modal.isOpen}
+        onClose={handleClose}
+        title={isEditing ? 'Editar Usuário' : 'Criar Novo Usuário'}
+        onSubmit={handleSubmitWrapper}
+        isSubmitting={isPending}
+        submitLabel={isEditing ? 'Salvar Alterações' : 'Criar Usuário'}
+        size="lg"
+        showFooter={false}
+      >
+        <form 
+          onSubmit={handleSubmit(onSubmit)} 
+          className={styles.form}
+          autoComplete="off"
+          noValidate
+        >
               {/* Campo oculto para confundir o autocomplete */}
               <input
                 type="email"
@@ -438,7 +425,7 @@ export function UserFormModal({ children, user, currentUserRole, onSuccess }: Us
               <div className={styles.fieldGroup}>
                 <Label htmlFor="name" className={styles.label}>
                   <UserIcon className={styles.labelIcon} />
-                  Nome Completo *
+                  <span>Nome Completo *</span>
                 </Label>
                 <Input
                   id="name"
@@ -455,7 +442,7 @@ export function UserFormModal({ children, user, currentUserRole, onSuccess }: Us
               <div className={styles.fieldGroup}>
                 <Label htmlFor="email" className={styles.label}>
                   <Mail className={styles.labelIcon} />
-                  E-mail *
+                  <span>E-mail *</span>
                 </Label>
                 <Input
                   id="email"
@@ -479,7 +466,7 @@ export function UserFormModal({ children, user, currentUserRole, onSuccess }: Us
               <div className={styles.fieldGroup}>
                 <Label htmlFor="phone" className={styles.label}>
                   <Phone className={styles.labelIcon} />
-                  Telefone
+                  <span>Telefone</span>
                 </Label>
                 <Input
                   id="phone"
@@ -499,7 +486,7 @@ export function UserFormModal({ children, user, currentUserRole, onSuccess }: Us
               <div className={styles.fieldGroup}>
                 <Label htmlFor="role" className={styles.label}>
                   <Shield className={styles.labelIcon} />
-                  Permissão *
+                  <span>Permissão *</span>
                 </Label>
                 <select
                   id="role"
@@ -551,7 +538,6 @@ export function UserFormModal({ children, user, currentUserRole, onSuccess }: Us
                         <div className={styles.strengthBar}>
                           <div 
                             className={`${styles.strengthFill} ${styles[`strength${passwordStrength.strength}`]}`}
-                            style={{ width: `${(passwordStrength.strength / 5) * 100}%` }}
                           />
                         </div>
                         <span className={styles.strengthLabel}>
@@ -598,23 +584,25 @@ export function UserFormModal({ children, user, currentUserRole, onSuccess }: Us
               )}
 
               {/* Status */}
-              <div className={styles.fieldGroup}>
-                <Label className={styles.checkboxLabel}>
-                  <input
-                    type="checkbox"
-                    {...register('isActive')}
-                    className={styles.checkbox}
-                  />
-                  <span className={styles.checkboxText}>Usuário ativo</span>
+              <div className={styles.checkboxLabel}>
+                <input
+                  type="checkbox"
+                  {...register('isActive')}
+                  className={styles.checkbox}
+                  id="isActive"
+                />
+                <Label htmlFor="isActive" className={styles.checkboxText}>
+                  Usuário ativo
                 </Label>
               </div>
 
+              {error && (
+                <div className={styles.error}>
+                  <p>{error}</p>
+                </div>
+              )}
+
               <div className={styles.actions}>
-                {error && (
-                  <div className={styles.error}>
-                    {error}
-                  </div>
-                )}
                 <div className={styles.buttonsContainer}>
                   <Button
                     type="button"
@@ -642,9 +630,7 @@ export function UserFormModal({ children, user, currentUserRole, onSuccess }: Us
                 </div>
               </div>
             </form>
-          </div>
-        </div>
-      )}
+      </FormModal>
     </>
   );
 }

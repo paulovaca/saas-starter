@@ -1,0 +1,22 @@
+/* Edit Agency Modal Styles */
+.formContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.messageSuccess {
+  padding: 0.75rem;
+  border-radius: 0.375rem;
+  background-color: rgb(240 253 244);
+  border: 1px solid rgb(187 247 208);
+  color: rgb(22 101 52);
+}
+
+.messageError {
+  padding: 0.75rem;
+  border-radius: 0.375rem;
+  background-color: rgb(254 242 242);
+  border: 1px solid rgb(252 165 165);
+  color: rgb(153 27 27);
+}

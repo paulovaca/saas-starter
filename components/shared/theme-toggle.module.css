@@ -64,6 +64,14 @@
   stroke: currentColor !important;
 }
 
+/* Icon styles to replace inline styles */
+.iconStyle {
+  color: var(--foreground);
+  fill: currentColor;
+  stroke: currentColor;
+  opacity: 1;
+}
+
 .dropdownContent {
   min-width: 140px;
   background-color: var(--popover);

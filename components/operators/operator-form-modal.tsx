@@ -11,17 +11,21 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { createOperator } from '@/lib/actions/operators/create-operator';
 import { updateOperator } from '@/lib/actions/operators/update-operator';
 import { createOperatorSchema, updateOperatorSchema, type CreateOperatorInput, type UpdateOperatorInput } from '@/lib/validations/operators/operator.schema';
-import { toast } from 'sonner';
+import { useToast } from '@/components/ui/toast';
 import { useRouter } from 'next/navigation';
 import { Operator } from '@/lib/db/schema';
 import { OperatorDetails } from '@/lib/actions/operators/get-operator-details';
 import { Loader2 } from 'lucide-react';
-import styles from './operator-form-modal.module.css';
 import { useInputMask } from '@/hooks/use-input-mask';
+import styles from './operator-form-modal.module.css';
+import loadingStyles from '../ui/loading-icon.module.css';
 
 interface OperatorFormModalProps {
   isOpen: boolean;
@@ -53,6 +57,7 @@ interface FormData {
 export function OperatorFormModal({ isOpen, onClose, operator }: OperatorFormModalProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const { showSuccess, showError } = useToast();
   const isEditing = !!operator;
   const { applyMask, createMaskedHandler } = useInputMask();
 
@@ -122,11 +127,11 @@ export function OperatorFormModal({ isOpen, onClose, operator }: OperatorFormMod
         console.log('📥 Resultado do update:', result);
         
         if (result.success) {
-          toast.success('Operadora atualizada com sucesso!');
+          showSuccess('Operadora atualizada com sucesso!');
           handleCancel();
           router.refresh();
         } else {
-          toast.error(result.error);
+          showError(result.error || 'Erro ao processar solicitação');
         }
       } else {
         console.log('➕ Entrando no fluxo de CREATE...');
@@ -147,16 +152,16 @@ export function OperatorFormModal({ isOpen, onClose, operator }: OperatorFormMod
         console.log('📥 Resultado do create:', result);
         
         if (result.success) {
-          toast.success('Operadora criada com sucesso!');
+          showSuccess('Operadora criada com sucesso!');
           handleCancel();
           router.refresh();
         } else {
-          toast.error(result.error);
+          showError(result.error || 'Erro ao processar solicitação');
         }
       }
     } catch (error) {
       console.error('❌ ERRO no onSubmit:', error);
-      toast.error('Erro ao processar operação');
+      showError('Erro ao processar operação');
     } finally {
       setIsLoading(false);
     }
@@ -172,8 +177,8 @@ export function OperatorFormModal({ isOpen, onClose, operator }: OperatorFormMod
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={() => {}}>
-      <DialogContent className={styles.modalContent}>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className={styles.dialogContent}>
         <DialogHeader>
           <DialogTitle>
             {isEditing ? 'Editar Operadora' : 'Nova Operadora de Turismo'}
@@ -195,25 +200,25 @@ export function OperatorFormModal({ isOpen, onClose, operator }: OperatorFormMod
               Object.keys(errors).forEach(key => {
                 console.log(`  - Campo "${key}":`, (errors as any)[key]?.message);
               });
-              toast.error('Por favor, corrija os erros no formulário');
+              showError('Por favor, corrija os erros no formulário');
             }
           )} 
-          className={styles.formContainer}
+          className={styles.form}
         >
           {/* Campo hidden para o ID quando editando */}
           {isEditing && operator && (
             <input type="hidden" name="id" value={operator.id} />
           )}
           
-          <Tabs defaultValue="general" className={styles.formContainer}>
-            <TabsList className={styles.tabsList}>
+          <Tabs defaultValue="general" className={styles.formTabs}>
+            <TabsList className={styles.formTabsList}>
               <TabsTrigger value="general">Dados Principais</TabsTrigger>
               <TabsTrigger value="contact">Contato</TabsTrigger>
               <TabsTrigger value="additional">Adicional</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="general" className={styles.tabContent}>
-              <div className={styles.fieldGroup}>
+            <TabsContent value="general" className={styles.formTabsContent}>
+              <div className={styles.formGroup}>
                 <div className={styles.formField}>
                   <label htmlFor="name" className={styles.formLabel}>
                     Nome da Operadora *
@@ -291,9 +296,9 @@ export function OperatorFormModal({ isOpen, onClose, operator }: OperatorFormMod
               </div>
             </TabsContent>
 
-            <TabsContent value="contact" className={styles.tabContent}>
-              <div className={styles.fieldGroup}>
-                <div className={styles.formField}>
+            <TabsContent value="contact" className={styles.formTabsContent}>
+              <div className={styles.formGroup}>
+                <div className={styles.formGroup}>
                   <label htmlFor="contactName" className={styles.formLabel}>
                     Nome do Contato
                   </label>
@@ -311,7 +316,7 @@ export function OperatorFormModal({ isOpen, onClose, operator }: OperatorFormMod
                   )}
                 </div>
 
-                <div className={styles.formField}>
+                <div className={styles.formGroup}>
                   <label htmlFor="contactEmail" className={styles.formLabel}>
                     Email de Contato
                   </label>
@@ -330,8 +335,8 @@ export function OperatorFormModal({ isOpen, onClose, operator }: OperatorFormMod
                 </div>
               </div>
 
-              <div className={styles.fieldGroup}>
-                <div className={styles.formField}>
+              <div className={styles.formGroup}>
+                <div className={styles.formGroup}>
                   <label htmlFor="contactPhone" className={styles.formLabel}>
                     Telefone de Contato
                   </label>
@@ -350,7 +355,7 @@ export function OperatorFormModal({ isOpen, onClose, operator }: OperatorFormMod
                   )}
                 </div>
 
-                <div className={styles.formField}>
+                <div className={styles.formGroup}>
                   <label htmlFor="website" className={styles.formLabel}>
                     Website
                   </label>
@@ -369,10 +374,10 @@ export function OperatorFormModal({ isOpen, onClose, operator }: OperatorFormMod
                 </div>
               </div>
 
-              <div className={styles.formField}>
+              <div className={styles.formGroup}>
                 <label className={styles.formLabel}>Endereço</label>
-                <div className={styles.fieldGroupThree}>
-                  <div className={styles.formField}>
+                <div className={styles.formGroup}>
+                  <div className={styles.formGroup}>
                     <input
                       type="text"
                       placeholder="Logradouro"
@@ -380,7 +385,7 @@ export function OperatorFormModal({ isOpen, onClose, operator }: OperatorFormMod
                       className={styles.formInput}
                     />
                   </div>
-                  <div className={styles.formField}>
+                  <div className={styles.formGroup}>
                     <input
                       type="text"
                       placeholder="Número"
@@ -388,7 +393,7 @@ export function OperatorFormModal({ isOpen, onClose, operator }: OperatorFormMod
                       className={styles.formInput}
                     />
                   </div>
-                  <div className={styles.formField}>
+                  <div className={styles.formGroup}>
                     <input
                       type="text"
                       placeholder="CEP"
@@ -399,8 +404,8 @@ export function OperatorFormModal({ isOpen, onClose, operator }: OperatorFormMod
                   </div>
                 </div>
                 
-                <div className={styles.fieldGroupThree}>
-                  <div className={styles.formField}>
+                <div className={styles.formGroup}>
+                  <div className={styles.formGroup}>
                     <input
                       type="text"
                       placeholder="Cidade"
@@ -408,7 +413,7 @@ export function OperatorFormModal({ isOpen, onClose, operator }: OperatorFormMod
                       className={styles.formInput}
                     />
                   </div>
-                  <div className={styles.formField}>
+                  <div className={styles.formGroup}>
                     <input
                       type="text"
                       placeholder="Estado"
@@ -416,7 +421,7 @@ export function OperatorFormModal({ isOpen, onClose, operator }: OperatorFormMod
                       className={styles.formInput}
                     />
                   </div>
-                  <div className={styles.formField}>
+                  <div className={styles.formGroup}>
                     <input
                       type="text"
                       placeholder="País"
@@ -428,8 +433,8 @@ export function OperatorFormModal({ isOpen, onClose, operator }: OperatorFormMod
               </div>
             </TabsContent>
 
-            <TabsContent value="additional" className={styles.tabContent}>
-              <div className={styles.formField}>
+            <TabsContent value="additional" className={styles.formTabsContent}>
+              <div className={styles.formGroup}>
                 <label htmlFor="notes" className={styles.formLabel}>
                   Observações
                 </label>
@@ -457,14 +462,12 @@ export function OperatorFormModal({ isOpen, onClose, operator }: OperatorFormMod
               variant="outline"
               onClick={handleCancel}
               disabled={isLoading}
-              className={styles.cancelButton}
             >
               Cancelar
             </Button>
             <Button
               type="submit"
               disabled={isLoading}
-              className={styles.submitButton}
               onClick={() => {
                 console.log('🖱️ BOTÃO SUBMIT CLICADO!');
                 console.log('🔍 Form state:', form.formState);
@@ -481,7 +484,7 @@ export function OperatorFormModal({ isOpen, onClose, operator }: OperatorFormMod
             >
               {isLoading ? (
                 <>
-                  <Loader2 className={styles.loadingIcon} />
+                  <Loader2 className={loadingStyles.loadingIcon} />
                   {isEditing ? 'Atualizando...' : 'Cadastrando...'}
                 </>
               ) : (

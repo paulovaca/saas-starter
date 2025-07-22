@@ -1,4 +1,5 @@
 import styles from '../../app/(dashboard)/clients/clients.module.css';
+import skeletonStyles from './clients-page-skeleton.module.css';
 
 export default function ClientsPageSkeleton() {
   return (
@@ -6,79 +7,28 @@ export default function ClientsPageSkeleton() {
       {/* Header Skeleton */}
       <div className={styles.clientsHeader}>
         <div className={styles.clientsHeaderContent}>
-          <div style={{ 
-            height: '2rem', 
-            width: '200px', 
-            background: 'var(--muted)', 
-            borderRadius: 'var(--radius)' 
-          }} />
-          <div style={{ 
-            height: '1rem', 
-            width: '300px', 
-            background: 'var(--muted)', 
-            borderRadius: 'var(--radius)',
-            marginTop: '0.5rem'
-          }} />
+          <div className={`${skeletonStyles.skeletonPlaceholder} ${skeletonStyles.headerTitle}`} />
+          <div className={`${skeletonStyles.skeletonPlaceholder} ${skeletonStyles.headerSubtitle}`} />
         </div>
         <div className={styles.clientsActions}>
-          <div style={{ 
-            height: '40px', 
-            width: '120px', 
-            background: 'var(--muted)', 
-            borderRadius: 'var(--radius)' 
-          }} />
+          <div className={`${skeletonStyles.skeletonPlaceholder} ${skeletonStyles.headerButton}`} />
         </div>
       </div>
 
       {/* Filters Skeleton */}
       <div className={styles.clientsFilters}>
         <div className={styles.filtersRow}>
-          <div style={{ 
-            height: '40px', 
-            width: '250px', 
-            background: 'var(--muted)', 
-            borderRadius: 'var(--radius)' 
-          }} />
-          <div style={{ 
-            height: '40px', 
-            width: '150px', 
-            background: 'var(--muted)', 
-            borderRadius: 'var(--radius)' 
-          }} />
-          <div style={{ 
-            height: '40px', 
-            width: '150px', 
-            background: 'var(--muted)', 
-            borderRadius: 'var(--radius)' 
-          }} />
-          <div style={{ 
-            height: '40px', 
-            width: '150px', 
-            background: 'var(--muted)', 
-            borderRadius: 'var(--radius)' 
-          }} />
+          <div className={`${skeletonStyles.skeletonPlaceholder} ${skeletonStyles.filterInput}`} />
+          <div className={`${skeletonStyles.skeletonPlaceholder} ${skeletonStyles.filterSelect}`} />
+          <div className={`${skeletonStyles.skeletonPlaceholder} ${skeletonStyles.filterSelect}`} />
+          <div className={`${skeletonStyles.skeletonPlaceholder} ${skeletonStyles.filterSelect}`} />
         </div>
       </div>
 
       {/* View Toggle Skeleton */}
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center', 
-        marginBottom: '1.5rem' 
-      }}>
-        <div style={{ 
-          height: '32px', 
-          width: '100px', 
-          background: 'var(--muted)', 
-          borderRadius: 'var(--radius)' 
-        }} />
-        <div style={{ 
-          height: '32px', 
-          width: '80px', 
-          background: 'var(--muted)', 
-          borderRadius: 'var(--radius)' 
-        }} />
+      <div className={skeletonStyles.viewToggleContainer}>
+        <div className={`${skeletonStyles.skeletonPlaceholder} ${skeletonStyles.viewToggleLeft}`} />
+        <div className={`${skeletonStyles.skeletonPlaceholder} ${skeletonStyles.viewToggleRight}`} />
       </div>
 
       {/* Grid Skeleton */}
@@ -87,102 +37,33 @@ export default function ClientsPageSkeleton() {
           <div key={index} className={styles.clientCard}>
             <div className={styles.clientCardHeader}>
               <div>
-                <div style={{ 
-                  height: '1.5rem', 
-                  width: '180px', 
-                  background: 'var(--muted)', 
-                  borderRadius: 'var(--radius)' 
-                }} />
-                <div style={{ 
-                  height: '1rem', 
-                  width: '200px', 
-                  background: 'var(--muted)', 
-                  borderRadius: 'var(--radius)',
-                  marginTop: '0.5rem'
-                }} />
+                <div className={`${skeletonStyles.skeletonPlaceholder} ${skeletonStyles.cardTitle}`} />
+                <div className={`${skeletonStyles.skeletonPlaceholder} ${skeletonStyles.cardSubtitle}`} />
               </div>
               <div className={styles.clientActions}>
-                <div style={{ 
-                  height: '32px', 
-                  width: '32px', 
-                  background: 'var(--muted)', 
-                  borderRadius: 'var(--radius)' 
-                }} />
-                <div style={{ 
-                  height: '32px', 
-                  width: '32px', 
-                  background: 'var(--muted)', 
-                  borderRadius: 'var(--radius)' 
-                }} />
+                <div className={`${skeletonStyles.skeletonPlaceholder} ${skeletonStyles.cardAction}`} />
+                <div className={`${skeletonStyles.skeletonPlaceholder} ${skeletonStyles.cardAction}`} />
               </div>
             </div>
             
             <div className={styles.clientInfo}>
-              <div style={{ 
-                height: '1rem', 
-                width: '150px', 
-                background: 'var(--muted)', 
-                borderRadius: 'var(--radius)' 
-              }} />
-              <div style={{ 
-                height: '1rem', 
-                width: '120px', 
-                background: 'var(--muted)', 
-                borderRadius: 'var(--radius)' 
-              }} />
-              <div style={{ 
-                height: '1rem', 
-                width: '100px', 
-                background: 'var(--muted)', 
-                borderRadius: 'var(--radius)' 
-              }} />
+              <div className={`${skeletonStyles.skeletonPlaceholder} ${skeletonStyles.cardInfo}`} />
+              <div className={`${skeletonStyles.skeletonPlaceholder} ${skeletonStyles.cardInfoMedium}`} />
+              <div className={`${skeletonStyles.skeletonPlaceholder} ${skeletonStyles.cardInfoSmall}`} />
             </div>
             
             <div className={styles.clientStats}>
               <div className={styles.clientStat}>
-                <div style={{ 
-                  height: '1.5rem', 
-                  width: '40px', 
-                  background: 'var(--muted)', 
-                  borderRadius: 'var(--radius)' 
-                }} />
-                <div style={{ 
-                  height: '0.75rem', 
-                  width: '60px', 
-                  background: 'var(--muted)', 
-                  borderRadius: 'var(--radius)',
-                  marginTop: '0.25rem'
-                }} />
+                <div className={`${skeletonStyles.skeletonPlaceholder} ${skeletonStyles.statValue}`} />
+                <div className={`${skeletonStyles.skeletonPlaceholder} ${skeletonStyles.statLabel}`} />
               </div>
               <div className={styles.clientStat}>
-                <div style={{ 
-                  height: '1.5rem', 
-                  width: '40px', 
-                  background: 'var(--muted)', 
-                  borderRadius: 'var(--radius)' 
-                }} />
-                <div style={{ 
-                  height: '0.75rem', 
-                  width: '60px', 
-                  background: 'var(--muted)', 
-                  borderRadius: 'var(--radius)',
-                  marginTop: '0.25rem'
-                }} />
+                <div className={`${skeletonStyles.skeletonPlaceholder} ${skeletonStyles.statValue}`} />
+                <div className={`${skeletonStyles.skeletonPlaceholder} ${skeletonStyles.statLabel}`} />
               </div>
               <div className={styles.clientStat}>
-                <div style={{ 
-                  height: '1.5rem', 
-                  width: '40px', 
-                  background: 'var(--muted)', 
-                  borderRadius: 'var(--radius)' 
-                }} />
-                <div style={{ 
-                  height: '0.75rem', 
-                  width: '60px', 
-                  background: 'var(--muted)', 
-                  borderRadius: 'var(--radius)',
-                  marginTop: '0.25rem'
-                }} />
+                <div className={`${skeletonStyles.skeletonPlaceholder} ${skeletonStyles.statValue}`} />
+                <div className={`${skeletonStyles.skeletonPlaceholder} ${skeletonStyles.statLabel}`} />
               </div>
             </div>
           </div>
@@ -191,36 +72,11 @@ export default function ClientsPageSkeleton() {
 
       {/* Pagination Skeleton */}
       <div className={styles.pagination}>
-        <div style={{ 
-          height: '32px', 
-          width: '80px', 
-          background: 'var(--muted)', 
-          borderRadius: 'var(--radius)' 
-        }} />
-        <div style={{ 
-          height: '32px', 
-          width: '32px', 
-          background: 'var(--muted)', 
-          borderRadius: 'var(--radius)' 
-        }} />
-        <div style={{ 
-          height: '32px', 
-          width: '32px', 
-          background: 'var(--muted)', 
-          borderRadius: 'var(--radius)' 
-        }} />
-        <div style={{ 
-          height: '32px', 
-          width: '32px', 
-          background: 'var(--muted)', 
-          borderRadius: 'var(--radius)' 
-        }} />
-        <div style={{ 
-          height: '32px', 
-          width: '80px', 
-          background: 'var(--muted)', 
-          borderRadius: 'var(--radius)' 
-        }} />
+        <div className={`${skeletonStyles.skeletonPlaceholder} ${skeletonStyles.paginationButton}`} />
+        <div className={`${skeletonStyles.skeletonPlaceholder} ${skeletonStyles.paginationButtonSmall}`} />
+        <div className={`${skeletonStyles.skeletonPlaceholder} ${skeletonStyles.paginationButtonSmall}`} />
+        <div className={`${skeletonStyles.skeletonPlaceholder} ${skeletonStyles.paginationButtonSmall}`} />
+        <div className={`${skeletonStyles.skeletonPlaceholder} ${skeletonStyles.paginationButton}`} />
       </div>
     </div>
   );

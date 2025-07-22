@@ -2,13 +2,13 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { FormModal } from '@/components/ui/form-modal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { X, Lock, Eye, EyeOff } from 'lucide-react';
-import styles from './profile.module.css';
+import { Eye, EyeOff } from 'lucide-react';
 import { changePassword } from './actions';
+import styles from './change-password-modal.module.css';
 
 interface ChangePasswordModalProps {
   user: {
@@ -39,166 +39,137 @@ export function ChangePasswordModal({ user }: ChangePasswordModalProps) {
     }));
   };
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setIsSubmitting(true);
+  const handleSubmit = async () => {
     setMessage(null);
 
-    const formData = new FormData(event.currentTarget);
+    // Get form data from the DOM since FormModal doesn't pass the event
+    const form = document.querySelector('form') as HTMLFormElement;
+    const formData = new FormData(form);
     
-    try {
-      const result = await changePassword(formData);
-      
-      if (result.success) {
-        setMessage({ type: 'success', text: result.success });
-        setTimeout(() => {
-          closeModal();
-        }, 2000);
-      } else {
-        setMessage({ type: 'error', text: result.error || 'Erro desconhecido' });
-      }
-    } catch (error) {
-      setMessage({ type: 'error', text: 'Erro interno do servidor' });
-    } finally {
-      setIsSubmitting(false);
+    const result = await changePassword(formData);
+    
+    if (result.success) {
+      setMessage({ type: 'success', text: result.success });
+      setTimeout(() => {
+        closeModal();
+      }, 2000);
+    } else {
+      setMessage({ type: 'error', text: result.error || 'Erro desconhecido' });
+      throw new Error(result.error || 'Erro desconhecido');
     }
   };
 
   return (
-    <div className={styles.modalOverlay}>
-      <div className={styles.modalContent}>
-        <Card className={styles.modalCard}>
-          <CardHeader className={styles.modalHeader}>
-            <div className={styles.modalTitleContainer}>
-              <CardTitle className={styles.modalTitle}>
-                <Lock className={styles.modalIcon} />
-                Alterar Senha
-              </CardTitle>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={closeModal}
-                className={styles.closeButton}
-              >
-                <X className={styles.closeIcon} />
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent className={styles.modalBody}>
-            <form onSubmit={handleSubmit} className={styles.passwordForm}>
-              <div className={styles.formField}>
-                <Label htmlFor="currentPassword" className={styles.fieldLabel}>
-                  Senha Atual
-                </Label>
-                <div className={styles.passwordInputContainer}>
-                  <Input
-                    id="currentPassword"
-                    name="currentPassword"
-                    type={showPasswords.current ? 'text' : 'password'}
-                    placeholder="Digite sua senha atual"
-                    required
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className={styles.passwordToggle}
-                    onClick={() => togglePasswordVisibility('current')}
-                  >
-                    {showPasswords.current ? (
-                      <EyeOff className={styles.toggleIcon} />
-                    ) : (
-                      <Eye className={styles.toggleIcon} />
-                    )}
-                  </Button>
-                </div>
-              </div>
-
-              <div className={styles.formField}>
-                <Label htmlFor="newPassword" className={styles.fieldLabel}>
-                  Nova Senha
-                </Label>
-                <div className={styles.passwordInputContainer}>
-                  <Input
-                    id="newPassword"
-                    name="newPassword"
-                    type={showPasswords.new ? 'text' : 'password'}
-                    placeholder="Digite a nova senha"
-                    required
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className={styles.passwordToggle}
-                    onClick={() => togglePasswordVisibility('new')}
-                  >
-                    {showPasswords.new ? (
-                      <EyeOff className={styles.toggleIcon} />
-                    ) : (
-                      <Eye className={styles.toggleIcon} />
-                    )}
-                  </Button>
-                </div>
-                <p className={styles.fieldHelp}>
-                  Mínimo de 8 caracteres
-                </p>
-              </div>
-
-              <div className={styles.formField}>
-                <Label htmlFor="confirmPassword" className={styles.fieldLabel}>
-                  Confirmar Nova Senha
-                </Label>
-                <div className={styles.passwordInputContainer}>
-                  <Input
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    type={showPasswords.confirm ? 'text' : 'password'}
-                    placeholder="Confirme a nova senha"
-                    required
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className={styles.passwordToggle}
-                    onClick={() => togglePasswordVisibility('confirm')}
-                  >
-                    {showPasswords.confirm ? (
-                      <EyeOff className={styles.toggleIcon} />
-                    ) : (
-                      <Eye className={styles.toggleIcon} />
-                    )}
-                  </Button>
-                </div>
-              </div>
-
-              {message && (
-                <div className={`${styles.message} ${styles[message.type]}`}>
-                  {message.text}
-                </div>
+    <FormModal
+      isOpen={true}
+      onClose={closeModal}
+      title="Alterar Senha"
+      onSubmit={handleSubmit}
+      isSubmitting={isSubmitting}
+      submitLabel={isSubmitting ? 'Alterando...' : 'Alterar Senha'}
+      size="md"
+    >
+      <div className={styles.container}>
+        <div>
+          <Label htmlFor="currentPassword" className={styles.fieldLabel}>
+            Senha Atual
+          </Label>
+          <div className={styles.passwordField}>
+            <Input
+              id="currentPassword"
+              name="currentPassword"
+              type={showPasswords.current ? 'text' : 'password'}
+              placeholder="Digite sua senha atual"
+              required
+              className={styles.passwordInput}
+            />
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className={styles.toggleButton}
+              onClick={() => togglePasswordVisibility('current')}
+            >
+              {showPasswords.current ? (
+                <EyeOff className={styles.toggleIcon} />
+              ) : (
+                <Eye className={styles.toggleIcon} />
               )}
+            </Button>
+          </div>
+        </div>
 
-              <div className={styles.modalActions}>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={closeModal}
-                  disabled={isSubmitting}
-                >
-                  Cancelar
-                </Button>
-                <Button
-                  type="submit"
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? 'Alterando...' : 'Alterar Senha'}
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
+        <div>
+          <Label htmlFor="newPassword" className={styles.fieldLabel}>
+            Nova Senha
+          </Label>
+          <div className={styles.passwordField}>
+            <Input
+              id="newPassword"
+              name="newPassword"
+              type={showPasswords.new ? 'text' : 'password'}
+              placeholder="Digite a nova senha"
+              required
+              className={styles.passwordInput}
+            />
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className={styles.toggleButton}
+              onClick={() => togglePasswordVisibility('new')}
+            >
+              {showPasswords.new ? (
+                <EyeOff className={styles.toggleIcon} />
+              ) : (
+                <Eye className={styles.toggleIcon} />
+              )}
+            </Button>
+          </div>
+          <p className={styles.helpText}>
+            Mínimo de 8 caracteres
+          </p>
+        </div>
+
+        <div>
+          <Label htmlFor="confirmPassword" className={styles.fieldLabel}>
+            Confirmar Nova Senha
+          </Label>
+          <div className={styles.passwordField}>
+            <Input
+              id="confirmPassword"
+              name="confirmPassword"
+              type={showPasswords.confirm ? 'text' : 'password'}
+              placeholder="Confirme a nova senha"
+              required
+              className={styles.passwordInput}
+            />
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className={styles.toggleButton}
+              onClick={() => togglePasswordVisibility('confirm')}
+            >
+              {showPasswords.confirm ? (
+                <EyeOff className={styles.toggleIcon} />
+              ) : (
+                <Eye className={styles.toggleIcon} />
+              )}
+            </Button>
+          </div>
+        </div>
+
+        {message && (
+          <div className={`${styles.messageContainer} ${
+            message.type === 'success' 
+              ? styles.messageSuccess
+              : styles.messageError
+          }`}>
+            {message.text}
+          </div>
+        )}
       </div>
-    </div>
+    </FormModal>
   );
 }

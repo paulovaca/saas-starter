@@ -24,34 +24,19 @@ export function ThemeToggle() {
   if (!mounted) {
     return (
       <Button variant="outline" size="icon" className={styles.themeToggleButton}>
-        <Sun 
-          className={styles.themeIcon} 
-          style={{
-            color: 'var(--foreground)',
-            fill: 'currentColor',
-            stroke: 'currentColor',
-            opacity: 1
-          }} 
-        />
+        <Sun className={`${styles.themeIcon} ${styles.iconStyle}`} />
       </Button>
     )
   }
 
   const getThemeIcon = () => {
-    const iconStyle = {
-      color: 'var(--foreground)',
-      fill: 'currentColor',
-      stroke: 'currentColor',
-      opacity: 1
-    }
-    
     switch (theme) {
       case THEMES.LIGHT:
-        return <Sun className={styles.themeIcon} style={iconStyle} />
+        return <Sun className={`${styles.themeIcon} ${styles.iconStyle}`} />
       case THEMES.DARK:
-        return <Moon className={styles.themeIcon} style={iconStyle} />
+        return <Moon className={`${styles.themeIcon} ${styles.iconStyle}`} />
       default:
-        return <Monitor className={styles.themeIcon} style={iconStyle} />
+        return <Monitor className={`${styles.themeIcon} ${styles.iconStyle}`} />
     }
   }
 

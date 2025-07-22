@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { toast } from 'sonner';
+import { useToast } from '@/components/ui/toast';
 import { 
   Dialog, 
   DialogContent, 
@@ -86,7 +86,7 @@ export function CreateCommissionRuleModal({
         try {
           data.conditions = JSON.parse(formData.conditions);
         } catch {
-          toast.error('Formato JSON inválido nas condições');
+          showError('Formato JSON inválido nas condições');
           setIsLoading(false);
           return;
         }
@@ -95,7 +95,7 @@ export function CreateCommissionRuleModal({
       const result = await createCommissionRule(data);
       
       if (result.success) {
-        toast.success(result.message);
+        showSuccess(result.message || 'Regra criada com sucesso!');
         onSuccess();
         onClose();
         // Reset form
@@ -109,18 +109,20 @@ export function CreateCommissionRuleModal({
           tiers: [],
         });
       } else {
-        toast.error(result.error);
+        showError(result.error || 'Erro ao criar regra');
       }
     } catch (error) {
       console.error('Error creating commission rule:', error);
-      toast.error('Erro ao criar regra de comissão');
+      showError('Erro ao criar regra de comissão');
     } finally {
       setIsLoading(false);
     }
   };
 
+  const { showSuccess, showError } = useToast();
+
   return (
-    <Dialog open={isOpen} onOpenChange={() => {}}>
+    <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className={styles.modal}>
         <DialogHeader>
           <DialogTitle>Nova Regra de Comissão</DialogTitle>
@@ -136,7 +138,7 @@ export function CreateCommissionRuleModal({
               }
             >
               <SelectTrigger>
-                <span className={styles.selectValueCustom}>
+                <span>
                   {formData.ruleType ? getRuleTypeLabel(formData.ruleType) : "Selecione o tipo de regra"}
                 </span>
               </SelectTrigger>
@@ -193,7 +195,7 @@ export function CreateCommissionRuleModal({
               </div>
               
               {formData.tiers.map((tier, index) => (
-                <div key={index} className={`${styles.tierItem} ${styles.tiersList}`}>
+                <div key={index} className={styles.tierItem}>
                   <div className={styles.tiersHeader}>
                     <h4 className={styles.tiersTitle}>Faixa {index + 1}</h4>
                     <Button
@@ -316,10 +318,11 @@ export function CreateCommissionRuleModal({
               variant="outline"
               onClick={onClose}
               disabled={isLoading}
+              className={styles.cancelButton}
             >
               Cancelar
             </Button>
-            <Button type="submit" disabled={isLoading}>
+            <Button type="submit" disabled={isLoading} className={styles.submitButton}>
               {isLoading && <Loader2 className={styles.loadingIcon} />}
               Criar Regra
             </Button>

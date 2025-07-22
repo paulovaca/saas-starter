@@ -172,3 +172,39 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* Additional styles for description formatting */
+.description {
+  text-align: left;
+}
+
+.description > * + * {
+  margin-top: 0.75rem;
+}
+
+.userDetails {
+  font-weight: 500;
+}
+
+.dangerBox {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background-color: rgb(from var(--destructive) r g b / 0.1);
+  border: 1px solid rgb(from var(--destructive) r g b / 0.2);
+  border-radius: var(--radius);
+}
+
+.dangerTitle {
+  color: var(--destructive);
+  font-weight: 500;
+}
+
+.dangerList {
+  color: var(--destructive);
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}
+
+.dangerList > * + * {
+  margin-top: 0.25rem;
+}

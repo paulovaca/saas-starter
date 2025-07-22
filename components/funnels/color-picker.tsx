@@ -9,16 +9,30 @@ interface ColorPickerProps {
   disabled?: boolean;
 }
 
-const COLOR_OPTIONS: { value: ColorOption; label: string; className: string }[] = [
-  { value: 'blue', label: 'Azul', className: styles.colorBlue },
-  { value: 'green', label: 'Verde', className: styles.colorGreen },
-  { value: 'yellow', label: 'Amarelo', className: styles.colorYellow },
-  { value: 'red', label: 'Vermelho', className: styles.colorRed },
-  { value: 'purple', label: 'Roxo', className: styles.colorPurple },
-  { value: 'gray', label: 'Cinza', className: styles.colorGray },
-  { value: 'orange', label: 'Laranja', className: styles.colorOrange },
-  { value: 'pink', label: 'Rosa', className: styles.colorPink },
+const COLOR_OPTIONS: { value: ColorOption; label: string }[] = [
+  { value: 'blue', label: 'Azul' },
+  { value: 'green', label: 'Verde' },
+  { value: 'yellow', label: 'Amarelo' },
+  { value: 'red', label: 'Vermelho' },
+  { value: 'purple', label: 'Roxo' },
+  { value: 'gray', label: 'Cinza' },
+  { value: 'orange', label: 'Laranja' },
+  { value: 'pink', label: 'Rosa' },
 ];
+
+const getColorClass = (colorValue: ColorOption): string => {
+  const colorMap: Record<ColorOption, string> = {
+    blue: styles.colorBlue,
+    green: styles.colorGreen,
+    yellow: styles.colorYellow,
+    red: styles.colorRed,
+    purple: styles.colorPurple,
+    gray: styles.colorGray,
+    orange: styles.colorOrange,
+    pink: styles.colorPink,
+  };
+  return colorMap[colorValue];
+};
 
 export default function ColorPicker({ value, onChange, disabled = false }: ColorPickerProps) {
   return (
@@ -29,9 +43,11 @@ export default function ColorPicker({ value, onChange, disabled = false }: Color
           <button
             key={color.value}
             type="button"
-            className={`${styles.colorOption} ${color.className} ${
+            className={`${styles.colorOption} ${getColorClass(color.value)} ${
               value === color.value ? styles.selected : ''
-            } ${disabled ? styles.disabled : ''}`}
+            } ${
+              disabled ? styles.disabled : ''
+            }`}
             onClick={() => !disabled && onChange(color.value)}
             disabled={disabled}
             title={color.label}

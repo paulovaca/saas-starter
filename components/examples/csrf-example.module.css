@@ -1,0 +1,127 @@
+.container {
+  max-width: 32rem;
+  padding: 1.5rem;
+}
+
+.container > * + * {
+  margin-top: 1.5rem;
+}
+
+.header {
+  margin-bottom: 1rem;
+}
+
+.title {
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.description {
+  color: var(--muted-foreground);
+  margin-bottom: 1rem;
+}
+
+.tokenDisplay {
+  background-color: var(--info-background);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.tokenDisplay p {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.tokenCode {
+  background-color: var(--muted);
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+}
+
+.exampleSection {
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.exampleTitle {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.formContent {
+  margin-top: 0.75rem;
+}
+
+.formContent > * + * {
+  margin-top: 0.75rem;
+}
+
+.resultContainer {
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.resultTitle {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.resultPre {
+  background-color: var(--muted);
+  padding: 0.75rem;
+  border-radius: 0.25rem;
+  overflow-x: auto;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+}
+
+.instructionsContainer {
+  background-color: var(--muted);
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.instructionsTitle {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.instructionsList {
+  list-style-type: decimal;
+  list-style-position: inside;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.instructionsList > * + * {
+  margin-top: 0.5rem;
+}
+
+.instructionsList ul {
+  list-style-type: disc;
+  list-style-position: inside;
+  margin-left: 1rem;
+  margin-top: 0.25rem;
+}
+
+.instructionCode {
+  background-color: var(--muted);
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.125rem;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+}

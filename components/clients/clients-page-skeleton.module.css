@@ -1,0 +1,106 @@
+/* Skeleton placeholder styles */
+.skeletonPlaceholder {
+  background: var(--muted);
+  border-radius: var(--radius);
+}
+
+/* Header skeleton */
+.headerTitle {
+  height: 2rem;
+  width: 200px;
+}
+
+.headerSubtitle {
+  height: 1rem;
+  width: 300px;
+  margin-top: 0.5rem;
+}
+
+.headerButton {
+  height: 40px;
+  width: 120px;
+}
+
+/* Filter skeleton */
+.filterInput {
+  height: 40px;
+  width: 250px;
+}
+
+.filterSelect {
+  height: 40px;
+  width: 150px;
+}
+
+/* View toggle skeleton */
+.viewToggleContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.viewToggleLeft {
+  height: 32px;
+  width: 100px;
+}
+
+.viewToggleRight {
+  height: 32px;
+  width: 80px;
+}
+
+/* Card content skeleton */
+.cardTitle {
+  height: 1.5rem;
+  width: 180px;
+}
+
+.cardSubtitle {
+  height: 1rem;
+  width: 200px;
+  margin-top: 0.5rem;
+}
+
+.cardAction {
+  height: 32px;
+  width: 32px;
+}
+
+.cardInfo {
+  height: 1rem;
+  width: 150px;
+}
+
+.cardInfoMedium {
+  height: 1rem;
+  width: 120px;
+}
+
+.cardInfoSmall {
+  height: 1rem;
+  width: 100px;
+}
+
+/* Stats skeleton */
+.statValue {
+  height: 1.5rem;
+  width: 40px;
+}
+
+.statLabel {
+  height: 0.75rem;
+  width: 60px;
+  margin-top: 0.25rem;
+}
+
+/* Pagination skeleton */
+.paginationButton {
+  height: 32px;
+  width: 80px;
+}
+
+.paginationButtonSmall {
+  height: 32px;
+  width: 32px;
+}

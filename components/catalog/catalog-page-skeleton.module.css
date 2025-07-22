@@ -134,6 +134,47 @@
   height: 20px;
 }
 
+/* Specific width/height classes for inline style replacement */
+.textWidth120Height20 {
+  width: 120px;
+  height: 20px;
+}
+
+.textWidth100Height16 {
+  width: 100px;
+  height: 16px;
+}
+
+.textWidth20Height16 {
+  width: 20px;
+  height: 16px;
+}
+
+.textWidth150Height20 {
+  width: 150px;
+  height: 20px;
+}
+
+.textWidth100PercentHeight16 {
+  width: 100%;
+  height: 16px;
+}
+
+.textWidth80PercentHeight16 {
+  width: 80%;
+  height: 16px;
+}
+
+.textWidth60PercentHeight16 {
+  width: 60%;
+  height: 16px;
+}
+
+.textWidth100Height14 {
+  width: 100px;
+  height: 14px;
+}
+
 @keyframes skeleton-loading {
   0% {
     background-position: -200% 0;

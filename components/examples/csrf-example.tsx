@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Loader2 } from 'lucide-react';
+import styles from './csrf-example.module.css';
+import loadingStyles from '../ui/loading-icon.module.css';
 
 /**
  * Example component demonstrating CSRF token usage
@@ -92,16 +94,16 @@ export function CSRFExample() {
   }
 
   return (
-    <div className="space-y-6 p-6 max-w-2xl">
-      <div>
-        <h2 className="text-2xl font-bold mb-4">CSRF Protection Example</h2>
-        <p className="text-gray-600 dark:text-gray-400 mb-4">
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <h2 className={styles.title}>CSRF Protection Example</h2>
+        <p className={styles.description}>
           This example demonstrates how to use CSRF tokens in your application.
         </p>
-        <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg mb-4">
-          <p className="text-sm">
+        <div className={styles.tokenDisplay}>
+          <p>
             <strong>Current CSRF Token:</strong>{' '}
-            <code className="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-xs">
+            <code className={styles.tokenCode}>
               {token || 'Loading...'}
             </code>
           </p>
@@ -109,9 +111,9 @@ export function CSRFExample() {
       </div>
 
       {/* Example 1: Fetch with CSRF */}
-      <div className="border rounded-lg p-4">
-        <h3 className="text-lg font-semibold mb-3">Example 1: Fetch with CSRF Header</h3>
-        <div className="space-y-3">
+      <div className={styles.exampleSection}>
+        <h3 className={styles.exampleTitle}>Example 1: Fetch with CSRF Header</h3>
+        <div className={styles.formContent}>
           <div>
             <Label htmlFor="data">Data to send</Label>
             <Input
@@ -124,7 +126,7 @@ export function CSRFExample() {
           <Button onClick={handleFetchSubmit} disabled={loading || !token}>
             {loading ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className={loadingStyles.loadingIcon} />
                 Sending...
               </>
             ) : (
@@ -135,9 +137,9 @@ export function CSRFExample() {
       </div>
 
       {/* Example 2: Form with CSRF */}
-      <div className="border rounded-lg p-4">
-        <h3 className="text-lg font-semibold mb-3">Example 2: Form with CSRF Query Parameter</h3>
-        <form onSubmit={handleFormSubmit} className="space-y-3">
+      <div className={styles.exampleSection}>
+        <h3 className={styles.exampleTitle}>Example 2: Form with CSRF Query Parameter</h3>
+        <form onSubmit={handleFormSubmit} className={styles.formContent}>
           <div>
             <Label htmlFor="formData">Form Data</Label>
             <Input
@@ -150,7 +152,7 @@ export function CSRFExample() {
           <Button type="submit" disabled={loading || !token}>
             {loading ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className={loadingStyles.loadingIcon} />
                 Submitting...
               </>
             ) : (
@@ -162,24 +164,24 @@ export function CSRFExample() {
 
       {/* Result Display */}
       {result && (
-        <div className="border rounded-lg p-4">
-          <h3 className="text-lg font-semibold mb-3">Result</h3>
-          <pre className="bg-gray-100 dark:bg-gray-800 p-3 rounded overflow-x-auto text-sm">
+        <div className={styles.resultContainer}>
+          <h3 className={styles.resultTitle}>Result</h3>
+          <pre className={styles.resultPre}>
             {result}
           </pre>
         </div>
       )}
 
       {/* Usage Instructions */}
-      <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4">
-        <h3 className="text-lg font-semibold mb-3">How to Use CSRF Protection</h3>
-        <ol className="list-decimal list-inside space-y-2 text-sm">
-          <li>Import the <code className="bg-gray-200 dark:bg-gray-800 px-1 rounded">useCSRF</code> hook</li>
-          <li>Get the token from the hook: <code className="bg-gray-200 dark:bg-gray-800 px-1 rounded">const {'{ token }'} = useCSRF()</code></li>
+      <div className={styles.instructionsContainer}>
+        <h3 className={styles.instructionsTitle}>How to Use CSRF Protection</h3>
+        <ol className={styles.instructionsList}>
+          <li>Import the <code className={styles.instructionCode}>useCSRF</code> hook</li>
+          <li>Get the token from the hook: <code className={styles.instructionCode}>const {'{ token }'} = useCSRF()</code></li>
           <li>Include the token in your requests:
-            <ul className="list-disc list-inside ml-4 mt-1">
-              <li>As a header: <code className="bg-gray-200 dark:bg-gray-800 px-1 rounded">'x-csrf-token': token</code></li>
-              <li>As a query parameter: <code className="bg-gray-200 dark:bg-gray-800 px-1 rounded">?_csrf=token</code></li>
+            <ul>
+              <li>As a header: <code className={styles.instructionCode}>'x-csrf-token': token</code></li>
+              <li>As a query parameter: <code className={styles.instructionCode}>?_csrf=token</code></li>
             </ul>
           </li>
           <li>The middleware will validate the token automatically</li>

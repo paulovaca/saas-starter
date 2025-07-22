@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useTransition } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { useTransition } from 'react';
+import { ConfirmModal } from '@/components/ui/confirm-modal';
 import { resetUserPassword } from '@/lib/actions/users/reset-password';
+import { useToast } from '@/components/ui/toast';
 import styles from './reset-password-modal.module.css';
 
 interface ResetPasswordModalProps {
@@ -17,133 +17,59 @@ interface ResetPasswordModalProps {
 }
 
 export function ResetPasswordModal({ isOpen, onClose, user }: ResetPasswordModalProps) {
-  const [confirmText, setConfirmText] = useState('');
   const [isPending, startTransition] = useTransition();
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
+  const { showSuccess, showError } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setSuccess(null);
+  const handleConfirm = () => {
+    return new Promise<void>((resolve, reject) => {
+      startTransition(async () => {
+        try {
+          const formData = new FormData();
+          formData.append('userId', user.id);
+          formData.append('confirmText', 'resetar');
 
-    if (confirmText !== 'resetar') {
-      setError('Digite "resetar" para confirmar');
-      return;
-    }
+          const result = await resetUserPassword(formData);
 
-    startTransition(async () => {
-      const formData = new FormData();
-      formData.append('userId', user.id);
-      formData.append('confirmText', confirmText);
-
-      const result = await resetUserPassword(formData);
-
-      if (result.error) {
-        setError(result.error);
-      } else if (result.success) {
-        setSuccess(result.success);
-        setTimeout(() => {
-          onClose();
-          setConfirmText('');
-          setSuccess(null);
-        }, 3000);
-      }
+          if (result.error) {
+            showError(result.error);
+            reject(new Error(result.error));
+          } else if (result.success) {
+            showSuccess(result.success);
+            resolve();
+          }
+        } catch (error) {
+          showError('Erro inesperado ao resetar senha');
+          reject(error);
+        }
+      });
     });
   };
 
-  const handleClose = () => {
-    if (!isPending) {
-      setConfirmText('');
-      setError(null);
-      setSuccess(null);
-      onClose();
-    }
-  };
-
-  if (!isOpen) return null;
-
-  return (
-    <div className={styles.modal}>
-      <div className={styles.modalContent}>
-        <div className={styles.modalHeader}>
-          <h2 className={styles.modalTitle}>
-            Resetar Senha
-          </h2>
-          <button
-            onClick={handleClose}
-            disabled={isPending}
-            className={styles.closeButton}
-          >
-            ✕
-          </button>
-        </div>
-
-        <div className={styles.userInfo}>
-          <p className={styles.userLabel}>
-            Você está prestes a resetar a senha do usuário:
-          </p>
-          <p className={styles.userName}>
-            {user.name} ({user.role})
-          </p>
-        </div>
-
-        <div className={styles.warning}>
-          <p className={styles.warningText}>
-            <strong>Nova senha padrão:</strong> User123!
-          </p>
-          <p className={styles.warningText}>
-            O usuário deverá alterar a senha no próximo login.
-          </p>
-        </div>
-
-        <form onSubmit={handleSubmit}>
-          <div className={styles.formGroup}>
-            <label htmlFor="confirmText" className={styles.confirmLabel}>
-              Digite "resetar" para confirmar:
-            </label>
-            <Input
-              id="confirmText"
-              type="text"
-              value={confirmText}
-              onChange={(e) => setConfirmText(e.target.value)}
-              placeholder="resetar"
-              disabled={isPending}
-              autoComplete="off"
-            />
-          </div>
-
-          {error && (
-            <div className={styles.error}>
-              <p className={styles.errorText}>{error}</p>
-            </div>
-          )}
-
-          {success && (
-            <div className={styles.success}>
-              <p className={styles.successText}>{success}</p>
-            </div>
-          )}
-
-          <div className={styles.actions}>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleClose}
-              disabled={isPending}
-            >
-              Cancelar
-            </Button>
-            <button
-              type="submit"
-              disabled={isPending || confirmText !== 'resetar'}
-              className={styles.submitButton}
-            >
-              {isPending ? 'Resetando...' : 'Resetar Senha'}
-            </button>
-          </div>
-        </form>
+  const descriptionContent = (
+    <div className={styles.description}>
+      <p>
+        <span className={styles.userDetails}>Usuário:</span> {user.name} ({user.role})
+      </p>
+      <div className={styles.infoBox}>
+        <p className={styles.infoTitle}>ℹ️ Nova senha padrão: User123!</p>
+        <p className={styles.infoText}>
+          O usuário deverá alterar a senha no próximo login.
+        </p>
       </div>
     </div>
+  );
+
+  return (
+    <ConfirmModal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Resetar Senha"
+      description={descriptionContent}
+      onConfirm={handleConfirm}
+      requiredConfirmation="resetar"
+      confirmText="Resetar Senha"
+      variant="warning"
+      isLoading={isPending}
+    />
   );
 }

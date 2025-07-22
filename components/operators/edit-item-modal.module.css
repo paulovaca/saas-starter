@@ -108,3 +108,13 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+.helpText {
+  font-size: 0.875rem;
+  color: #4b5563;
+  margin-top: 0.25rem;
+}
+
+[data-theme="dark"] .helpText {
+  color: #9ca3af;
+}
