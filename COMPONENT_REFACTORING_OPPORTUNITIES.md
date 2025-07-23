@@ -39,7 +39,7 @@ Este documento mapeia os padrões de código repetitivos identificados no aplica
 - Criar storybook para visualização dos componentes
 - Já substitua os antigos códigos pelos componentes novos
 
-### 1. Modal/Dialog System
+<!-- ### 1. Modal/Dialog System
 
 #### Padrão Atual
 - **3 implementações diferentes**: Dialog customizado, Radix UI Alert Dialog, e implementações diretas
@@ -80,7 +80,7 @@ Especialização para modais com formulários:
 Para ações destrutivas:
 - Layout de aviso consistente
 - Input de confirmação opcional
-- Botões com estilo destrutivo
+- Botões com estilo destrutivo -->
 
 ### 2. Form System
 
