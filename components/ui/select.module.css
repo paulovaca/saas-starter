@@ -2,6 +2,9 @@
 .select {
   position: relative;
   width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .selectTrigger {
@@ -9,6 +12,9 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
   border-radius: 6px;
   border: 1px solid var(--border);
   background-color: var(--background);

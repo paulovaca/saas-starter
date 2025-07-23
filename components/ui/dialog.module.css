@@ -20,11 +20,15 @@
   max-height: 90vh;
   overflow: hidden;
   animation: dialogAppear 0.2s ease-out;
+  box-sizing: border-box;
 }
 
 .dialogContent {
   padding: 24px;
   width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .header {

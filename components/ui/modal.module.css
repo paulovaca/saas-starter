@@ -128,7 +128,14 @@
 .body {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 1.5rem;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.body * {
+  box-sizing: border-box;
 }
 
 /* Footer */

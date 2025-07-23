@@ -266,12 +266,36 @@
   }
 }
 
-/* Regras específicas para modais - Garantir fundos sólidos */
+/* Regras específicas para modais - Garantir fundos sólidos e layout correto */
 @layer utilities {
   /* Overlay de modal sempre com fundo sólido escuro */
   .modal-overlay {
     background-color: rgba(0, 0, 0, 0.9) !important;
     backdrop-filter: none !important;
+  }
+
+  /* Garantir box-sizing correto em todos os elementos dentro de modais */
+  [data-modal="true"] *,
+  [data-modal="true"] *::before,
+  [data-modal="true"] *::after {
+    box-sizing: border-box;
+  }
+
+  /* Garantir que inputs e selects não extrapolem */
+  [data-modal="true"] input,
+  [data-modal="true"] select,
+  [data-modal="true"] textarea {
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Prevenir overflow horizontal em containers de formulário */
+  [data-modal="true"] form,
+  [data-modal="true"] .form-container,
+  [data-modal="true"] .modal-content {
+    overflow-x: hidden;
+    min-width: 0;
   }
   
   /* Modal sempre com fundo sólido da cor do card */

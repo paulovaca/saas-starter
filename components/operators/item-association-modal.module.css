@@ -1,11 +1,13 @@
 .modalContent {
-  max-width: 800px;
+  max-width: min(800px, 95vw);
+  width: 100%;
   max-height: 85vh;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   background-color: var(--card);
   border: 1px solid var(--border);
+  box-sizing: border-box;
 }
 
 .formContainer {
@@ -19,10 +21,12 @@
 .scrollableContent {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 1.5rem 0;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  min-width: 0;
 }
 
 .searchSection {
@@ -48,6 +52,9 @@
 
 .searchInput {
   width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
   padding: 0.75rem 0.75rem 0.75rem 2.5rem;
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -201,6 +208,10 @@
 
 .formInput,
 .formSelect {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
   padding: 0.75rem;
   border: 1px solid var(--border);
   border-radius: var(--radius);
