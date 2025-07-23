@@ -414,43 +414,43 @@
 
 /* Badge cores para status */
 .statusPending {
-  background: rgb(255 237 213);
-  color: rgb(154 52 18);
+  background: rgb(from var(--warning) r g b / 0.1);
+  color: var(--warning);
 }
 
 .statusInProgress {
-  background: rgb(219 234 254);
-  color: rgb(30 64 175);
+  background: rgb(from var(--primary) r g b / 0.1);
+  color: var(--primary);
 }
 
 .statusCompleted {
-  background: rgb(220 252 231);
-  color: rgb(22 101 52);
+  background: rgb(from var(--success) r g b / 0.1);
+  color: var(--success);
 }
 
 .statusCancelled {
-  background: rgb(254 226 226);
-  color: rgb(153 27 27);
+  background: rgb(from var(--destructive) r g b / 0.1);
+  color: var(--destructive);
 }
 
 .statusSent {
-  background: rgb(219 234 254);
-  color: rgb(30 64 175);
+  background: rgb(from var(--primary) r g b / 0.1);
+  color: var(--primary);
 }
 
 .statusAccepted {
-  background: rgb(220 252 231);
-  color: rgb(22 101 52);
+  background: rgb(from var(--success) r g b / 0.1);
+  color: var(--success);
 }
 
 .statusRejected {
-  background: rgb(254 226 226);
-  color: rgb(153 27 27);
+  background: rgb(from var(--destructive) r g b / 0.1);
+  color: var(--destructive);
 }
 
 .statusExpired {
-  background: rgb(229 231 235);
-  color: rgb(55 65 81);
+  background: var(--muted);
+  color: var(--muted-foreground);
 }
 
 .contactIcon {

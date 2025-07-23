@@ -15,7 +15,7 @@
 }
 
 .buttonBase:focus-visible {
-  outline: 2px solid var();
+  outline: 2px solid var(--ring);
   outline-offset: 2px;
 }
 
@@ -33,32 +33,32 @@
 
 /* Variantes do botão com contraste aprimorado */
 .default {
-  background-color: var();
-  color: var();
-  border: 1px solid var();
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  border: 1px solid var(--primary);
+  box-shadow: var(--shadow-sm);
 }
 
 .default:hover {
-  background-color: rgb(from var() r g b / );
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  background-color: rgb(from var(--primary) r g b / 0.9);
+  box-shadow: var(--shadow-md);
 }
 
 .default:active {
   transform: scale(0.98);
-  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  box-shadow: var(--shadow-sm);
 }
 
 .destructive {
-  background-color: var();
-  color: var();
-  border: 1px solid var();
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  background-color: var(--destructive);
+  color: var(--destructive-foreground);
+  border: 1px solid var(--destructive);
+  box-shadow: var(--shadow-sm);
 }
 
 .destructive:hover {
-  background-color: rgb(from var() r g b / );
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  background-color: rgb(from var(--destructive) r g b / 0.9);
+  box-shadow: var(--shadow-md);
 }
 
 .destructive:active {
@@ -66,15 +66,15 @@
 }
 
 .secondary {
-  background-color: var();
-  color: var();
-  border: 1px solid var();
-  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  background-color: var(--secondary);
+  color: var(--secondary-foreground);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
 }
 
 .secondary:hover {
-  background-color: rgb(from var() r g b / );
-  box-shadow: 0 2px 4px 0 rgb(0 0 0 / 0.1);
+  background-color: rgb(from var(--secondary) r g b / 0.8);
+  box-shadow: var(--shadow-sm);
 }
 
 .secondary:active {
@@ -82,17 +82,17 @@
 }
 
 .outline {
-  background-color: var();
-  color: var();
-  border: 1px solid var();
-  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  background-color: var(--background);
+  color: var(--foreground);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
 }
 
 .outline:hover {
-  background-color: var();
-  color: var();
-  border-color: var();
-  box-shadow: 0 2px 4px 0 rgb(0 0 0 / 0.1);
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+  border-color: var(--border);
+  box-shadow: var(--shadow-sm);
 }
 
 .outline:active {
@@ -101,14 +101,14 @@
 
 .ghost {
   background-color: transparent;
-  color: var();
+  color: var(--foreground);
   border: 1px solid transparent;
 }
 
 .ghost:hover {
-  background-color: var();
-  color: var();
-  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+  box-shadow: var(--shadow-sm);
 }
 
 .ghost:active {
@@ -116,7 +116,7 @@
 }
 
 .link {
-  color: var();
+  color: var(--primary);
   text-decoration: underline;
   text-underline-offset: 4px;
   background-color: transparent;
@@ -125,7 +125,7 @@
 
 .link:hover {
   text-decoration: none;
-  color: rgb(from var() r g b / );
+  color: rgb(from var(--primary) r g b / 0.8);
 }
 
 .link:active {
@@ -133,15 +133,15 @@
 }
 
 .success {
-  background-color: var();
-  color: var();
-  border: 1px solid var();
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  background-color: var(--success);
+  color: var(--success-foreground);
+  border: 1px solid var(--success);
+  box-shadow: var(--shadow-sm);
 }
 
 .success:hover {
-  background-color: rgb(from var() r g b / );
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  background-color: rgb(from var(--success) r g b / 0.9);
+  box-shadow: var(--shadow-md);
 }
 
 .success:active {
@@ -149,15 +149,15 @@
 }
 
 .warning {
-  background-color: var();
-  color: var();
-  border: 1px solid var();
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  background-color: var(--warning);
+  color: var(--warning-foreground);
+  border: 1px solid var(--warning);
+  box-shadow: var(--shadow-sm);
 }
 
 .warning:hover {
-  background-color: rgb(from var() r g b / );
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  background-color: rgb(from var(--warning) r g b / 0.9);
+  box-shadow: var(--shadow-md);
 }
 
 .warning:active {

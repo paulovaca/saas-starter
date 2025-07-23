@@ -108,9 +108,9 @@ export function Modal({
               {title}
             </h2>
             {description && (
-              <p id="modal-description" className={styles.description}>
+              <div id="modal-description" className={styles.description}>
                 {description}
-              </p>
+              </div>
             )}
           </div>
           {showCloseButton && !preventClose && (

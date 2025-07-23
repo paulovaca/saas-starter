@@ -5,7 +5,7 @@
   position: fixed;
   inset: 0;
   z-index: 50;
-  background-color: rgb(0 0 0 / 0.8);
+  background-color: var(--overlay-dark);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -43,7 +43,7 @@
   background-color: var(--background);
   border-radius: var(--radius);
   border: 1px solid var(--border);
-  box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+  box-shadow: var(--shadow-xl);
   position: relative;
   width: 100%;
   max-height: calc(100vh - 2rem);
@@ -283,7 +283,7 @@
 
 /* Alert dialog styles (for better compatibility) */
 .alert-dialog-overlay {
-  background-color: rgb(0 0 0 / 0.8);
+  background-color: var(--overlay-dark);
   position: fixed;
   inset: 0;
   animation: overlay-show 150ms cubic-bezier(0.16, 1, 0.3, 1);
@@ -292,9 +292,7 @@
 .alert-dialog-content {
   background-color: var(--background);
   border-radius: var(--radius);
-  box-shadow: 
-    hsl(206 22% 7% / 35%) 0px 10px 38px -10px,
-    hsl(206 22% 7% / 20%) 0px 10px 20px -15px;
+  box-shadow: var(--shadow-xl);
   position: fixed;
   top: 50%;
   left: 50%;
@@ -315,9 +313,7 @@
   background-color: var(--background);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  box-shadow: 
-    0 25px 50px -12px rgb(0 0 0 / 0.25),
-    0 0 0 1px rgb(255 255 255 / 0.05);
+  box-shadow: var(--shadow-xl);
   position: fixed;
   left: 50%;
   top: 50%;
@@ -333,7 +329,7 @@
 }
 
 .dialog-overlay {
-  background-color: rgb(0 0 0 / 0.8);
+  background-color: var(--overlay-dark);
   position: fixed;
   inset: 0;
   z-index: 50;
@@ -414,7 +410,7 @@
 .modal-loading-overlay {
   position: absolute;
   inset: 0;
-  background-color: rgb(from var(--background) r g b / 0.8);
+  background-color: var(--background-alpha-80);
   display: flex;
   align-items: center;
   justify-content: center;

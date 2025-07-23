@@ -65,19 +65,19 @@
   background-color: var(--primary);
   color: var(--primary-foreground);
   border-color: var(--primary);
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+  box-shadow: var(--shadow-sm);
 }
 
 .btn-primary:hover:not(:disabled) {
   background-color: rgb(from var(--primary) r g b / 0.9);
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  box-shadow: var(--shadow-md);
 }
 
 .btn-secondary {
   background-color: var(--secondary);
   color: var(--secondary-foreground);
   border-color: var(--border);
-  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  box-shadow: var(--shadow-sm);
 }
 
 .btn-secondary:hover:not(:disabled) {
@@ -123,7 +123,7 @@
   background-color: var(--destructive);
   color: var(--destructive-foreground);
   border-color: var(--destructive);
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+  box-shadow: var(--shadow-sm);
 }
 
 .btn-destructive:hover:not(:disabled) {
@@ -134,7 +134,7 @@
   background-color: var(--success);
   color: var(--success-foreground);
   border-color: var(--success);
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+  box-shadow: var(--shadow-sm);
 }
 
 .btn-success:hover:not(:disabled) {
@@ -145,7 +145,7 @@
   background-color: var(--warning);
   color: var(--warning-foreground);
   border-color: var(--warning);
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+  box-shadow: var(--shadow-sm);
 }
 
 .btn-warning:hover:not(:disabled) {
@@ -234,12 +234,12 @@
   width: 3.5rem;
   height: 3.5rem;
   border-radius: 50%;
-  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  box-shadow: var(--shadow-lg);
   z-index: 50;
 }
 
 .btn-fab:hover:not(:disabled) {
-  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  box-shadow: var(--shadow-xl);
   transform: translateY(-2px);
 }
 
@@ -289,35 +289,35 @@
   transform: scale(0.95);
 }
 
-/* Color variants for specific use cases */
+/* Color variants for specific use cases - Using theme variables */
 .btn-blue {
-  background-color: rgb(37 99 235);
-  color: rgb(255 255 255);
-  border-color: rgb(37 99 235);
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  border-color: var(--primary);
 }
 
 .btn-blue:hover:not(:disabled) {
-  background-color: rgb(29 78 216);
+  background-color: rgb(from var(--primary) r g b / 0.9);
 }
 
 .btn-green {
-  background-color: rgb(22 163 74);
-  color: rgb(255 255 255);
-  border-color: rgb(22 163 74);
+  background-color: var(--success);
+  color: var(--success-foreground);
+  border-color: var(--success);
 }
 
 .btn-green:hover:not(:disabled) {
-  background-color: rgb(21 128 61);
+  background-color: rgb(from var(--success) r g b / 0.9);
 }
 
 .btn-red {
-  background-color: rgb(239 68 68);
-  color: rgb(255 255 255);
-  border-color: rgb(239 68 68);
+  background-color: var(--destructive);
+  color: var(--destructive-foreground);
+  border-color: var(--destructive);
 }
 
 .btn-red:hover:not(:disabled) {
-  background-color: rgb(220 38 38);
+  background-color: rgb(from var(--destructive) r g b / 0.9);
 }
 
 .btn-orange {

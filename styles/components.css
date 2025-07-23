@@ -256,11 +256,11 @@
 .bg-warning { background-color: var(--warning); }
 
 .bg-gray-50 { background-color: var(--muted); }
-.bg-gray-100 { background-color: var(--muted); opacity: 0.8; }
+.bg-gray-100 { background-color: var(--muted); }
 .bg-gray-200 { background-color: var(--border); }
 
-.bg-red-50 { background-color: var(--destructive); opacity: 0.1; }
-.bg-red-100 { background-color: var(--destructive); opacity: 0.2; }
+.bg-red-50 { background-color: rgb(from var(--destructive) r g b / 0.1); }
+.bg-red-100 { background-color: rgb(from var(--destructive) r g b / 0.2); }
 
 .bg-orange-50 { background-color: var(--orange-50); }
 .bg-orange-100 { background-color: var(--orange-100); }
@@ -277,8 +277,8 @@
 .border-primary { border-color: var(--primary); }
 .border-destructive { border-color: var(--destructive); }
 .border-gray-200 { border-color: var(--border); }
-.border-gray-300 { border-color: var(--border); opacity: 0.8; }
-.border-red-200 { border-color: var(--destructive); opacity: 0.3; }
+.border-gray-300 { border-color: var(--border); }
+.border-red-200 { border-color: rgb(from var(--destructive) r g b / 0.3); }
 .border-red-500 { border-color: var(--destructive); }
 
 /* Border radius */
@@ -342,7 +342,7 @@
 .hover\:bg-gray-100:hover { background-color: var(--muted); }
 .hover\:bg-gray-200:hover { background-color: var(--accent); }
 .hover\:text-gray-700:hover { color: var(--foreground); }
-.hover\:text-red-700:hover { color: var(--destructive); opacity: 0.9; }
+.hover\:text-red-700:hover { color: var(--destructive); }
 
 /* Transitions */
 .transition-colors {
@@ -360,8 +360,8 @@
 .duration-300 { transition-duration: 300ms; }
 
 /* Shadows */
-.shadow { box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1); }
-.shadow-lg { box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); }
+.shadow { box-shadow: var(--shadow-sm); }
+.shadow-lg { box-shadow: var(--shadow-lg); }
 
 /* Opacity */
 .opacity-0 { opacity: 0; }
@@ -605,10 +605,8 @@
 
 /* Error container */
 .error-container {
-  background-color: var(--destructive);
-  opacity: 0.1;
-  border: 1px solid var(--destructive);
-  opacity: 0.2;
+  background-color: rgb(from var(--destructive) r g b / 0.1);
+  border: 1px solid rgb(from var(--destructive) r g b / 0.2);
   border-radius: var(--radius);
   padding: 0.75rem;
 }

@@ -13,19 +13,19 @@
 .dangerIcon {
   width: 1.5rem;
   height: 1.5rem;
-  color: rgb(220 38 38);
+  color: var(--destructive);
 }
 
 .warningIcon {
   width: 1.5rem;
   height: 1.5rem;
-  color: rgb(220 38 38);
+  color: var(--warning);
 }
 
 .infoIcon {
   width: 1.5rem;
   height: 1.5rem;
-  color: rgb(37 99 235);
+  color: var(--primary);
 }
 
 .confirmationContainer {

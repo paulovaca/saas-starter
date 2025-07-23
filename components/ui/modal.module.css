@@ -1,7 +1,7 @@
 .overlay {
   position: fixed;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: var(--overlay-subtle);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -11,14 +11,14 @@
 }
 
 .overlayAlert {
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: var(--overlay-dark);
 }
 
 .content {
   position: relative;
-  background-color: white;
+  background-color: var(--card);
   border-radius: 0.5rem;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  box-shadow: var(--shadow-xl);
   width: 100%;
   max-height: calc(100vh - 2rem);
   overflow: hidden;
@@ -64,7 +64,7 @@
 }
 
 .alert .title {
-  color: #dc2626;
+  color: var(--destructive);
 }
 
 .form .body {
@@ -77,20 +77,20 @@
   align-items: flex-start;
   justify-content: space-between;
   padding: 1.5rem;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--border);
 }
 
 .title {
   font-size: 1.25rem;
   font-weight: 600;
-  color: #111827;
+  color: var(--card-foreground);
   margin: 0;
 }
 
 .description {
   margin-top: 0.5rem;
   font-size: 0.875rem;
-  color: #6b7280;
+  color: var(--muted-foreground);
 }
 
 .closeButton {
@@ -102,7 +102,7 @@
   border-radius: 0.375rem;
   border: none;
   background: transparent;
-  color: #6b7280;
+  color: var(--muted-foreground);
   cursor: pointer;
   transition: all 0.2s;
   margin-left: 1rem;
@@ -110,12 +110,12 @@
 }
 
 .closeButton:hover {
-  background-color: #f3f4f6;
-  color: #374151;
+  background-color: var(--accent);
+  color: var(--accent-foreground);
 }
 
 .closeButton:focus {
-  outline: 2px solid #3b82f6;
+  outline: 2px solid var(--ring);
   outline-offset: 2px;
 }
 
@@ -138,8 +138,8 @@
   justify-content: flex-end;
   gap: 0.75rem;
   padding: 1.5rem;
-  border-top: 1px solid #e5e7eb;
-  background-color: #f9fafb;
+  border-top: 1px solid var(--border);
+  background-color: var(--muted);
 }
 
 /* Loading state */
@@ -150,7 +150,7 @@
 .loadingOverlay {
   position: absolute;
   inset: 0;
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: var(--background-alpha-80);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -160,8 +160,8 @@
 .spinner {
   width: 2.5rem;
   height: 2.5rem;
-  border: 3px solid #e5e7eb;
-  border-top-color: #3b82f6;
+  border: 3px solid var(--border);
+  border-top-color: var(--primary);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }

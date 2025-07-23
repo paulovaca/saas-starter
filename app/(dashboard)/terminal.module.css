@@ -2,7 +2,7 @@
 .terminal {
   width: 100%;
   border-radius: 0.5rem;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-lg);
   overflow: hidden;
   background-color: var(--card);
   border: 1px solid var(--border);
@@ -35,15 +35,15 @@
 }
 
 .dotRed {
-  background-color: #ef4444;
+  background-color: var(--destructive);
 }
 
 .dotYellow {
-  background-color: #eab308;
+  background-color: var(--warning);
 }
 
 .dotGreen {
-  background-color: #22c55e;
+  background-color: var(--success);
 }
 
 .copyButton {

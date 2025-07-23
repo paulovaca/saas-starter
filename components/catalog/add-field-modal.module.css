@@ -4,7 +4,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: var(--overlay-subtle);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -16,16 +16,13 @@
   background: var(--background);
   border: 1px solid var(--border);
   border-radius: 8px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-lg);
   width: 100%;
   max-width: 500px;
   max-height: 90vh;
   overflow-y: auto;
 }
 
-[data-theme="dark"] .modal {
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-}
 
 .header {
   display: flex;

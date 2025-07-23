@@ -8,9 +8,9 @@
   align-items: center;
   justify-content: center;
   border-radius: 6px;
-  background-color: #f3f4f6;
+  background-color: var(--muted);
   padding: 4px;
-  color: #6b7280;
+  color: var(--muted-foreground);
 }
 
 .tabsTrigger {
@@ -30,14 +30,14 @@
 }
 
 .tabsTrigger:hover {
-  background-color: #e5e7eb;
-  color: #374151;
+  background-color: var(--accent);
+  color: var(--accent-foreground);
 }
 
 .tabsTrigger.active {
-  background-color: white;
-  color: #111827;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  background-color: var(--background);
+  color: var(--foreground);
+  box-shadow: var(--shadow-sm);
 }
 
 .tabsTrigger:disabled {
@@ -48,21 +48,4 @@
 .tabsContent {
   margin-top: 16px;
   outline: none;
-}
-
-/* Dark mode */
-[data-theme="dark"] .tabsList {
-  background-color: #374151;
-  color: #9ca3af;
-}
-
-[data-theme="dark"] .tabsTrigger:hover {
-  background-color: #4b5563;
-  color: #d1d5db;
-}
-
-[data-theme="dark"] .tabsTrigger.active {
-  background-color: #1f2937;
-  color: #f9fafb;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }

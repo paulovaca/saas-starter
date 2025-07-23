@@ -326,7 +326,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgb(from var(--background) r g b / 0.8);
+  background-color: var(--background-alpha-80);
   display: flex;
   align-items: center;
   justify-content: center;

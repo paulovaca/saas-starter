@@ -4,7 +4,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: var(--overlay-subtle);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -15,7 +15,7 @@
 .dialog {
   background: var(--background);
   border-radius: var(--radius);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-xl);
   width: 100%;
   max-width: 400px;
   max-height: 90vh;
@@ -53,18 +53,18 @@
 }
 
 .icon.warning {
-  background: #fef3c7;
-  color: #d97706;
+  background: var(--orange-50);
+  color: var(--orange-600);
 }
 
 .icon.danger {
-  background: #fee2e2;
-  color: #dc2626;
+  background: rgb(from var(--destructive) r g b / 0.1);
+  color: var(--destructive);
 }
 
 .icon.info {
-  background: #dbeafe;
-  color: #2563eb;
+  background: rgb(from var(--primary) r g b / 0.1);
+  color: var(--primary);
 }
 
 .closeButton {

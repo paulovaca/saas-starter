@@ -134,15 +134,9 @@
 }
 
 .rolepurple {
-  background-color: rgb(196 181 253 / 0.1);
+  background-color: rgb(168 85 247 / 0.1);
   color: rgb(147 51 234);
-  border: 1px solid rgb(196 181 253 / 0.3);
-}
-
-[data-theme="dark"] .rolepurple {
-  background-color: rgb(147 51 234 / 0.15);
-  color: rgb(196 181 253);
-  border: 1px solid rgb(147 51 234 / 0.25);
+  border: 1px solid rgb(168 85 247 / 0.3);
 }
 
 .roleblue {
@@ -359,7 +353,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.9);
+  background-color: rgb(from var(--background) r g b / 0.9);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -371,7 +365,7 @@
   background-color: var(--card);
   border-radius: 0.75rem;
   border: 2px solid var(--border);
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  box-shadow: var(--shadow-xl);
   max-width: 400px;
   width: 100%;
   padding: 1.5rem;

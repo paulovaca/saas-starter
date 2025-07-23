@@ -63,6 +63,21 @@
     --chart-4: rgb(168 85 247);
     --chart-5: rgb(236 72 153);
     
+    /* Sombras - Sistema consistente */
+    --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    
+    /* Overlays - Fundos com transparência */
+    --overlay-light: rgb(255 255 255 / 0.8);
+    --overlay-dark: rgb(0 0 0 / 0.8);
+    --overlay-subtle: rgb(0 0 0 / 0.5);
+    
+    /* Background com transparência */
+    --background-alpha-80: rgb(255 255 255 / 0.8);
+    --background-alpha-95: rgb(255 255 255 / 0.95);
+    
     /* Configuração do raio */
     --radius: 0.5rem;
   }
@@ -123,6 +138,21 @@
     --chart-3: rgb(251 191 36);
     --chart-4: rgb(196 181 253);
     --chart-5: rgb(244 114 182);
+    
+    /* Sombras - Adaptadas para tema escuro */
+    --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.3), 0 1px 2px -1px rgb(0 0 0 / 0.3);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.3), 0 8px 10px -6px rgb(0 0 0 / 0.3);
+    
+    /* Overlays - Fundos com transparência para escuro */
+    --overlay-light: rgb(255 255 255 / 0.1);
+    --overlay-dark: rgb(0 0 0 / 0.9);
+    --overlay-subtle: rgb(0 0 0 / 0.7);
+    
+    /* Background com transparência */
+    --background-alpha-80: rgb(9 9 11 / 0.8);
+    --background-alpha-95: rgb(9 9 11 / 0.95);
   }
 }
 

@@ -36,12 +36,12 @@
   background-color: var(--primary);
   color: var(--primary-foreground);
   border: 1px solid var(--primary);
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  box-shadow: var(--shadow-sm);
 }
 
 .default:hover {
   background-color: rgb(from var(--primary) r g b / 0.9);
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  box-shadow: var(--shadow-md);
 }
 
 .default:active {
@@ -53,12 +53,12 @@
   background-color: var(--destructive);
   color: var(--destructive-foreground);
   border: 1px solid var(--destructive);
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  box-shadow: var(--shadow-sm);
 }
 
 .destructive:hover {
   background-color: rgb(from var(--destructive) r g b / 0.9);
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  box-shadow: var(--shadow-md);
 }
 
 .destructive:active {
@@ -125,7 +125,7 @@
 
 .link:hover {
   text-decoration: none;
-  color: var(--primary) / 0.8;
+  color: rgb(from var(--primary) r g b / 0.8);
 }
 
 .link:active {
@@ -136,12 +136,12 @@
   background-color: var(--success);
   color: var(--success-foreground);
   border: 1px solid var(--success);
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  box-shadow: var(--shadow-sm);
 }
 
 .success:hover {
-  background-color: var(--success) / 0.9;
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  background-color: rgb(from var(--success) r g b / 0.9);
+  box-shadow: var(--shadow-md);
 }
 
 .success:active {
@@ -152,12 +152,12 @@
   background-color: var(--warning);
   color: var(--warning-foreground);
   border: 1px solid var(--warning);
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  box-shadow: var(--shadow-sm);
 }
 
 .warning:hover {
-  background-color: var(--warning) / 0.9;
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  background-color: rgb(from var(--warning) r g b / 0.9);
+  box-shadow: var(--shadow-md);
 }
 
 .warning:active {

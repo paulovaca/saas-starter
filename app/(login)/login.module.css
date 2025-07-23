@@ -46,7 +46,7 @@
 .logo {
   height: 3rem;
   width: 3rem;
-  color: #f97316; /* orange-500 */
+  color: var(--orange-500);
 }
 
 .title {
