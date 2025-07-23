@@ -12,9 +12,10 @@ import styles from './create-base-item-modal.module.css';
 interface CreateBaseItemModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onItemCreated?: () => void;
 }
 
-export function CreateBaseItemModal({ open, onOpenChange }: CreateBaseItemModalProps) {
+export function CreateBaseItemModal({ open, onOpenChange, onItemCreated }: CreateBaseItemModalProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -41,6 +42,12 @@ export function CreateBaseItemModal({ open, onOpenChange }: CreateBaseItemModalP
       
       // Reset form
       setFormData({ name: '', description: '' });
+      
+      // Close modal
+      onOpenChange(false);
+      
+      // Notify parent component to refresh items
+      onItemCreated?.();
       
       // Refresh the page to show the new item
       router.refresh();

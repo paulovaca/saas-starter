@@ -13,6 +13,7 @@ export function BaseItemsPageContent() {
   const [baseItems, setBaseItems] = useState<(BaseItem & { customFields: BaseItemField[] })[]>([]);
   const [filteredItems, setFilteredItems] = useState<(BaseItem & { customFields: BaseItemField[] })[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
     const loadItems = async () => {
@@ -28,7 +29,7 @@ export function BaseItemsPageContent() {
     };
 
     loadItems();
-  }, []);
+  }, [refreshKey]);
 
   const handleFiltersChange = (filters: Record<string, string>) => {
     let filtered = baseItems;
@@ -51,6 +52,10 @@ export function BaseItemsPageContent() {
     setFilteredItems(filtered);
   };
 
+  const handleItemsChanged = () => {
+    setRefreshKey(prev => prev + 1);
+  };
+
   if (isLoading) {
     return (
       <div className={styles.container}>
@@ -69,7 +74,7 @@ export function BaseItemsPageContent() {
               Gerencie os itens base que comporão os portfólios das operadoras
             </p>
           </div>
-          <CreateBaseItemButton />
+          <CreateBaseItemButton onItemCreated={handleItemsChanged} />
         </div>
       </div>
 
@@ -80,7 +85,7 @@ export function BaseItemsPageContent() {
       />
 
       <div className={styles.content}>
-        <BaseItemsList items={filteredItems} />
+        <BaseItemsList items={filteredItems} onItemDeleted={handleItemsChanged} />
       </div>
     </div>
   );

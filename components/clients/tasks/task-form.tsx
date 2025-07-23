@@ -26,7 +26,8 @@ interface TaskFormProps {
   clientId: string;
   users: User[];
   currentUserId: string;
-  isAdmin: boolean;
+  currentUserRole: 'DEVELOPER' | 'MASTER' | 'ADMIN' | 'AGENT';
+  clientOwnerId?: string;
   onSubmit: (data: TaskFormInput & { clientId: string }) => Promise<void>;
   onCancel: () => void;
   isLoading?: boolean;
@@ -36,12 +37,26 @@ export function TaskForm({
   clientId,
   users,
   currentUserId,
-  isAdmin,
+  currentUserRole,
+  clientOwnerId,
   onSubmit,
   onCancel,
   isLoading = false,
 }: TaskFormProps) {
   const [notifyAssignee, setNotifyAssignee] = useState(false);
+
+  // Determine default assignee: for admin/master creating task, default to client owner if different, otherwise current user
+  const getDefaultAssignee = () => {
+    if (['ADMIN', 'MASTER'].includes(currentUserRole) && clientOwnerId && clientOwnerId !== currentUserId) {
+      return clientOwnerId;
+    }
+    return currentUserId;
+  };
+
+  // Default para amanhã às 9h
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  tomorrow.setHours(9, 0, 0, 0);
 
   const {
     register,
@@ -52,9 +67,10 @@ export function TaskForm({
   } = useForm<TaskFormInput>({
     resolver: zodResolver(taskFormSchema),
     defaultValues: {
-      assignedTo: currentUserId,
+      assignedTo: getDefaultAssignee(),
       notifyAssignee: false,
       priority: 'medium' as TaskPriority,
+      dueDate: tomorrow,
     },
   });
 
@@ -97,11 +113,6 @@ export function TaskForm({
     
     setValue('dueDate', newDate);
   };
-
-  // Default para amanhã às 9h
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  tomorrow.setHours(9, 0, 0, 0);
 
   return (
     <div className={styles.container}>
@@ -172,14 +183,14 @@ export function TaskForm({
         </div>
 
         {/* Responsável */}
-        {isAdmin && users.length > 1 && (
+        {['ADMIN', 'MASTER'].includes(currentUserRole) && users.length > 1 && (
           <div className={styles.field}>
             <Label className={styles.label}>
               <User className={styles.labelIcon} />
               Responsável *
             </Label>
             <Select
-              value={watchedAssignedTo || currentUserId}
+              value={watchedAssignedTo || getDefaultAssignee()}
               onValueChange={(value) => setValue('assignedTo', value)}
             >
               <SelectTrigger className={styles.select}>
@@ -192,6 +203,9 @@ export function TaskForm({
                       <span>{user.name}</span>
                       {user.id === currentUserId && (
                         <span className={styles.currentUserBadge}>(Você)</span>
+                      )}
+                      {user.id === clientOwnerId && user.id !== currentUserId && (
+                        <span className={styles.currentUserBadge}>(Dono do Cliente)</span>
                       )}
                     </div>
                   </SelectItem>

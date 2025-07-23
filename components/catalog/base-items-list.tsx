@@ -6,9 +6,10 @@ import styles from './base-items-list.module.css';
 
 interface BaseItemsListProps {
   items: (BaseItem & { customFields: BaseItemField[] })[];
+  onItemDeleted?: () => void;
 }
 
-export function BaseItemsList({ items }: BaseItemsListProps) {
+export function BaseItemsList({ items, onItemDeleted }: BaseItemsListProps) {
   if (items.length === 0) {
     return (
       <div className={styles.emptyState}>
@@ -30,7 +31,7 @@ export function BaseItemsList({ items }: BaseItemsListProps) {
 
       <div className={styles.grid}>
         {items.map((item) => (
-          <BaseItemCard key={item.id} item={item} />
+          <BaseItemCard key={item.id} item={item} onItemDeleted={onItemDeleted} />
         ))}
       </div>
     </div>

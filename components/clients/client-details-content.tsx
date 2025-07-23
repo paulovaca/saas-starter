@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import useSWR from 'swr';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -25,6 +26,7 @@ import {
 } from 'lucide-react';
 import { formatCPF, formatCNPJ, formatPhone } from '@/lib/validations/clients/client.schema';
 import { Client } from '@/lib/types/clients';
+import type { User } from '@/lib/db/schema';
 import ClientFunnelStageEditor from './client-funnel-stage-editor';
 import { InteractionForm } from './interactions/interaction-form';
 import { TaskForm } from './tasks/task-form';
@@ -109,11 +111,17 @@ interface ClientWithDetails extends Client {
   }>;
 }
 
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
+
 export default function ClientDetailsContent({ clientId }: ClientDetailsContentProps) {
   const router = useRouter();
   const [client, setClient] = useState<ClientWithDetails | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
+  
+  // Get current user and agency users
+  const { data: currentUser } = useSWR<User>('/api/user', fetcher);
+  const { data: agencyUsers } = useSWR<User[]>('/api/users', fetcher);
   
   // Estados para modais
   const [showInteractionModal, setShowInteractionModal] = useState(false);
@@ -137,14 +145,9 @@ export default function ClientDetailsContent({ clientId }: ClientDetailsContentP
 
       const clientData = await response.json();
       
-      // Transformar dados para incluir relacionamentos mockados
-      // TODO: Implementar busca real de interações, tarefas, propostas e transferências
+      // Os relacionamentos já vêm da API
       const transformedClient: ClientWithDetails = {
         ...clientData,
-        interactions: [], // Será implementado
-        tasks: [], // Será implementado
-        proposals: [], // Será implementado
-        transfers: [] // Será implementado
       };
 
       setClient(transformedClient);
@@ -229,6 +232,28 @@ export default function ClientDetailsContent({ clientId }: ClientDetailsContentP
     }
   };
 
+  const handleTaskStatusChange = async (taskId: string, newStatus: string) => {
+    try {
+      const response = await fetch(`/api/tasks/${taskId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Erro ao atualizar status da tarefa');
+      }
+
+      // Recarregar dados do cliente
+      await fetchClient();
+    } catch (error) {
+      console.error('Erro ao atualizar tarefa:', error);
+      alert('Erro ao atualizar status da tarefa');
+    }
+  };
+
   const handleNewProposal = () => {
     router.push(`/proposals/new?clientId=${clientId}`);
   };
@@ -249,10 +274,6 @@ export default function ClientDetailsContent({ clientId }: ClientDetailsContentP
         const clientData = await response.json();
         const transformedClient: ClientWithDetails = {
           ...clientData,
-          interactions: [],
-          tasks: [],
-          proposals: [],
-          transfers: []
         };
         setClient(transformedClient);
       }
@@ -588,7 +609,10 @@ export default function ClientDetailsContent({ clientId }: ClientDetailsContentP
                 </CardHeader>
                 <CardContent>
                   <div className={styles.clientInteractionsList}>
-                    {client.interactions.map((interaction) => (
+                    {client.interactions.length === 0 ? (
+                      <p className={styles.emptyState}>Nenhuma interação registrada para este cliente.</p>
+                    ) : (
+                      client.interactions.map((interaction) => (
                       <div key={interaction.id} className={styles.clientInteractionItem}>
                         <div className={styles.clientInteractionIcon}>
                           {getInteractionIcon(interaction.type)}
@@ -611,7 +635,7 @@ export default function ClientDetailsContent({ clientId }: ClientDetailsContentP
                           <p className={styles.clientInteractionDescription}>{interaction.description}</p>
                         </div>
                       </div>
-                    ))}
+                    )))}
                   </div>
                 </CardContent>
               </Card>
@@ -624,28 +648,71 @@ export default function ClientDetailsContent({ clientId }: ClientDetailsContentP
                 </CardHeader>
                 <CardContent>
                   <div className={styles.clientTasksList}>
-                    {client.tasks.map((task) => (
-                      <div key={task.id} className={styles.clientTaskItem}>
-                        <div className={styles.clientTaskContent}>
-                          <div className={styles.clientTaskHeader}>
-                            <h4 className={styles.clientTaskTitle}>{task.title}</h4>
-                            <Badge className={`${badgeStyles[`priority${task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}`] || badgeStyles.priorityLow}`}>
-                              {task.priority}
-                            </Badge>
-                            <Badge variant="outline" className={`${badgeStyles[`status${task.status.charAt(0).toUpperCase() + task.status.slice(1).replace('_', '')}`] || badgeStyles.statusPending}`}>
-                              {task.status}
-                            </Badge>
-                          </div>
-                          {task.description && (
-                            <p className={styles.clientTaskDescription}>{task.description}</p>
-                          )}
-                          <div className={styles.clientTaskMeta}>
-                            <span>Responsável: {task.assignedUser.name}</span>
-                            <span>Vencimento: {formatDate(task.dueDate)}</span>
+                    {!client?.tasks || client.tasks.length === 0 ? (
+                      <div className={styles.empty}>
+                        <p>Nenhuma tarefa encontrada para este cliente.</p>
+                        <p>Debug: Total de tarefas carregadas: {client?.tasks?.length || 0}</p>
+                      </div>
+                    ) : (
+                      client.tasks.map((task) => (
+                        <div key={task.id} className={styles.clientTaskItem}>
+                          <div className={styles.clientTaskContent}>
+                            <div className={styles.clientTaskHeader}>
+                              <h4 className={styles.clientTaskTitle}>{task.title}</h4>
+                              <Badge className={`${badgeStyles[`priority${task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}`] || badgeStyles.priorityLow}`}>
+                                {task.priority}
+                              </Badge>
+                              <Badge variant="outline" className={`${badgeStyles[`status${task.status.charAt(0).toUpperCase() + task.status.slice(1).replace('_', '')}`] || badgeStyles.statusPending}`}>
+                                {task.status}
+                              </Badge>
+                            </div>
+                            {task.description && (
+                              <p className={styles.clientTaskDescription}>{task.description}</p>
+                            )}
+                            <div className={styles.clientTaskMeta}>
+                              <span>Responsável: {task.assignedUser.name}</span>
+                              <span>Vencimento: {formatDate(task.dueDate)}</span>
+                            </div>
+                            <div className={styles.clientTaskActions}>
+                              <div className={styles.taskStatusButtons}>
+                                <button
+                                  onClick={() => handleTaskStatusChange(task.id, 'pending')}
+                                  className={`${styles.statusButton} ${task.status === 'pending' ? styles.activeStatus : ''}`}
+                                  disabled={task.status === 'pending'}
+                                  title="Pendente"
+                                >
+                                  ⏳
+                                </button>
+                                <button
+                                  onClick={() => handleTaskStatusChange(task.id, 'in_progress')}
+                                  className={`${styles.statusButton} ${task.status === 'in_progress' ? styles.activeStatus : ''}`}
+                                  disabled={task.status === 'in_progress'}
+                                  title="Em Progresso"
+                                >
+                                  🔄
+                                </button>
+                                <button
+                                  onClick={() => handleTaskStatusChange(task.id, 'completed')}
+                                  className={`${styles.statusButton} ${task.status === 'completed' ? styles.activeStatus : ''}`}
+                                  disabled={task.status === 'completed'}
+                                  title="Concluída"
+                                >
+                                  ✅
+                                </button>
+                                <button
+                                  onClick={() => handleTaskStatusChange(task.id, 'cancelled')}
+                                  className={`${styles.statusButton} ${task.status === 'cancelled' ? styles.activeStatus : ''}`}
+                                  disabled={task.status === 'cancelled'}
+                                  title="Cancelada"
+                                >
+                                  ❌
+                                </button>
+                              </div>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      ))
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -745,12 +812,14 @@ export default function ClientDetailsContent({ clientId }: ClientDetailsContentP
           </DialogHeader>
           <TaskForm
             clientId={clientId}
-            users={[
-              { id: '1', name: 'João Silva', email: 'joao@example.com' },
-              { id: '2', name: 'Maria Santos', email: 'maria@example.com' },
-            ]} // TODO: Buscar lista real de usuários
-            currentUserId="1" // TODO: Buscar usuário atual
-            isAdmin={true} // TODO: Verificar se é admin
+            users={agencyUsers?.map(user => ({
+              id: user.id,
+              name: user.name,
+              email: user.email,
+            })) || []}
+            currentUserId={currentUser?.id || ''}
+            currentUserRole={currentUser?.role || 'AGENT'}
+            clientOwnerId={client?.userId}
             onSubmit={handleTaskSubmit}
             onCancel={() => setShowTaskModal(false)}
             isLoading={isSubmittingTask}

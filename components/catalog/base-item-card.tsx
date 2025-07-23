@@ -10,9 +10,10 @@ import styles from './base-item-card.module.css';
 
 interface BaseItemCardProps {
   item: BaseItem & { customFields: BaseItemField[] };
+  onItemDeleted?: () => void;
 }
 
-export function BaseItemCard({ item }: BaseItemCardProps) {
+export function BaseItemCard({ item, onItemDeleted }: BaseItemCardProps) {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleDelete = async () => {
@@ -23,6 +24,7 @@ export function BaseItemCard({ item }: BaseItemCardProps) {
     setIsLoading(true);
     try {
       await deleteBaseItem(item.id);
+      onItemDeleted?.();
     } catch (error) {
       console.error('Erro ao excluir item:', error);
       alert(error instanceof Error ? error.message : 'Erro ao excluir item');

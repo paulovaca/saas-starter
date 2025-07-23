@@ -40,7 +40,13 @@ export async function GET(request: NextRequest) {
 
     const result = await getClientsWithFilters(
       session.user.agencyId,
-      filters,
+      {
+        ...filters,
+        // Agents can only see their own clients
+        userId: session.user.role === 'AGENT' 
+          ? session.user.id 
+          : filters.userId
+      },
       pagination
     );
 
