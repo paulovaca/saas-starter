@@ -1,25 +1,17 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { Plus, Search, Filter, MoreHorizontal, Trash2, UserCheck, Phone, MessageCircle, Calendar, Eye, ChevronDown, ChevronUp, X } from 'lucide-react';
+import { Plus, Filter, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuSeparator, 
-  DropdownMenuTrigger 
-} from '@/components/ui/dropdown-menu';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { formatCPF, formatCNPJ, formatPhone } from '@/lib/validations/clients/client.schema';
 import { useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
 import { usePermissions } from '@/hooks/use-permissions';
 import { SearchFilters } from '@/components/shared/search-filters';
-import { TransferModal } from './transfer-modal';
 import Link from 'next/link';
 import styles from '../../app/(dashboard)/clients/clients.module.css';
 import pageStyles from './clients-page-content.module.css';
@@ -416,49 +408,15 @@ export default function ClientsPageContent({ searchParams }: ClientsPageContentP
                 {client.lastInteraction ? formatDate(client.lastInteraction) : 'Nunca'}
               </td>
               <td className={`${styles.clientsTableCell} ${styles.actions}`}>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="sm" className={pageStyles.clientActionsButton}>
-                      <MoreHorizontal className={pageStyles.clientActionsIcon} />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => handleViewClient(client.id)}>
-                      <Eye className={pageStyles.actionMenuIcon} />
-                      Visualizar
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem>
-                      <Phone className={pageStyles.actionMenuIcon} />
-                      Ligar
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <MessageCircle className={pageStyles.actionMenuIcon} />
-                      WhatsApp
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <Calendar className={pageStyles.actionMenuIcon} />
-                      Agendar
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    {canEditUsers() && agencyUsers.length > 0 && (
-                      <TransferModal
-                        client={client}
-                        users={agencyUsers}
-                        onSuccess={handleTransferSuccess}
-                      >
-                        <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                          <UserCheck className={pageStyles.actionMenuIcon} />
-                          Transferir
-                        </DropdownMenuItem>
-                      </TransferModal>
-                    )}
-                    <DropdownMenuItem className={pageStyles.actionMenuItemDanger}>
-                      <Trash2 className={pageStyles.actionMenuIcon} />
-                      Excluir
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className={pageStyles.clientActionsButton}
+                  onClick={() => handleViewClient(client.id)}
+                  title="Visualizar detalhes do cliente"
+                >
+                  <Eye className={pageStyles.clientActionsIcon} />
+                </Button>
               </td>
             </tr>
           ))}
