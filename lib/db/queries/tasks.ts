@@ -131,7 +131,7 @@ export async function updateTaskStatus(
   // If marking as completed, set completedAt
   if (newStatus === 'completed') {
     updateData.completedAt = new Date();
-  } else if (newStatus !== 'completed') {
+  } else {
     // If changing from completed to other status, clear completedAt
     updateData.completedAt = null;
   }

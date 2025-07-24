@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { FormModal } from '@/components/ui/form-modal'
 import { Button } from '@/components/ui/button'
-import { Select } from '@/components/ui/select'
+// import { Select } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
@@ -19,7 +19,7 @@ import styles from './transfer-modal.module.css'
 const transferSchema = z.object({
   toUserId: z.string().min(1, 'Selecione um novo responsável'),
   reason: z.string().min(20, 'A justificativa deve ter pelo menos 20 caracteres'),
-  notifyNewAgent: z.boolean().default(true)
+  notifyNewAgent: z.boolean()
 })
 
 type TransferFormData = z.infer<typeof transferSchema>
@@ -161,11 +161,10 @@ export function TransferModal({
           <UserIcon className={styles.labelIcon} />
           Novo Responsável
         </Label>
-        <Select
+        <select
           id="toUserId"
           {...register('toUserId')}
           className={styles.select}
-          error={errors.toUserId?.message}
         >
           <option value="">Selecione um usuário</option>
           {availableUsers.length === 0 ? (
@@ -177,7 +176,10 @@ export function TransferModal({
               </option>
             ))
           )}
-        </Select>
+        </select>
+        {errors.toUserId && (
+          <span className={styles.error}>{errors.toUserId.message}</span>
+        )}
       </div>
 
       <div className={styles.section}>
@@ -189,8 +191,10 @@ export function TransferModal({
           {...register('reason')}
           className={styles.textarea}
           placeholder="Explique o motivo da transferência..."
-          error={errors.reason?.message}
         />
+        {errors.reason && (
+          <span className={styles.error}>{errors.reason.message}</span>
+        )}
         <span className={styles.charCount}>
           {watchedReason.length}/20 caracteres mínimos
         </span>

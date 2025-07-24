@@ -83,7 +83,7 @@ export const transferClient = createPermissionAction(
       await tx.insert(activityLog).values({
         userId: user.id,
         agencyId: user.agencyId,
-        type: 'client.transferred',
+        type: 'TRANSFER_CLIENT',
         description: `Cliente ${client.name} transferido de ${client.userId} para ${input.toUserId}`,
         metadata: {
           clientId: input.clientId,

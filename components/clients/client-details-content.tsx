@@ -46,6 +46,7 @@ interface ClientWithDetails extends Client {
     id: string;
     name: string;
     email: string;
+    role: string;
   };
   funnel: {
     id: string;

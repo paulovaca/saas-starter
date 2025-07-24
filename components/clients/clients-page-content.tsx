@@ -49,6 +49,7 @@ interface ClientData {
   documentNumber: string;
   city?: string;
   state?: string;
+  userId: string;
   funnel: {
     id: string;
     name: string;
@@ -61,6 +62,8 @@ interface ClientData {
   user: {
     id: string;
     name: string;
+    email: string;
+    role: string;
   };
   totalProposals: number;
   totalValue: number;
@@ -438,7 +441,7 @@ export default function ClientsPageContent({ searchParams }: ClientsPageContentP
                       Agendar
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    {canEditUsers && agencyUsers.length > 0 && (
+                    {canEditUsers() && agencyUsers.length > 0 && (
                       <TransferModal
                         client={client}
                         users={agencyUsers}

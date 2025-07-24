@@ -62,7 +62,7 @@ export const deleteClient = createPermissionAction(
     await db.insert(activityLog).values({
       userId: user.id,
       agencyId: user.agencyId,
-      type: 'client.deleted',
+      type: 'DELETE_CLIENT',
       description: `Cliente ${client.name} excluído`,
       metadata: {
         clientId: client.id,

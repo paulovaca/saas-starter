@@ -24,7 +24,7 @@ export const getClients = createPermissionAction(
   Permission.CLIENT_READ,
   async (input, user) => {
     const { page, limit, search, funnelId, stageId, userId, isActive, sortBy, sortOrder } = input
-    const offset = (page - 1) * limit
+    const offset = ((page || 1) - 1) * (limit || 20)
 
     // Base query conditions
     const conditions = [
@@ -108,7 +108,7 @@ export const getClients = createPermissionAction(
     const [clients, totalCount] = await Promise.all([
       query
         .orderBy(orderByClause)
-        .limit(limit)
+        .limit(limit || 20)
         .offset(offset),
       db
         .select({ count: sql<number>`count(*)` })
@@ -139,7 +139,7 @@ export const getClients = createPermissionAction(
         page,
         limit,
         total: Number(totalCount[0].count),
-        totalPages: Math.ceil(Number(totalCount[0].count) / limit)
+        totalPages: Math.ceil(Number(totalCount[0].count) / (limit || 20))
       }
     }
   },

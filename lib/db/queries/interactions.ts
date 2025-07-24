@@ -17,7 +17,7 @@ export interface InteractionWithUser {
     id: string;
     name: string;
     email: string;
-  };
+  } | null;
 }
 
 /**

@@ -128,7 +128,7 @@ export const updateClient = createPermissionAction(
       await db.insert(activityLog).values({
         userId: user.id,
         agencyId: user.agencyId,
-        type: 'client.updated',
+        type: 'UPDATE_CLIENT',
         description: `Cliente ${updatedClient.name} atualizado`,
         metadata: {
           clientId: updatedClient.id,

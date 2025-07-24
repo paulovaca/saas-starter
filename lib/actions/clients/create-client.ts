@@ -85,7 +85,7 @@ export const createClient = createAuthenticatedAction(
         // Buscar a primeira etapa do funil padrão
         const firstStage = await db.query.salesFunnelStages.findFirst({
           where: eq(salesFunnelStages.funnelId, funnelId),
-          orderBy: (stages, { asc }) => [asc(stages.sortOrder)]
+          orderBy: (stages, { asc }) => [asc(stages.order)]
         })
 
         if (firstStage) {
@@ -107,7 +107,7 @@ export const createClient = createAuthenticatedAction(
       phone: input.phone,
       documentType: input.documentType,
       documentNumber: input.documentNumber,
-      birthDate: input.birthDate ? new Date(input.birthDate) : undefined,
+      birthDate: input.birthDate || undefined,
       addressZipcode: input.addressZipcode,
       addressStreet: input.addressStreet,
       addressNumber: input.addressNumber,
@@ -125,7 +125,7 @@ export const createClient = createAuthenticatedAction(
     await db.insert(activityLog).values({
       userId: user.id,
       agencyId: user.agencyId,
-      type: 'client.created',
+      type: 'CREATE_CLIENT',
       description: `Cliente ${newClient.name} criado`,
       metadata: {
         clientId: newClient.id,
