@@ -41,7 +41,7 @@ const Dialog = ({ open, onOpenChange, children }: DialogProps) => {
   if (!open) return null;
 
   return (
-    <div className={styles.overlay} onClick={() => onOpenChange(false)}>
+    <div className={styles.overlay} onClick={(e) => e.stopPropagation()}>
       <div className={styles.content} onClick={(e) => e.stopPropagation()}>
         {children}
       </div>

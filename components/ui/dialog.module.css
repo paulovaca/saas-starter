@@ -18,9 +18,10 @@
   box-shadow: var(--shadow-xl);
   max-width: 90vw;
   max-height: 90vh;
-  overflow: hidden;
+  overflow: auto;
   animation: dialogAppear 0.2s ease-out;
   box-sizing: border-box;
+  position: relative;
 }
 
 .dialogContent {

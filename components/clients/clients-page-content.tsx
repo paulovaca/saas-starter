@@ -19,6 +19,7 @@ import { useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
 import { usePermissions } from '@/hooks/use-permissions';
 import { SearchFilters } from '@/components/shared/search-filters';
+import { TransferModal } from './transfer-modal';
 import Link from 'next/link';
 import styles from '../../app/(dashboard)/clients/clients.module.css';
 import pageStyles from './clients-page-content.module.css';
@@ -81,6 +82,7 @@ export default function ClientsPageContent({ searchParams }: ClientsPageContentP
   // Estados
   const [clients, setClients] = useState<ClientData[]>([]);
   const [filterData, setFilterData] = useState<FilterData>({ funnels: [], funnelStages: [], users: [] });
+  const [agencyUsers, setAgencyUsers] = useState<Array<{id: string; name: string; email: string; role: string}>>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(Number(searchParams?.page) || 1);
   const [totalPages, setTotalPages] = useState(1);
@@ -219,11 +221,34 @@ export default function ClientsPageContent({ searchParams }: ClientsPageContentP
     }
   }, []);
 
+  // Função para buscar usuários da agência
+  const fetchAgencyUsers = useCallback(async () => {
+    try {
+      const response = await fetch('/api/users');
+      
+      if (!response.ok) {
+        throw new Error('Erro ao buscar usuários');
+      }
+
+      const users = await response.json();
+      setAgencyUsers(users.map((user: any) => ({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+      })));
+    } catch (error) {
+      console.error('Erro ao buscar usuários:', error);
+      setAgencyUsers([]);
+    }
+  }, []);
+
   // Carregar dados iniciais
   useEffect(() => {
     fetchFilterData();
+    fetchAgencyUsers();
     fetchClients();
-  }, [fetchFilterData, fetchClients]);
+  }, [fetchFilterData, fetchAgencyUsers, fetchClients]);
 
   // Função para formatar documento
   const formatDocument = (type: 'cpf' | 'cnpj', number: string) => {
@@ -260,6 +285,11 @@ export default function ClientsPageContent({ searchParams }: ClientsPageContentP
   // Função para navegar para detalhes do cliente
   const handleViewClient = (clientId: string) => {
     router.push(`/clients/${clientId}`);
+  };
+
+  // Função para recarregar após transferência
+  const handleTransferSuccess = () => {
+    fetchClients();
   };
 
   // Render do cabeçalho
@@ -408,10 +438,18 @@ export default function ClientsPageContent({ searchParams }: ClientsPageContentP
                       Agendar
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem>
-                      <UserCheck className={pageStyles.actionMenuIcon} />
-                      Transferir
-                    </DropdownMenuItem>
+                    {canEditUsers && agencyUsers.length > 0 && (
+                      <TransferModal
+                        client={client}
+                        users={agencyUsers}
+                        onSuccess={handleTransferSuccess}
+                      >
+                        <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                          <UserCheck className={pageStyles.actionMenuIcon} />
+                          Transferir
+                        </DropdownMenuItem>
+                      </TransferModal>
+                    )}
                     <DropdownMenuItem className={pageStyles.actionMenuItemDanger}>
                       <Trash2 className={pageStyles.actionMenuIcon} />
                       Excluir

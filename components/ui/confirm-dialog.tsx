@@ -27,7 +27,7 @@ export default function ConfirmDialog({
   if (!isOpen) return null;
 
   return (
-    <div className={styles.overlay} onClick={onCancel}>
+    <div className={styles.overlay}>
       <div className={styles.dialog} onClick={(e) => e.stopPropagation()}>
         <div className={styles.header}>
           <div className={`${styles.icon} ${styles[variant]}`}>

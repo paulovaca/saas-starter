@@ -37,7 +37,7 @@ Com toda a infraestrutura (Fase 1) e configurações (Fase 2) prontas, agora vam
 6. **Verifique antes do build** - Execute `npm run type-check` regularmente
 
 
-# Implantação 1
+<!-- # Implantação 1
 ## 🗄️ ESTRUTURA COMPLETA DO BANCO DE DADOS
 
 ### 📊 Tabela: `clients`
@@ -499,7 +499,7 @@ mkdir -p styles/clients
    - Vencida: borda vermelha
    - Alta prioridade: badge vermelho
    - Concluída: texto riscado
-   - Em progresso: borda azul
+   - Em progresso: borda azul -->
 
 # Implantação 4
 ## ✅ PASSO A PASSO DETALHADO

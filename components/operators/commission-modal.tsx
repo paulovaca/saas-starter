@@ -102,6 +102,8 @@ export function CommissionModal({ isOpen, onClose, item: initialItem, onSuccess 
       title="Gerenciar Comissões"
       description={`${item?.customName || `Item ${item?.catalogItemId?.slice(-8)}`} - Configure as regras de comissionamento`}
       size="lg"
+      preventClose={false}
+      showCloseButton={true}
     >
       <div className={styles.rulesContainer}>
         <div className={styles.ruleHeader}>

@@ -298,7 +298,7 @@ export function OperatorFormModal({ isOpen, onClose, operator }: OperatorFormMod
 
             <TabsContent value="contact" className={styles.formTabsContent}>
               <div className={styles.formGroup}>
-                <div className={styles.formGroup}>
+                <div className={styles.formField}>
                   <label htmlFor="contactName" className={styles.formLabel}>
                     Nome do Contato
                   </label>
@@ -316,7 +316,7 @@ export function OperatorFormModal({ isOpen, onClose, operator }: OperatorFormMod
                   )}
                 </div>
 
-                <div className={styles.formGroup}>
+                <div className={styles.formField}>
                   <label htmlFor="contactEmail" className={styles.formLabel}>
                     Email de Contato
                   </label>
@@ -336,7 +336,7 @@ export function OperatorFormModal({ isOpen, onClose, operator }: OperatorFormMod
               </div>
 
               <div className={styles.formGroup}>
-                <div className={styles.formGroup}>
+                <div className={styles.formField}>
                   <label htmlFor="contactPhone" className={styles.formLabel}>
                     Telefone de Contato
                   </label>
@@ -355,7 +355,7 @@ export function OperatorFormModal({ isOpen, onClose, operator }: OperatorFormMod
                   )}
                 </div>
 
-                <div className={styles.formGroup}>
+                <div className={styles.formField}>
                   <label htmlFor="website" className={styles.formLabel}>
                     Website
                   </label>
@@ -374,10 +374,11 @@ export function OperatorFormModal({ isOpen, onClose, operator }: OperatorFormMod
                 </div>
               </div>
 
-              <div className={styles.formGroup}>
+              <div className={styles.formField}>
                 <label className={styles.formLabel}>Endereço</label>
+                
                 <div className={styles.formGroup}>
-                  <div className={styles.formGroup}>
+                  <div className={styles.formField}>
                     <input
                       type="text"
                       placeholder="Logradouro"
@@ -385,7 +386,7 @@ export function OperatorFormModal({ isOpen, onClose, operator }: OperatorFormMod
                       className={styles.formInput}
                     />
                   </div>
-                  <div className={styles.formGroup}>
+                  <div className={styles.formField}>
                     <input
                       type="text"
                       placeholder="Número"
@@ -393,7 +394,7 @@ export function OperatorFormModal({ isOpen, onClose, operator }: OperatorFormMod
                       className={styles.formInput}
                     />
                   </div>
-                  <div className={styles.formGroup}>
+                  <div className={styles.formField}>
                     <input
                       type="text"
                       placeholder="CEP"
@@ -405,7 +406,7 @@ export function OperatorFormModal({ isOpen, onClose, operator }: OperatorFormMod
                 </div>
                 
                 <div className={styles.formGroup}>
-                  <div className={styles.formGroup}>
+                  <div className={styles.formField}>
                     <input
                       type="text"
                       placeholder="Cidade"
@@ -413,7 +414,7 @@ export function OperatorFormModal({ isOpen, onClose, operator }: OperatorFormMod
                       className={styles.formInput}
                     />
                   </div>
-                  <div className={styles.formGroup}>
+                  <div className={styles.formField}>
                     <input
                       type="text"
                       placeholder="Estado"
@@ -421,7 +422,7 @@ export function OperatorFormModal({ isOpen, onClose, operator }: OperatorFormMod
                       className={styles.formInput}
                     />
                   </div>
-                  <div className={styles.formGroup}>
+                  <div className={styles.formField}>
                     <input
                       type="text"
                       placeholder="País"
@@ -434,7 +435,7 @@ export function OperatorFormModal({ isOpen, onClose, operator }: OperatorFormMod
             </TabsContent>
 
             <TabsContent value="additional" className={styles.formTabsContent}>
-              <div className={styles.formGroup}>
+              <div className={styles.formField}>
                 <label htmlFor="notes" className={styles.formLabel}>
                   Observações
                 </label>

@@ -116,8 +116,8 @@ export function ConfirmModal({
       description={description}
       footer={footer}
       loading={isLoading}
-      preventClose={isSubmitting || isLoading}
-      showCloseButton={!isSubmitting && !isLoading}
+      preventClose={true}
+      showCloseButton={false}
     >
       <div className={styles.modalContent}>
         <div className={styles.iconContainer}>{getIcon()}</div>

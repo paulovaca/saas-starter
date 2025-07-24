@@ -12,12 +12,16 @@
 .dialogContent {
   max-width: 56rem; /* dialog-xl */
   width: 100%;
+  min-width: 48rem; /* Garantir largura mínima adequada */
 }
 
 .form {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .formTabs {
@@ -31,12 +35,19 @@
 
 .formTabsContent {
   padding: 1rem 0;
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .formGroup {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .formGroupSingle {
@@ -70,6 +81,9 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  width: 100%;
+  box-sizing: border-box;
+  min-width: 0;
 }
 
 .formLabel {
@@ -87,6 +101,8 @@
   font-size: 0.875rem;
   transition: border-color 0.2s;
   color: var(--foreground);
+  box-sizing: border-box;
+  min-width: 0;
 }
 
 .formInput:focus {
@@ -112,6 +128,8 @@
   transition: border-color 0.2s;
   color: var(--foreground);
   font-family: inherit;
+  box-sizing: border-box;
+  min-width: 0;
 }
 
 .formTextarea:focus {
@@ -217,6 +235,11 @@
   .modalContent {
     max-width: 95vw;
     margin: 0.5rem;
+  }
+  
+  .dialogContent {
+    min-width: auto;
+    max-width: 95vw;
   }
   
   .tabsList {

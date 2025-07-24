@@ -311,6 +311,9 @@ export function UserFormModal({ children, user, currentUserRole, onSuccess }: Us
         setPhoneValue('');
         setError(null);
         onSuccess?.();
+        
+        // Fechar o modal após sucesso
+        modal.close();
       } catch (error) {
         setError('Erro inesperado. Verifique os dados e tente novamente.');
         throw error;

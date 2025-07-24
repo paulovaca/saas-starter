@@ -73,7 +73,8 @@ export function FormModal({
       variant="form"
       footer={footer}
       loading={isSubmitting}
-      preventClose={isSubmitting}
+      preventClose={true}
+      showCloseButton={false}
     >
       {children}
     </Modal>

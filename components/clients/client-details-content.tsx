@@ -30,6 +30,7 @@ import type { User } from '@/lib/db/schema';
 import ClientFunnelStageEditor from './client-funnel-stage-editor';
 import { InteractionForm } from './interactions/interaction-form';
 import { TaskForm } from './tasks/task-form';
+import { TransferModal } from './transfer-modal';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import type { InteractionFormInput, TaskFormInput } from '@/lib/validations/clients';
 import styles from './client-details-content.module.css';
@@ -258,9 +259,9 @@ export default function ClientDetailsContent({ clientId }: ClientDetailsContentP
     router.push(`/proposals/new?clientId=${clientId}`);
   };
 
-  const handleTransfer = () => {
-    // Implementar modal de transferência
-    console.log('Transferir cliente');
+  const handleTransferSuccess = () => {
+    // Recarregar dados do cliente após transferência
+    fetchClient();
   };
 
   // Função para atualizar dados do cliente após mudança de funil/etapa
@@ -450,10 +451,18 @@ export default function ClientDetailsContent({ clientId }: ClientDetailsContentP
               <FileText className={styles.buttonIcon} />
               Nova Proposta
             </Button>
-            <Button onClick={handleTransfer} variant="outline">
-              <UserCheck className={styles.buttonIcon} />
-              Transferir
-            </Button>
+            {(currentUser?.role === 'ADMIN' || currentUser?.role === 'MASTER' || currentUser?.role === 'DEVELOPER') && agencyUsers && client && (
+              <TransferModal
+                client={client}
+                users={agencyUsers}
+                onSuccess={handleTransferSuccess}
+              >
+                <Button variant="outline">
+                  <UserCheck className={styles.buttonIcon} />
+                  Transferir
+                </Button>
+              </TransferModal>
+            )}
           </div>
         </div>
       </div>
