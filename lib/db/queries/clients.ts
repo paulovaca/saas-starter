@@ -273,21 +273,47 @@ export async function getClientWithDetails(clientId: string, agencyId: string) {
 
   // Buscar transferências
   const transfers = await db
-    .select({
-      id: clientTransfers.id,
-      reason: clientTransfers.reason,
-      transferredAt: clientTransfers.transferredAt,
-    })
+    .select()
     .from(clientTransfers)
     .where(eq(clientTransfers.clientId, clientId))
     .orderBy(desc(clientTransfers.transferredAt));
+
+  // Buscar dados dos usuários relacionados às transferências
+  const transfersWithUsers = await Promise.all(
+    transfers.map(async (transfer) => {
+      const [fromUser, toUser, transferredByUser] = await Promise.all([
+        db.select({
+          id: users.id,
+          name: users.name,
+          email: users.email,
+        }).from(users).where(eq(users.id, transfer.fromUserId)).then(r => r[0]),
+        db.select({
+          id: users.id,
+          name: users.name,
+          email: users.email,
+        }).from(users).where(eq(users.id, transfer.toUserId)).then(r => r[0]),
+        db.select({
+          id: users.id,
+          name: users.name,
+          email: users.email,
+        }).from(users).where(eq(users.id, transfer.transferredBy)).then(r => r[0]),
+      ]);
+
+      return {
+        ...transfer,
+        fromUser,
+        toUser,
+        transferredByUser,
+      };
+    })
+  );
 
   return {
     ...client,
     interactions,
     tasks,
     proposals: clientProposals,
-    transfers,
+    transfers: transfersWithUsers,
     totalProposals: clientProposals.length,
     totalValue: clientProposals.reduce((sum, p) => sum + Number(p.totalAmount), 0),
     lastInteraction: interactions[0]?.contactDate || null,
