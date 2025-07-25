@@ -272,6 +272,21 @@ export default function ClientsPageContent({ searchParams }: ClientsPageContentP
     }
   };
 
+  // Função para obter classe CSS da cor
+  const getColorClass = (color: string) => {
+    const colorMap: Record<string, string> = {
+      blue: pageStyles.colorBlue,
+      green: pageStyles.colorGreen,
+      yellow: pageStyles.colorYellow,
+      red: pageStyles.colorRed,
+      purple: pageStyles.colorPurple,
+      gray: pageStyles.colorGray,
+      orange: pageStyles.colorOrange,
+      pink: pageStyles.colorPink,
+    };
+    return colorMap[color] || pageStyles.colorGray;
+  };
+
   // Função para navegar para novo cliente
   const handleNewClient = () => {
     router.push('/clients/new');
@@ -386,12 +401,12 @@ export default function ClientsPageContent({ searchParams }: ClientsPageContentP
                 {client.phone ? formatPhone(client.phone) : '-'}
               </td>
               <td className={styles.clientsTableCell}>
-                <Badge variant="outline" className={`${styles.clientStatus} ${styles.active}`}>
+                <Badge variant="outline" className={`${styles.clientStatus} ${styles.active} ${client.funnelStage?.color ? getColorClass(client.funnelStage.color) : ''}`}>
                   {client.funnel?.name || 'Sem funil'}
                 </Badge>
               </td>
               <td className={styles.clientsTableCell}>
-                <Badge variant="outline" className={`${styles.clientStatus} ${styles.active}`}>
+                <Badge variant="outline" className={`${styles.clientStatus} ${styles.active} ${client.funnelStage?.color ? getColorClass(client.funnelStage.color) : ''}`}>
                   {client.funnelStage?.name || 'Sem etapa'}
                 </Badge>
               </td>
