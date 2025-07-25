@@ -386,7 +386,7 @@ export default function ClientsPageContent({ searchParams }: ClientsPageContentP
                 {client.phone ? formatPhone(client.phone) : '-'}
               </td>
               <td className={styles.clientsTableCell}>
-                <Badge variant="secondary" className={pageStyles.funnelBadge}>
+                <Badge variant="outline" className={`${styles.clientStatus} ${styles.active}`}>
                   {client.funnel?.name || 'Sem funil'}
                 </Badge>
               </td>
