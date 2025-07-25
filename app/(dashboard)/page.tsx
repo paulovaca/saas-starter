@@ -20,7 +20,7 @@ import Link from 'next/link';
 import styles from './dashboard.module.css';
 
 export const metadata: Metadata = {
-  title: 'Dashboard Executivo',
+  title: 'Dashboard',
   description: 'Visão geral das vendas, clientes e performance da agência',
 };
 
@@ -35,7 +35,7 @@ export default async function DashboardPage() {
     <div className={styles.dashboardContainer}>
       <div className={styles.header}>
         <div>
-          <h1 className={styles.title}>Dashboard Executivo</h1>
+          <h1 className={styles.title}>Dashboard</h1>
           <p className={styles.subtitle}>
             Visão geral das vendas e performance da sua agência
           </p>
