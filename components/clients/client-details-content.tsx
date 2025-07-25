@@ -389,6 +389,21 @@ export default function ClientDetailsContent({ clientId }: ClientDetailsContentP
     }
   };
 
+  // Cores para etapas do funil
+  const getStageColorClass = (color: string) => {
+    const colorMap: Record<string, string> = {
+      blue: styles.colorBlue,
+      green: styles.colorGreen,
+      yellow: styles.colorYellow,
+      red: styles.colorRed,
+      purple: styles.colorPurple,
+      gray: styles.colorGray,
+      orange: styles.colorOrange,
+      pink: styles.colorPink,
+    };
+    return colorMap[color] || styles.colorGray;
+  };
+
   if (isLoading) {
     return <div className={styles.loadingState}>Carregando dados do cliente...</div>;
   }
@@ -427,7 +442,7 @@ export default function ClientDetailsContent({ clientId }: ClientDetailsContentP
               )}
             </div>
             <div className={styles.clientDetailsMetaTags}>
-              <Badge variant="outline" className={`${styles.clientStatus} ${styles.active}`}>
+              <Badge variant="outline" className={`${styles.clientStatus} ${styles.active} ${client.funnelStage?.color ? getStageColorClass(client.funnelStage.color) : ''}`}>
                 {client.funnelStage?.name}
               </Badge>
               <span className={styles.clientDetailsDocumentText}>

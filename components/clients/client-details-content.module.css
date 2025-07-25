@@ -521,6 +521,55 @@
   font-size: 0.75rem;
 }
 
+/* Cores das etapas */
+.colorBlue {
+  background-color: var(--primary) !important;
+  color: white !important;
+  border-color: var(--primary) !important;
+}
+
+.colorGreen {
+  background-color: var(--success) !important;
+  color: white !important;
+  border-color: var(--success) !important;
+}
+
+.colorYellow {
+  background-color: var(--warning) !important;
+  color: white !important;
+  border-color: var(--warning) !important;
+}
+
+.colorRed {
+  background-color: var(--destructive) !important;
+  color: white !important;
+  border-color: var(--destructive) !important;
+}
+
+.colorPurple {
+  background-color: rgb(168 85 247) !important;
+  color: white !important;
+  border-color: rgb(168 85 247) !important;
+}
+
+.colorGray {
+  background-color: var(--muted-foreground) !important;
+  color: white !important;
+  border-color: var(--muted-foreground) !important;
+}
+
+.colorOrange {
+  background-color: rgb(249 115 22) !important;
+  color: white !important;
+  border-color: rgb(249 115 22) !important;
+}
+
+.colorPink {
+  background-color: rgb(236 72 153) !important;
+  color: white !important;
+  border-color: rgb(236 72 153) !important;
+}
+
 /* Responsividade */
 @media (max-width: 1024px) {
   .clientDetailsLayout {

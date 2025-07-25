@@ -135,15 +135,16 @@ export default function ClientFunnelStageEditor({
 
   const getStageColor = (color?: string) => {
     const colorMap: { [key: string]: string } = {
-      blue: 'bg-blue-100 text-blue-800',
-      green: 'bg-green-100 text-green-800',
-      yellow: 'bg-yellow-100 text-yellow-800',
-      red: 'bg-red-100 text-red-800',
-      purple: 'bg-purple-100 text-purple-800',
-      orange: 'bg-orange-100 text-orange-800',
-      gray: 'bg-gray-100 text-gray-800',
+      blue: styles.colorBlue,
+      green: styles.colorGreen,
+      yellow: styles.colorYellow,
+      red: styles.colorRed,
+      purple: styles.colorPurple,
+      orange: styles.colorOrange,
+      pink: styles.colorPink,
+      gray: styles.colorGray,
     };
-    return colorMap[color || 'gray'] || colorMap.gray;
+    return colorMap[color || 'gray'] || styles.colorGray;
   };
 
   if (!canEdit) {
@@ -160,7 +161,7 @@ export default function ClientFunnelStageEditor({
             </div>
             <div className={styles.infoItem}>
               <span className={styles.label}>Etapa:</span>
-              <Badge className={`${styles.stageBadge} ${getStageColor(currentStage?.color)}`}>
+              <Badge variant="outline" className={`${styles.stageBadge} ${getStageColor(currentStage?.color)}`}>
                 {currentStage?.name || 'Não definido'}
               </Badge>
             </div>
@@ -203,7 +204,7 @@ export default function ClientFunnelStageEditor({
             </div>
             <div className={styles.infoItem}>
               <span className={styles.label}>Etapa:</span>
-              <Badge className={`${styles.stageBadge} ${getStageColor(currentStage?.color)}`}>
+              <Badge variant="outline" className={`${styles.stageBadge} ${getStageColor(currentStage?.color)}`}>
                 {currentStage?.name || 'Não definido'}
               </Badge>
             </div>
