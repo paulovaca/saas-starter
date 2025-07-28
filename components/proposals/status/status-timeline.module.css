@@ -1,0 +1,288 @@
+/* Timeline Card */
+.timelineCard {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+}
+
+.timelineTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.timelineContent {
+  padding: 1rem;
+}
+
+/* Loading and Empty States */
+.loadingState {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+}
+
+.emptyIcon {
+  width: 2rem;
+  height: 2rem;
+  color: var(--muted-foreground);
+  margin-bottom: 0.5rem;
+}
+
+.emptyMessage {
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+/* Timeline List */
+.timelineList {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.timelineEvent {
+  display: flex;
+  gap: 0.75rem;
+  position: relative;
+  padding-bottom: 1.5rem;
+}
+
+.timelineEvent:last-child {
+  padding-bottom: 0;
+}
+
+/* Event Icon Container */
+.eventIconContainer {
+  position: relative;
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: var(--background);
+}
+
+.eventIcon {
+  width: 0.875rem;
+  height: 0.875rem;
+  color: var(--muted-foreground);
+}
+
+.eventConnector {
+  position: absolute;
+  top: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 1.5rem;
+  background: var(--border);
+}
+
+/* Event Content */
+.eventContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.eventHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.25rem;
+  gap: 0.75rem;
+}
+
+.eventTitle {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--foreground);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.eventTime {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.eventDescription {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+  line-height: 1.4;
+  margin: 0 0 0.5rem 0;
+}
+
+.eventUser {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.625rem;
+  color: var(--muted-foreground);
+}
+
+.userIcon {
+  width: 0.75rem;
+  height: 0.75rem;
+  flex-shrink: 0;
+}
+
+.userName {
+  font-weight: 500;
+}
+
+.userRole {
+  font-weight: 400;
+}
+
+/* Event Type Styles */
+.eventCreation .eventIconContainer {
+  border-color: var(--primary);
+  background: rgb(from var(--primary) r g b / 0.1);
+}
+
+.eventCreation .eventIcon {
+  color: var(--primary);
+}
+
+.eventEdit .eventIconContainer {
+  border-color: rgb(249 115 22);
+  background: rgb(249 115 22 / 0.1);
+}
+
+.eventEdit .eventIcon {
+  color: rgb(249 115 22);
+}
+
+.eventView .eventIconContainer {
+  border-color: rgb(107 114 128);
+  background: rgb(107 114 128 / 0.1);
+}
+
+.eventView .eventIcon {
+  color: rgb(107 114 128);
+}
+
+.eventSent .eventIconContainer {
+  border-color: var(--primary);
+  background: rgb(from var(--primary) r g b / 0.1);
+}
+
+.eventSent .eventIcon {
+  color: var(--primary);
+}
+
+.eventAccepted .eventIconContainer {
+  border-color: rgb(34 197 94);
+  background: rgb(34 197 94 / 0.1);
+}
+
+.eventAccepted .eventIcon {
+  color: rgb(34 197 94);
+}
+
+.eventRejected .eventIconContainer {
+  border-color: var(--destructive);
+  background: rgb(from var(--destructive) r g b / 0.1);
+}
+
+.eventRejected .eventIcon {
+  color: var(--destructive);
+}
+
+.eventExpired .eventIconContainer {
+  border-color: rgb(249 115 22);
+  background: rgb(249 115 22 / 0.1);
+}
+
+.eventExpired .eventIcon {
+  color: rgb(249 115 22);
+}
+
+/* Dark Mode Adjustments */
+.dark .eventIconContainer {
+  background: var(--card);
+}
+
+.dark .eventCreation .eventIconContainer {
+  background: rgb(from var(--primary) r g b / 0.15);
+}
+
+.dark .eventEdit .eventIconContainer {
+  background: rgb(249 115 22 / 0.15);
+}
+
+.dark .eventView .eventIconContainer {
+  background: rgb(107 114 128 / 0.15);
+}
+
+.dark .eventSent .eventIconContainer {
+  background: rgb(from var(--primary) r g b / 0.15);
+}
+
+.dark .eventAccepted .eventIconContainer {
+  background: rgb(34 197 94 / 0.15);
+}
+
+.dark .eventRejected .eventIconContainer {
+  background: rgb(from var(--destructive) r g b / 0.15);
+}
+
+.dark .eventExpired .eventIconContainer {
+  background: rgb(249 115 22 / 0.15);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .timelineContent {
+    padding: 0.75rem;
+  }
+  
+  .timelineEvent {
+    gap: 0.5rem;
+  }
+  
+  .eventIconContainer {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+  
+  .eventIcon {
+    width: 0.75rem;
+    height: 0.75rem;
+  }
+  
+  .eventConnector {
+    top: 1.5rem;
+    height: 1.25rem;
+  }
+  
+  .eventHeader {
+    flex-direction: column;
+    gap: 0.25rem;
+    align-items: flex-start;
+  }
+  
+  .eventTime {
+    font-size: 0.6875rem;
+  }
+}

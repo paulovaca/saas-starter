@@ -1,0 +1,275 @@
+.modal {
+  min-height: 500px;
+}
+
+.content {
+  min-height: 400px;
+}
+
+/* Operator Selection */
+.operatorGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.operatorCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 1rem;
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.operatorCard:hover {
+  border-color: var(--primary);
+  box-shadow: var(--shadow-md);
+}
+
+.operatorCard.selected {
+  border-color: var(--primary);
+  background: rgb(from var(--primary) r g b / 0.05);
+}
+
+.operatorIcon {
+  width: 3rem;
+  height: 3rem;
+  color: var(--muted-foreground);
+  margin-bottom: 1rem;
+}
+
+.operatorName {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--foreground);
+  margin-bottom: 1rem;
+}
+
+.arrowIcon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--primary);
+}
+
+/* Items Section */
+.itemsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.stepInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: var(--muted);
+  border-radius: var(--radius);
+}
+
+.stepLabel {
+  font-weight: 500;
+  color: var(--muted-foreground);
+}
+
+.stepValue {
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.itemsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.itemCard {
+  display: block;
+  width: 100%;
+  padding: 1rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+}
+
+.itemCard:hover {
+  border-color: var(--primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.itemHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.itemIcon {
+  width: 2.5rem;
+  height: 2.5rem;
+  color: var(--primary);
+  flex-shrink: 0;
+  margin-top: 0.25rem;
+}
+
+.itemInfo {
+  flex: 1;
+}
+
+.itemName {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--foreground);
+  margin: 0 0 0.5rem 0;
+}
+
+.itemDescription {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  margin: 0 0 0.5rem 0;
+  line-height: 1.4;
+}
+
+.itemPrice {
+  font-size: 0.875rem;
+  color: var(--primary);
+  font-weight: 500;
+  margin: 0;
+}
+
+/* Details Section */
+.detailsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.formGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.formField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.fieldLabel {
+  font-weight: 500;
+  color: var(--foreground);
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.fieldNote {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+  font-weight: 400;
+}
+
+.required {
+  color: var(--destructive);
+}
+
+.input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--background);
+  color: var(--foreground);
+  font-size: 0.875rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgb(from var(--primary) r g b / 0.1);
+}
+
+.input:read-only {
+  background: var(--muted);
+  cursor: not-allowed;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--foreground);
+  cursor: pointer;
+}
+
+.checkbox {
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+}
+
+/* Total Preview */
+.totalPreview {
+  padding: 1rem;
+  background: var(--muted);
+  border-radius: var(--radius);
+  border-top: 2px solid var(--primary);
+}
+
+.totalLine {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+/* Footer */
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .operatorGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+
+  .itemHeader {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .itemIcon {
+    align-self: center;
+  }
+
+  .footer {
+    flex-direction: column-reverse;
+  }
+}

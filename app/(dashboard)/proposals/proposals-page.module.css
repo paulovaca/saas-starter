@@ -1,0 +1,227 @@
+/* Container principal */
+.proposalsContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* Header */
+.proposalsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.proposalsTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--foreground);
+  margin: 0;
+}
+
+
+/* Empty State */
+.emptyState {
+  text-align: center;
+  padding: 3rem 1rem;
+}
+
+.emptyMessage {
+  color: var(--muted-foreground);
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+}
+
+/* Table Container */
+.tableContainer {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tableHead {
+  background: var(--muted);
+}
+
+.tableHeader {
+  padding: 0.75rem 1.5rem;
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--border);
+}
+
+.tableBody {
+  background: var(--card);
+}
+
+.tableRow {
+  border-bottom: 1px solid var(--border);
+  transition: background-color 0.2s;
+}
+
+.tableRow:hover {
+  background: var(--accent);
+}
+
+.tableRow:last-child {
+  border-bottom: none;
+}
+
+.tableCell {
+  padding: 1rem 1.5rem;
+  white-space: nowrap;
+  font-size: 0.875rem;
+}
+
+.proposalNumber {
+  color: var(--primary);
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.proposalNumber:hover {
+  color: rgb(from var(--primary) r g b / 0.8);
+  text-decoration: underline;
+}
+
+.clientLink {
+  color: var(--foreground);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.clientLink:hover {
+  color: var(--primary);
+  text-decoration: underline;
+}
+
+.clientName {
+  color: var(--foreground);
+}
+
+.operatorName {
+  color: var(--foreground);
+}
+
+.amount {
+  font-weight: 500;
+  color: var(--foreground);
+}
+
+.date {
+  color: var(--muted-foreground);
+}
+
+.userName {
+  color: var(--muted-foreground);
+}
+
+/* Status Badge */
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.625rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.statusDraft {
+  background: var(--muted);
+  color: var(--muted-foreground);
+}
+
+.statusSent {
+  background: rgb(from var(--primary) r g b / 0.1);
+  color: var(--primary);
+}
+
+.statusAccepted {
+  background: rgb(from var(--success) r g b / 0.1);
+  color: var(--success);
+}
+
+.statusRejected {
+  background: rgb(from var(--destructive) r g b / 0.1);
+  color: var(--destructive);
+}
+
+.statusExpired {
+  background: rgb(from var(--warning) r g b / 0.1);
+  color: var(--warning);
+}
+
+/* Button Icon */
+.buttonIcon {
+  width: 1rem;
+  height: 1rem;
+  margin-right: 0.5rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .proposalsContainer {
+    padding: 1rem;
+  }
+
+  .proposalsHeader {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+
+
+  .tableContainer {
+    overflow-x: auto;
+  }
+
+  .table {
+    min-width: 800px;
+  }
+
+  .tableHeader,
+  .tableCell {
+    padding: 0.75rem 1rem;
+  }
+
+  .tableHeader {
+    font-size: 0.6875rem;
+  }
+
+  .tableCell {
+    font-size: 0.8125rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .proposalsContainer {
+    padding: 0.75rem;
+  }
+
+  .proposalsTitle {
+    font-size: 1.5rem;
+  }
+
+  .emptyState {
+    padding: 2rem 1rem;
+  }
+
+  .tableHeader,
+  .tableCell {
+    padding: 0.5rem 0.75rem;
+  }
+}

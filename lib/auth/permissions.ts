@@ -12,6 +12,12 @@ export enum Permission {
   CLIENT_UPDATE = 'client:update',
   CLIENT_DELETE = 'client:delete',
   
+  // Propostas
+  PROPOSAL_CREATE = 'proposal:create',
+  PROPOSAL_READ = 'proposal:read',
+  PROPOSAL_UPDATE = 'proposal:update',
+  PROPOSAL_DELETE = 'proposal:delete',
+  
   // Operadores
   OPERATOR_CREATE = 'operator:create',
   OPERATOR_READ = 'operator:read',
@@ -53,6 +59,10 @@ export const RolePermissions: Record<UserRole, Permission[]> = {
     Permission.CLIENT_READ,
     Permission.CLIENT_UPDATE,
     Permission.CLIENT_DELETE,
+    Permission.PROPOSAL_CREATE,
+    Permission.PROPOSAL_READ,
+    Permission.PROPOSAL_UPDATE,
+    Permission.PROPOSAL_DELETE,
     Permission.OPERATOR_CREATE,
     Permission.OPERATOR_READ,
     Permission.OPERATOR_UPDATE,
@@ -72,6 +82,9 @@ export const RolePermissions: Record<UserRole, Permission[]> = {
     Permission.CLIENT_CREATE,
     Permission.CLIENT_READ,
     Permission.CLIENT_UPDATE,
+    Permission.PROPOSAL_CREATE,
+    Permission.PROPOSAL_READ,
+    Permission.PROPOSAL_UPDATE,
     Permission.OPERATOR_READ,
     Permission.CATALOG_READ,
     Permission.SETTINGS_READ
@@ -80,6 +93,9 @@ export const RolePermissions: Record<UserRole, Permission[]> = {
   [UserRole.AGENT]: [
     Permission.CLIENT_READ,
     Permission.CLIENT_UPDATE,
+    Permission.PROPOSAL_CREATE,
+    Permission.PROPOSAL_READ,
+    Permission.PROPOSAL_UPDATE,
     Permission.CATALOG_READ
   ]
 };

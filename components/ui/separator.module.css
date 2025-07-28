@@ -1,0 +1,19 @@
+.separator {
+  flex-shrink: 0;
+  background-color: var(--border-color, hsl(210 40% 80%));
+}
+
+.horizontal {
+  height: 1px;
+  width: 100%;
+}
+
+.vertical {
+  height: 100%;
+  width: 1px;
+}
+
+/* Dark theme support */
+[data-theme="dark"] .separator {
+  background-color: var(--border-color-dark, hsl(217 32% 17%));
+}

@@ -5,7 +5,10 @@
       "Bash(find:*)",
       "Bash(npm install:*)",
       "Bash(mkdir:*)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(npm run:*)",
+      "mcp__puppeteer__puppeteer_evaluate",
+      "mcp__puppeteer__puppeteer_screenshot"
     ],
     "deny": []
   }

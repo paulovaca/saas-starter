@@ -4,6 +4,8 @@
  * Este arquivo mostra como usar o SearchFilters em diferentes páginas
  */
 
+import styles from './search-filters.examples.module.css';
+
 // ============================================================================
 // EXEMPLO 1: USUÁRIOS
 // ============================================================================
@@ -120,7 +122,7 @@ function AdvancedSearchExample() {
       ]}
       onFiltersChange={handleFiltersChange}
       showFilterButton={false} // Filtra automaticamente
-      className="custom-class"
+      className={styles.customClass}
     />
   );
 }

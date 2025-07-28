@@ -220,3 +220,4 @@ export const systemNotificationsRelations = relations(systemNotifications, ({ on
     references: [agencies.id],
   }),
 }));
+

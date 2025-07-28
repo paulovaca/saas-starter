@@ -1,0 +1,211 @@
+/* Operator Selector Container */
+.operatorContainer {
+  max-width: 100%;
+}
+
+.sectionTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--foreground);
+  margin-bottom: 1rem;
+}
+
+/* Loading State */
+.loadingContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 16rem;
+}
+
+.loadingText {
+  color: var(--muted-foreground);
+}
+
+/* Operator Grid */
+.operatorGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.operatorCard {
+  padding: 1.5rem;
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.operatorCard:hover {
+  border-color: var(--primary);
+  box-shadow: var(--shadow-md);
+}
+
+.operatorCard.selected {
+  border-color: var(--primary);
+  background: rgb(from var(--primary) r g b / 0.05);
+  box-shadow: var(--shadow-md);
+}
+
+/* Operator Logo */
+.operatorLogo {
+  width: 4rem;
+  height: 4rem;
+  border-radius: var(--radius);
+  background: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+.operatorLogo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.operatorLogoIcon {
+  width: 100%;
+  height: 100%;
+  color: var(--muted-foreground);
+}
+
+/* Operator Info */
+.operatorName {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--foreground);
+  text-align: center;
+  margin: 0;
+}
+
+.operatorInfo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+}
+
+.operatorInfoIcon {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* Commission Table */
+.operatorCommissions {
+  border-top: 1px solid var(--border);
+  padding-top: 1rem;
+}
+
+.commissionTable {
+  width: 100%;
+  font-size: 0.75rem;
+  border-collapse: collapse;
+}
+
+.commissionTable th {
+  padding: 0.5rem 0.25rem;
+  text-align: left;
+  font-weight: 500;
+  color: var(--muted-foreground);
+  border-bottom: 1px solid var(--border);
+}
+
+.commissionTable td {
+  padding: 0.25rem 0.25rem;
+  color: var(--foreground);
+}
+
+.commissionTable tr:not(:last-child) td {
+  border-bottom: 1px solid var(--border);
+}
+
+/* Empty State */
+.emptyState {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: var(--muted-foreground);
+}
+
+/* Actions */
+.actions {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .operatorGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .operatorCard {
+    padding: 1rem;
+  }
+
+  .operatorLogo {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  .operatorName {
+    font-size: 1rem;
+  }
+
+  .commissionTable {
+    font-size: 0.6875rem;
+  }
+
+  .commissionTable th,
+  .commissionTable td {
+    padding: 0.25rem;
+  }
+
+  .actions {
+    margin-top: 1rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .sectionTitle {
+    font-size: 1.125rem;
+  }
+
+  .operatorGrid {
+    gap: 0.75rem;
+  }
+
+  .operatorCard {
+    padding: 0.75rem;
+    gap: 0.75rem;
+  }
+
+  .operatorLogo {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  .operatorName {
+    font-size: 0.9375rem;
+  }
+
+  .operatorInfo {
+    font-size: 0.8125rem;
+  }
+
+  .emptyState {
+    padding: 1.5rem 0.75rem;
+  }
+}

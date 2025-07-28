@@ -501,7 +501,7 @@ mkdir -p styles/clients
    - Concluída: texto riscado
    - Em progresso: borda azul -->
 
-# Implantação 4
+<!-- # Implantação 4
 ## ✅ PASSO A PASSO DETALHADO
 
 ### 👤 MÓDULO 1: GESTÃO DE CLIENTES
@@ -726,9 +726,9 @@ mkdir -p styles/proposals
    - Subtotal dos itens
    - Desconto (se houver)
    - Total geral em destaque
-   - Comissão calculada
+   - Comissão calculada -->
 
-
+<!-- 
 
 # Implantação 6
 ## ✅ PASSO A PASSO DETALHADO
@@ -785,7 +785,7 @@ mkdir -p styles/proposals
    - sent: azul
    - accepted: verde
    - rejected: vermelho
-   - expired: laranja
+   - expired: laranja -->
 
 
 # Implantação 7

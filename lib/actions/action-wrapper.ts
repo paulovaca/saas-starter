@@ -80,7 +80,8 @@ export function createAction<TInput, TOutput>(
 
       // 3. Permission check
       if (options.permission && user) {
-        if (!hasPermission(user.role as UserRole, options.permission)) {
+        const hasRequiredPermission = hasPermission(user.role as UserRole, options.permission);
+        if (!hasRequiredPermission) {
           return {
             success: false,
             error: 'Acesso negado. Permissão insuficiente.',
