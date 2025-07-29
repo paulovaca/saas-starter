@@ -443,6 +443,7 @@ export default function AddProductModal({
                 <div className={styles.emptyState}>
                   <Package className={styles.emptyIcon} />
                   <p className={styles.emptyMessage}>Nenhum item disponível para esta operadora</p>
+                  <p className={styles.emptySubMessage}>Configure os itens da operadora na seção de Operadoras</p>
                 </div>
               ) : (
                 baseItems.map((item) => (
