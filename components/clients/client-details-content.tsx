@@ -760,7 +760,7 @@ export default function ClientDetailsContent({ clientId }: ClientDetailsContentP
                             </Badge>
                           </div>
                           <div className={styles.clientProposalMeta}>
-                            <span>Operadora: {proposal.operator.name}</span>
+                            <span>Operadora: {proposal.operator?.name || 'Não informado'}</span>
                             <span>Valor: {formatCurrency(proposal.totalAmount)}</span>
                             <span>Criada em: {formatDate(proposal.createdAt)}</span>
                           </div>

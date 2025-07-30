@@ -39,7 +39,7 @@ type ClientFormValues = z.infer<typeof clientFormSchema>;
 type ProcessedClientFormData = Omit<ClientFormValues, 'birthDate'> & { birthDate?: Date };
 
 interface ClientFormProps {
-  initialData?: Partial<ClientFormData>;
+  initialData?: Partial<ClientFormData> & { id?: string };
   onSubmit: (data: ProcessedClientFormData) => Promise<void>;
   onCancel: () => void;
   isLoading?: boolean;
@@ -181,6 +181,9 @@ export default function ClientForm({
       // Verificar se email já existe
       const params = new URLSearchParams();
       params.set('search', email);
+      if (initialData?.id) {
+        params.set('excludeId', initialData.id);
+      }
       
       const response = await fetch(`/api/clients?${params.toString()}`);
       
@@ -216,6 +219,9 @@ export default function ClientForm({
       // Verificar se documento já existe
       const params = new URLSearchParams();
       params.set('search', documentNumber);
+      if (initialData?.id) {
+        params.set('excludeId', initialData.id);
+      }
       
       const response = await fetch(`/api/clients?${params.toString()}`);
       
@@ -245,21 +251,24 @@ export default function ClientForm({
   // Handler para submit do formulário
   const handleFormSubmit = async (data: ClientFormValues) => {
     try {
-      // Validar email e documento apenas se preenchidos
+      // Validar email e documento apenas se preenchidos e se for um novo cliente
       const validationPromises = [];
       
-      if (data.email) {
-        validationPromises.push(validateEmail(data.email));
-      }
-      
-      if (data.documentNumber) {
-        validationPromises.push(validateDocument(data.documentNumber));
-      }
-      
-      const validationResults = await Promise.all(validationPromises);
-      
-      if (validationResults.includes(false)) {
-        return;
+      // Só validar unicidade se for um novo cliente (não tem ID)
+      if (!initialData?.id) {
+        if (data.email) {
+          validationPromises.push(validateEmail(data.email));
+        }
+        
+        if (data.documentNumber) {
+          validationPromises.push(validateDocument(data.documentNumber));
+        }
+        
+        const validationResults = await Promise.all(validationPromises);
+        
+        if (validationResults.includes(false)) {
+          return;
+        }
       }
       
       // Converter string de data para Date se necessário
@@ -308,7 +317,7 @@ export default function ClientForm({
                   {...register('email')}
                   placeholder="Digite o email"
                   className={errors.email ? styles.formInputError : ''}
-                  onBlur={(e) => validateEmail(e.target.value)}
+                  onBlur={(e) => !initialData?.id && validateEmail(e.target.value)}
                 />
                 {isCheckingEmail && (
                   <Loader2 className={styles.formInputSpinner} />
@@ -385,7 +394,7 @@ export default function ClientForm({
                 {...register('documentNumber')}
                 placeholder={documentType === 'cpf' ? '000.000.000-00' : '00.000.000/0000-00'}
                 className={errors.documentNumber ? styles.formInputError : ''}
-                onBlur={(e) => validateDocument(e.target.value)}
+                onBlur={(e) => !initialData?.id && validateDocument(e.target.value)}
               />
               {isCheckingDocument && (
                 <Loader2 className={styles.formInputSpinner} />

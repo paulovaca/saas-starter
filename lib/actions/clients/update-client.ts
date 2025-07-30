@@ -12,18 +12,18 @@ import { validateCPF, validateCNPJ } from '@/lib/validations/brazilian'
 const updateClientSchema = z.object({
   clientId: z.string().uuid('ID do cliente inválido'),
   name: z.string().min(3, 'Nome deve ter pelo menos 3 caracteres').optional(),
-  email: z.string().email('Email inválido').optional(),
+  email: z.string().email('Email inválido').optional().or(z.literal('')),
   phone: z.string().optional(),
   documentType: z.enum(['cpf', 'cnpj']).optional(),
   documentNumber: z.string().optional(),
   birthDate: z.string().optional(),
-  addressZipcode: z.string().regex(/^\d{5}-?\d{3}$/, 'CEP inválido').optional(),
+  addressZipcode: z.string().regex(/^\d{5}-?\d{3}$/, 'CEP inválido').optional().or(z.literal('')),
   addressStreet: z.string().optional(),
   addressNumber: z.string().optional(),
   addressComplement: z.string().optional(),
   addressNeighborhood: z.string().optional(),
   addressCity: z.string().optional(),
-  addressState: z.string().length(2, 'Estado deve ter 2 caracteres').optional(),
+  addressState: z.string().length(2, 'Estado deve ter 2 caracteres').optional().or(z.literal('')),
   funnelId: z.string().uuid('ID do funil inválido').optional(),
   funnelStageId: z.string().uuid('ID da etapa inválido').optional(),
   notes: z.string().optional(),
@@ -105,6 +105,17 @@ export const updateClient = createPermissionAction(
     // Converter birthDate se fornecido
     if (updateData.birthDate) {
       dataToUpdate.birthDate = new Date(updateData.birthDate)
+    }
+    
+    // Converter strings vazias para null
+    if (updateData.email === '') {
+      dataToUpdate.email = null
+    }
+    if (updateData.addressZipcode === '') {
+      dataToUpdate.addressZipcode = null
+    }
+    if (updateData.addressState === '') {
+      dataToUpdate.addressState = null
     }
 
     // Atualizar o cliente

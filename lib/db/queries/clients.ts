@@ -3,6 +3,7 @@ import { db } from '../drizzle';
 import { clientsNew, clientInteractions, clientTasks, clientTransfers, proposals } from '../schema/clients';
 import { users } from '../schema/users';
 import { salesFunnels, salesFunnelStages } from '../schema/funnels';
+import { operators } from '../schema/operators';
 import { ClientFormData, ClientFilters, PaginationOptions } from '@/lib/types/clients';
 import { getDefaultFunnelForAgency, getFirstStageForFunnel } from './sales-funnels';
 
@@ -320,8 +321,13 @@ export async function getClientWithDetails(clientId: string, agencyId: string) {
       status: proposals.status,
       totalAmount: proposals.totalAmount,
       createdAt: proposals.createdAt,
+      operator: {
+        id: operators.id,
+        name: operators.name,
+      },
     })
     .from(proposals)
+    .leftJoin(operators, eq(proposals.operatorId, operators.id))
     .where(eq(proposals.clientId, clientId))
     .orderBy(desc(proposals.createdAt));
 

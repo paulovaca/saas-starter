@@ -1,5 +1,3 @@
-'use server'
-
 // Export all client actions
 export { createClient } from './create-client'
 export { updateClient } from './update-client'
