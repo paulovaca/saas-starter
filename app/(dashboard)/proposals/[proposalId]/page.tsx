@@ -104,10 +104,16 @@ export default function ProposalDetailsPage({}: ProposalDetailsPageProps) {
       const result = await getProposal({ proposalId });
       
       if (result.success && result.data) {
-        setProposal(result.data);
+        // Handle double-nested data if needed
+        let proposalData = result.data;
+        if (result.data.data && typeof result.data.data === 'object') {
+          proposalData = result.data.data;
+        }
+        
+        setProposal(proposalData);
       }
     } catch (error) {
-      console.error('Error updating proposal after status change:', error);
+      console.error('Erro ao atualizar proposta após mudança de status:', error);
     }
   };
 

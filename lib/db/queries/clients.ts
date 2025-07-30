@@ -93,8 +93,8 @@ export async function getClientsWithFilters(
     whereConditions = and(whereConditions, eq(clientsNew.funnelStageId, filters.funnelStageId));
   }
   
-  // Buscar clientes
-  const clients = await db
+  // Buscar clientes com dados de propostas
+  const clientsData = await db
     .select({
       id: clientsNew.id,
       agencyId: clientsNew.agencyId,
@@ -143,6 +143,60 @@ export async function getClientsWithFilters(
     .orderBy(desc(clientsNew.createdAt))
     .limit(limit)
     .offset(offset);
+
+  // Calcular dados de propostas para cada cliente
+  const clients = await Promise.all(
+    clientsData.map(async (client) => {
+      // Contar propostas do cliente
+      const proposalsCount = await db
+        .select({ count: count() })
+        .from(proposals)
+        .where(
+          and(
+            eq(proposals.clientId, client.id),
+            eq(proposals.agencyId, agencyId)
+          )
+        )
+        .then(results => results[0].count);
+
+      // Calcular valor total das propostas (apenas aceitas/ativas)
+      const totalValue = await db
+        .select({ 
+          total: proposals.totalAmount 
+        })
+        .from(proposals)
+        .where(
+          and(
+            eq(proposals.clientId, client.id),
+            eq(proposals.agencyId, agencyId),
+            or(
+              eq(proposals.status, 'accepted'),
+              eq(proposals.status, 'awaiting_payment'),
+              eq(proposals.status, 'active_travel')
+            )
+          )
+        )
+        .then(results => 
+          results.reduce((sum, row) => sum + parseFloat(row.total || '0'), 0)
+        );
+
+      // Buscar última interação
+      const lastInteraction = await db
+        .select({ createdAt: clientInteractions.createdAt })
+        .from(clientInteractions)
+        .where(eq(clientInteractions.clientId, client.id))
+        .orderBy(desc(clientInteractions.createdAt))
+        .limit(1)
+        .then(results => results[0]?.createdAt || null);
+
+      return {
+        ...client,
+        totalProposals: proposalsCount,
+        totalValue,
+        lastInteraction,
+      };
+    })
+  );
   
   // Contar total de clientes
   const totalCount = await db

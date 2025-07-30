@@ -4,7 +4,9 @@ import { useState, useEffect, useCallback } from 'react';
 import { Modal } from '@/components/ui/modal';
 import { Button } from '@/components/ui/button';
 import { ProposalStatus, ProposalWithRelations } from '@/lib/types/proposals';
-import { Calendar, User, Building2, DollarSign, FileText, CreditCard } from 'lucide-react';
+import { Calendar, User, Building2, DollarSign, FileText, CreditCard, Edit } from 'lucide-react';
+import { updateProposal } from '@/lib/actions/proposals/update-proposal';
+import { getProposal } from '@/lib/actions/proposals/get-proposal';
 import styles from './edit-proposal-modal.module.css';
 
 interface EditProposalModalProps {
@@ -12,17 +14,18 @@ interface EditProposalModalProps {
   onClose: () => void;
   proposal: ProposalWithRelations | null;
   onUpdate: (updatedProposal: ProposalWithRelations) => void;
+  onFullEdit?: () => void;
 }
 
 export default function EditProposalModal({
   isOpen,
   onClose,
   proposal,
-  onUpdate
+  onUpdate,
+  onFullEdit
 }: EditProposalModalProps) {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    status: ProposalStatus.DRAFT,
     validUntil: '',
     paymentMethod: '',
     notes: '',
@@ -33,7 +36,6 @@ export default function EditProposalModal({
   useEffect(() => {
     if (isOpen && proposal) {
       setFormData({
-        status: proposal.status as ProposalStatus,
         validUntil: proposal.validUntil ? proposal.validUntil.toString().split('T')[0] : '',
         paymentMethod: proposal.paymentMethod || '',
         notes: proposal.notes || '',
@@ -54,32 +56,41 @@ export default function EditProposalModal({
 
     setLoading(true);
     try {
-      // TODO: Implement actual update API call
-      console.log('Updating proposal:', { proposalId: proposal.id, ...formData });
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Create updated proposal object
-      const updatedProposal: ProposalWithRelations = {
-        ...proposal,
-        status: formData.status,
-        validUntil: formData.validUntil,
-        paymentMethod: formData.paymentMethod,
-        notes: formData.notes,
-        internalNotes: formData.internalNotes,
-        updatedAt: new Date()
-      };
+      // Call the update proposal action
+      const result = await updateProposal({
+        proposalId: proposal.id,
+        validUntil: formData.validUntil || undefined,
+        paymentMethod: formData.paymentMethod || undefined,
+        notes: formData.notes || undefined,
+        internalNotes: formData.internalNotes || undefined,
+      });
 
-      onUpdate(updatedProposal);
-      onClose();
-      
-      // TODO: Show success notification
-      alert('Proposta atualizada com sucesso!');
+      if (result.success) {
+        // Fetch the updated proposal data
+        const updatedProposalResult = await getProposal({ proposalId: proposal.id });
+        
+        if (updatedProposalResult.success && updatedProposalResult.data) {
+          // Handle double-nested data if needed
+          let proposalData = updatedProposalResult.data;
+          if (updatedProposalResult.data.data && typeof updatedProposalResult.data.data === 'object') {
+            proposalData = updatedProposalResult.data.data;
+          }
+          
+          onUpdate(proposalData);
+          onClose();
+          
+          // TODO: Show success notification
+          alert('Proposta atualizada com sucesso!');
+        } else {
+          throw new Error('Erro ao buscar proposta atualizada');
+        }
+      } else {
+        throw new Error(result.error || 'Erro ao atualizar proposta');
+      }
       
     } catch (error) {
       console.error('Erro ao atualizar proposta:', error);
-      alert('Erro ao atualizar proposta. Tente novamente.');
+      alert(error instanceof Error ? error.message : 'Erro ao atualizar proposta. Tente novamente.');
     } finally {
       setLoading(false);
     }
@@ -91,13 +102,12 @@ export default function EditProposalModal({
     }
   }, [loading, onClose]);
 
-  const getStatusOptions = () => [
-    { value: ProposalStatus.DRAFT, label: 'Rascunho' },
-    { value: ProposalStatus.SENT, label: 'Enviada' },
-    { value: ProposalStatus.ACCEPTED, label: 'Aceita' },
-    { value: ProposalStatus.REJECTED, label: 'Recusada' },
-    { value: ProposalStatus.EXPIRED, label: 'Expirada' }
-  ];
+  // Check if proposal can be edited based on status
+  const canEdit = () => {
+    if (!proposal) return false;
+    const editableStatuses = [ProposalStatus.DRAFT, ProposalStatus.REJECTED, ProposalStatus.EXPIRED];
+    return editableStatuses.includes(proposal.status as ProposalStatus);
+  };
 
   const footer = (
     <div className={styles.modalFooter}>
@@ -108,6 +118,21 @@ export default function EditProposalModal({
       >
         Cancelar
       </Button>
+      
+      {proposal?.status === ProposalStatus.DRAFT && onFullEdit && (
+        <Button 
+          variant="outline"
+          onClick={() => {
+            onClose();
+            onFullEdit();
+          }}
+          disabled={loading}
+        >
+          <Edit className={styles.buttonIcon} />
+          Edição Completa
+        </Button>
+      )}
+      
       <Button 
         onClick={handleSubmit}
         disabled={loading}
@@ -172,26 +197,6 @@ export default function EditProposalModal({
             <h3 className={styles.sectionTitle}>Detalhes Editáveis</h3>
             
             <div className={styles.formGrid}>
-              {/* Status */}
-              <div className={styles.formGroup}>
-                <label className={styles.formLabel}>
-                  <FileText className={styles.labelIcon} />
-                  Status
-                </label>
-                <select
-                  className={styles.formSelect}
-                  value={formData.status}
-                  onChange={(e) => handleInputChange('status', e.target.value)}
-                  disabled={loading}
-                >
-                  {getStatusOptions().map(option => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
               {/* Valid Until */}
               <div className={styles.formGroup}>
                 <label className={styles.formLabel}>

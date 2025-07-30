@@ -12,7 +12,9 @@ export const ProposalStatus = {
   SENT: 'sent',
   ACCEPTED: 'accepted',
   REJECTED: 'rejected',
-  EXPIRED: 'expired'
+  EXPIRED: 'expired',
+  AWAITING_PAYMENT: 'awaiting_payment',
+  ACTIVE_TRAVEL: 'active_travel'
 } as const;
 
 export type ProposalStatus = typeof ProposalStatus[keyof typeof ProposalStatus];
@@ -148,9 +150,11 @@ export const proposalFormSchema = z.object({
 export const ALLOWED_STATUS_TRANSITIONS: Record<ProposalStatus, ProposalStatus[]> = {
   [ProposalStatus.DRAFT]: [ProposalStatus.SENT],
   [ProposalStatus.SENT]: [ProposalStatus.ACCEPTED, ProposalStatus.REJECTED, ProposalStatus.EXPIRED],
-  [ProposalStatus.ACCEPTED]: [],
-  [ProposalStatus.REJECTED]: [],
-  [ProposalStatus.EXPIRED]: []
+  [ProposalStatus.ACCEPTED]: [ProposalStatus.AWAITING_PAYMENT],
+  [ProposalStatus.REJECTED]: [ProposalStatus.DRAFT],
+  [ProposalStatus.EXPIRED]: [ProposalStatus.DRAFT],
+  [ProposalStatus.AWAITING_PAYMENT]: [ProposalStatus.ACTIVE_TRAVEL, ProposalStatus.EXPIRED],
+  [ProposalStatus.ACTIVE_TRAVEL]: []
 };
 
 // Helper functions
@@ -167,7 +171,9 @@ export function getStatusLabel(status: ProposalStatus): string {
     [ProposalStatus.SENT]: 'Enviada',
     [ProposalStatus.ACCEPTED]: 'Aceita',
     [ProposalStatus.REJECTED]: 'Recusada',
-    [ProposalStatus.EXPIRED]: 'Expirada'
+    [ProposalStatus.EXPIRED]: 'Expirada',
+    [ProposalStatus.AWAITING_PAYMENT]: 'Aguardando Pagamento',
+    [ProposalStatus.ACTIVE_TRAVEL]: 'Negócio/Viagem Ativo'
   };
   return labels[status] || 'Status Desconhecido'; // Default label if status is invalid
 }
@@ -178,7 +184,9 @@ export function getStatusColor(status: ProposalStatus): string {
     [ProposalStatus.SENT]: 'blue',
     [ProposalStatus.ACCEPTED]: 'green',
     [ProposalStatus.REJECTED]: 'red',
-    [ProposalStatus.EXPIRED]: 'orange'
+    [ProposalStatus.EXPIRED]: 'orange',
+    [ProposalStatus.AWAITING_PAYMENT]: 'yellow',
+    [ProposalStatus.ACTIVE_TRAVEL]: 'purple'
   };
   return colors[status] || 'gray'; // Default to gray if status is invalid
 }

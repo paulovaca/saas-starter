@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import EditProposalModal from '@/components/proposals/edit-proposal-modal';
+import EditExpirationModal from '@/components/proposals/edit-expiration-modal';
+import CreateProposalModal from '@/components/proposals/create-proposal-modal';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -30,7 +32,10 @@ import {
   RefreshCw,
   FileText,
   Archive,
-  MoreHorizontal
+  MoreHorizontal,
+  CreditCard,
+  Calendar,
+  Plane
 } from 'lucide-react';
 import { ProposalStatus, canTransitionToStatus, ProposalWithRelations } from '@/lib/types/proposals';
 import { changeProposalStatus } from '@/lib/actions/proposals/change-status';
@@ -53,9 +58,13 @@ export default function ProposalStatusActions({
   onStatusChange,
   onProposalUpdate
 }: ProposalStatusActionsProps) {
+  // Component working correctly
+
   const router = useRouter();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showExpirationModal, setShowExpirationModal] = useState(false);
+  const [showFullEditModal, setShowFullEditModal] = useState(false);
   const [showStatusDialog, setShowStatusDialog] = useState<{
     show: boolean;
     newStatus?: ProposalStatus;
@@ -64,6 +73,7 @@ export default function ProposalStatusActions({
 
   const handleStatusChange = async (newStatus: ProposalStatus) => {
     if (!canTransitionToStatus(currentStatus, newStatus)) {
+      alert(`Não é possível alterar o status de ${currentStatus} para ${newStatus}`);
       return;
     }
 
@@ -81,8 +91,8 @@ export default function ProposalStatusActions({
         throw new Error(result.error || 'Erro ao alterar status');
       }
     } catch (error) {
-      console.error('Error changing status:', error);
-      // TODO: Show toast notification with error
+      console.error('Erro ao alterar status:', error);
+      alert(error instanceof Error ? error.message : 'Erro ao alterar status. Tente novamente.');
     } finally {
       setLoading(false);
     }
@@ -142,7 +152,7 @@ export default function ProposalStatusActions({
       case ProposalStatus.ACCEPTED:
         return {
           title: 'Marcar como Aceita',
-          description: 'Confirma que o cliente aceitou esta proposta? Isso irá iniciar o processo de reserva.',
+          description: 'Confirma que o cliente aceitou esta proposta? Isso irá mover para "Aguardando Pagamento".',
           action: 'Aceitar'
         };
       case ProposalStatus.REJECTED:
@@ -156,6 +166,18 @@ export default function ProposalStatusActions({
           title: 'Marcar como Expirada',
           description: 'Confirma que esta proposta expirou? O prazo de validade foi ultrapassado.',
           action: 'Expirar'
+        };
+      case ProposalStatus.AWAITING_PAYMENT:
+        return {
+          title: 'Marcar como Aguardando Pagamento',
+          description: 'Confirma que a proposta foi aceita e está aguardando pagamento.',
+          action: 'Aguardar Pagamento'
+        };
+      case ProposalStatus.ACTIVE_TRAVEL:
+        return {
+          title: 'Marcar como Negócio/Viagem Ativo',
+          description: 'Confirma que o pagamento foi recebido e a viagem está ativa.',
+          action: 'Ativar Viagem'
         };
       default:
         return {
@@ -182,11 +204,16 @@ export default function ProposalStatusActions({
       <Button 
         size="sm" 
         className={styles.actionButton}
-        onClick={() => setShowStatusDialog({ show: true, newStatus: ProposalStatus.SENT })}
+        onClick={() => {
+          const confirm = window.confirm('Tem certeza que deseja enviar esta proposta? O cliente será notificado por email.');
+          if (confirm) {
+            handleStatusChange(ProposalStatus.SENT);
+          }
+        }}
         disabled={loading}
       >
         <Send className={styles.actionIcon} />
-        Enviar
+        Enviar Proposta
       </Button>
 
       <DropdownMenu>
@@ -219,7 +246,12 @@ export default function ProposalStatusActions({
         variant="outline" 
         size="sm" 
         className={styles.actionButton}
-        onClick={() => setShowStatusDialog({ show: true, newStatus: ProposalStatus.ACCEPTED })}
+        onClick={() => {
+          const confirm = window.confirm('Confirma que o cliente aceitou esta proposta? Isso irá mover para "Aguardando Pagamento".');
+          if (confirm) {
+            handleStatusChange(ProposalStatus.ACCEPTED);
+          }
+        }}
         disabled={loading}
       >
         <CheckCircle className={styles.actionIcon} />
@@ -230,7 +262,12 @@ export default function ProposalStatusActions({
         variant="outline" 
         size="sm" 
         className={styles.actionButton}
-        onClick={() => setShowStatusDialog({ show: true, newStatus: ProposalStatus.REJECTED })}
+        onClick={() => {
+          const confirm = window.confirm('Confirma que o cliente recusou esta proposta? Esta ação não pode ser desfeita.');
+          if (confirm) {
+            handleStatusChange(ProposalStatus.REJECTED);
+          }
+        }}
         disabled={loading}
       >
         <XCircle className={styles.actionIcon} />
@@ -260,16 +297,22 @@ export default function ProposalStatusActions({
   const renderAcceptedActions = () => (
     <>
       <Button 
-        variant="outline" 
         size="sm" 
         className={styles.actionButton}
+        onClick={() => {
+          const confirm = window.confirm('Confirma que a proposta foi aceita e está aguardando pagamento?');
+          if (confirm) {
+            handleStatusChange(ProposalStatus.AWAITING_PAYMENT);
+          }
+        }}
         disabled={loading}
       >
-        <FileText className={styles.actionIcon} />
-        Ver Reserva
+        <CreditCard className={styles.actionIcon} />
+        Aguardando Pagamento
       </Button>
       
       <Button 
+        variant="outline" 
         size="sm" 
         className={styles.actionButton}
         onClick={handleGeneratePDF}
@@ -298,13 +341,28 @@ export default function ProposalStatusActions({
   const renderRejectedActions = () => (
     <>
       <Button 
+        size="sm" 
+        className={styles.actionButton}
+        onClick={() => {
+          const confirm = window.confirm('Reabrir esta proposta como rascunho para edição?');
+          if (confirm) {
+            handleStatusChange(ProposalStatus.DRAFT);
+          }
+        }}
+        disabled={loading}
+      >
+        <RefreshCw className={styles.actionIcon} />
+        Reabrir Proposta
+      </Button>
+      
+      <Button 
         variant="outline" 
         size="sm" 
         className={styles.actionButton}
         onClick={handleDuplicate}
         disabled={loading}
       >
-        <Copy className={styles.actionIcon} />
+        <Copy className={styles.menuIcon} />
         Duplicar
       </Button>
       
@@ -323,13 +381,28 @@ export default function ProposalStatusActions({
   const renderExpiredActions = () => (
     <>
       <Button 
+        size="sm" 
+        className={styles.actionButton}
+        onClick={() => {
+          const confirm = window.confirm('Reabrir esta proposta como rascunho para edição?');
+          if (confirm) {
+            handleStatusChange(ProposalStatus.DRAFT);
+          }
+        }}
+        disabled={loading}
+      >
+        <RefreshCw className={styles.actionIcon} />
+        Reabrir Proposta
+      </Button>
+      
+      <Button 
         variant="outline" 
         size="sm" 
         className={styles.actionButton}
         onClick={handleDuplicate}
         disabled={loading}
       >
-        <Copy className={styles.actionIcon} />
+        <Copy className={styles.menuIcon} />
         Duplicar
       </Button>
       
@@ -357,10 +430,83 @@ export default function ProposalStatusActions({
         return renderRejectedActions();
       case ProposalStatus.EXPIRED:
         return renderExpiredActions();
+      case ProposalStatus.AWAITING_PAYMENT:
+        return renderAwaitingPaymentActions();
+      case ProposalStatus.ACTIVE_TRAVEL:
+        return renderActiveTravelActions();
       default:
         return null;
     }
   };
+
+  const renderAwaitingPaymentActions = () => (
+    <>
+      <Button 
+        size="sm" 
+        className={styles.actionButton}
+        onClick={() => {
+          const confirm = window.confirm('Confirma que o pagamento foi recebido e a viagem está ativa?');
+          if (confirm) {
+            handleStatusChange(ProposalStatus.ACTIVE_TRAVEL);
+          }
+        }}
+        disabled={loading}
+      >
+        <Plane className={styles.actionIcon} />
+        Pago / Ativar Viagem
+      </Button>
+      
+      <Button 
+        variant="outline" 
+        size="sm" 
+        className={styles.actionButton}
+        onClick={() => setShowExpirationModal(true)}
+        disabled={loading}
+      >
+        <Calendar className={styles.actionIcon} />
+        Editar Data de Expiração
+      </Button>
+
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="outline" size="sm" disabled={loading}>
+            <MoreHorizontal className={styles.actionIcon} />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem onClick={handleGeneratePDF}>
+            <FileText className={styles.menuIcon} />
+            Gerar PDF
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </>
+  );
+
+  const renderActiveTravelActions = () => (
+    <>
+      <Button 
+        variant="outline" 
+        size="sm" 
+        className={styles.actionButton}
+        disabled={loading}
+      >
+        <FileText className={styles.actionIcon} />
+        Ver Negócio
+      </Button>
+      
+      <Button 
+        variant="outline" 
+        size="sm" 
+        className={styles.actionButton}
+        onClick={handleGeneratePDF}
+        disabled={loading}
+      >
+        <FileText className={styles.actionIcon} />
+        Gerar PDF
+      </Button>
+    </>
+  );
 
   const dialogContent = showStatusDialog.newStatus ? 
     getStatusDialogContent(showStatusDialog.newStatus) : 
@@ -373,7 +519,13 @@ export default function ProposalStatusActions({
       </div>
 
       {/* Status Change Dialog */}
-      <AlertDialog open={showStatusDialog.show} onOpenChange={(open) => setShowStatusDialog({ show: open })}>
+      <AlertDialog 
+        open={showStatusDialog.show} 
+        onOpenChange={(open) => {
+          console.log('🚪 [MODAL] AlertDialog onOpenChange:', open);
+          setShowStatusDialog({ show: open });
+        }}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>{dialogContent.title}</AlertDialogTitle>
@@ -384,7 +536,16 @@ export default function ProposalStatusActions({
           <AlertDialogFooter>
             <AlertDialogCancel disabled={loading}>Cancelar</AlertDialogCancel>
             <AlertDialogAction 
-              onClick={() => showStatusDialog.newStatus && handleStatusChange(showStatusDialog.newStatus)}
+              onClick={() => {
+                console.log('🖱️ [MODAL] Botão de confirmação clicado');
+                console.log('🖱️ [MODAL] showStatusDialog:', showStatusDialog);
+                console.log('🖱️ [MODAL] newStatus:', showStatusDialog.newStatus);
+                if (showStatusDialog.newStatus) {
+                  handleStatusChange(showStatusDialog.newStatus);
+                } else {
+                  console.error('❌ [MODAL] newStatus é undefined!');
+                }
+              }}
               disabled={loading}
             >
               {loading ? 'Processando...' : dialogContent.action}
@@ -419,6 +580,30 @@ export default function ProposalStatusActions({
       <EditProposalModal
         isOpen={showEditModal}
         onClose={() => setShowEditModal(false)}
+        proposal={proposal}
+        onUpdate={handleProposalUpdate}
+        onFullEdit={() => setShowFullEditModal(true)}
+      />
+
+      {/* Full Edit Proposal Modal */}
+      <CreateProposalModal
+        isOpen={showFullEditModal}
+        onClose={() => setShowFullEditModal(false)}
+        onSubmit={(proposalData) => {
+          // TODO: Handle full proposal update
+          console.log('Full proposal update:', proposalData);
+          setShowFullEditModal(false);
+          // Refresh the page data
+          if (onProposalUpdate && proposal) {
+            onStatusChange(proposal.status as ProposalStatus);
+          }
+        }}
+      />
+
+      {/* Edit Expiration Modal */}
+      <EditExpirationModal
+        isOpen={showExpirationModal}
+        onClose={() => setShowExpirationModal(false)}
         proposal={proposal}
         onUpdate={handleProposalUpdate}
       />

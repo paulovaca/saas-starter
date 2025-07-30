@@ -20,7 +20,7 @@ export const clientDocumentTypeEnum = pgEnum('client_document_type', ['cpf', 'cn
 export const interactionTypeEnum = pgEnum('interaction_type', ['call', 'email', 'whatsapp', 'meeting', 'note']);
 export const taskPriorityEnum = pgEnum('task_priority', ['low', 'medium', 'high']);
 export const taskStatusEnum = pgEnum('task_status', ['pending', 'in_progress', 'completed', 'cancelled']);
-export const proposalStatusEnum = pgEnum('proposal_status', ['draft', 'sent', 'accepted', 'rejected', 'expired']);
+export const proposalStatusEnum = pgEnum('proposal_status', ['draft', 'sent', 'accepted', 'rejected', 'expired', 'awaiting_payment', 'active_travel']);
 
 // Tabela de clientes - versão atualizada
 export const clientsNew = pgTable('clients_new', {
@@ -134,6 +134,8 @@ export const proposals = pgTable('proposals', {
   internalNotes: text('internal_notes'),
   sentAt: timestamp('sent_at'),
   decidedAt: timestamp('decided_at'),
+  paymentDueAt: timestamp('payment_due_at'),
+  activatedAt: timestamp('activated_at'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 }, (table) => ({
