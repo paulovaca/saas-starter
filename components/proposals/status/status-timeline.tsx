@@ -47,28 +47,23 @@ export default function ProposalTimeline({ proposalId }: ProposalTimelineProps) 
         
         const result = await getProposalTimelineAction({ proposalId });
         
-        if (result.success && result.data) {
-          // Check if data is nested or is directly an array
-          let timelineData = result.data;
-          
-          // If result.data has a 'data' property, use that
-          if (result.data.data && Array.isArray(result.data.data)) {
-            timelineData = result.data.data;
-          } else if (!Array.isArray(result.data)) {
+        if (result.success) {
+          // Check if data is an array
+          if (!Array.isArray(result.data)) {
             console.error('Timeline data is not an array:', result.data);
             setEvents([]);
             return;
           }
           
           // Transform database timeline to component format
-          const transformedEvents: TimelineEvent[] = timelineData.map(event => ({
+          const transformedEvents: TimelineEvent[] = result.data.map(event => ({
             id: event.id,
             type: event.type,
             title: event.title,
             description: event.description,
             timestamp: event.timestamp,
             user: event.user,
-            status: event.status,
+            status: event.type === 'status_change' ? event.status : undefined,
             metadata: event.metadata
           }));
           

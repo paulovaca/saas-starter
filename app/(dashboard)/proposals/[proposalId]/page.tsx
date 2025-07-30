@@ -51,31 +51,23 @@ export default function ProposalDetailsPage({}: ProposalDetailsPageProps) {
         const result = await getProposal({ proposalId });
         console.log('📊 Frontend: getProposal result:', result);
         console.log('📋 Frontend: result keys:', Object.keys(result));
-        console.log('📋 Frontend: result.data type:', typeof result.data);
-        console.log('📋 Frontend: result.data keys:', result.data ? Object.keys(result.data) : 'null');
         
-        if (result.success && result.data) {
-          // Check if the data is double-nested
-          let proposalData = result.data;
-          
-          // If result.data has a 'data' property with the actual proposal, use that
-          if (result.data.data && typeof result.data.data === 'object') {
-            console.log('🔄 Frontend: Data is double-nested, using result.data.data');
-            proposalData = result.data.data;
-          }
+        if (result.success) {
+          console.log('📋 Frontend: result.data type:', typeof result.data);
+          console.log('📋 Frontend: result.data keys:', result.data ? Object.keys(result.data) : 'null');
           
           console.log('✅ Frontend: Setting proposal data:', {
-            id: proposalData.id,
-            clientName: proposalData.client?.name,
-            operatorName: proposalData.operator?.name,
-            keys: Object.keys(proposalData),
-            dataType: typeof proposalData,
-            hasClient: !!proposalData.client,
-            hasOperator: !!proposalData.operator,
-            hasUser: !!proposalData.user
+            id: result.data.id,
+            clientName: result.data.client?.name,
+            operatorName: result.data.operator?.name,
+            keys: Object.keys(result.data),
+            dataType: typeof result.data,
+            hasClient: !!result.data.client,
+            hasOperator: !!result.data.operator,
+            hasUser: !!result.data.user
           });
           
-          setProposal(proposalData);
+          setProposal(result.data);
         } else {
           console.error('❌ Frontend: Result not successful:', result);
           throw new Error(result.error || 'Erro ao carregar proposta');
@@ -103,14 +95,8 @@ export default function ProposalDetailsPage({}: ProposalDetailsPageProps) {
       // Refetch proposal data to get updated information
       const result = await getProposal({ proposalId });
       
-      if (result.success && result.data) {
-        // Handle double-nested data if needed
-        let proposalData = result.data;
-        if (result.data.data && typeof result.data.data === 'object') {
-          proposalData = result.data.data;
-        }
-        
-        setProposal(proposalData);
+      if (result.success) {
+        setProposal(result.data);
       }
     } catch (error) {
       console.error('Erro ao atualizar proposta após mudança de status:', error);
@@ -270,8 +256,7 @@ export default function ProposalDetailsPage({}: ProposalDetailsPageProps) {
                       <span>Valor unitário: {formatCurrency(parseFloat(item.unitPrice || '0'))}</span>
                     </div>
                     
-                    {/* Custom Fields */}
-                    {item.customFields && Object.keys(item.customFields).length > 0 && (
+                    {item.customFields && Object.keys(item.customFields).length > 0 ? (
                       <div className={styles.customFields}>
                         {Object.entries(item.customFields).map(([key, value]) => (
                           <div key={key} className={styles.customField}>
@@ -279,12 +264,12 @@ export default function ProposalDetailsPage({}: ProposalDetailsPageProps) {
                               {key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}:
                             </span>
                             <span className={styles.customFieldValue}>
-                              {renderCustomField(key, value)}
+                              {typeof value === 'object' ? JSON.stringify(value) : String(value)}
                             </span>
                           </div>
                         ))}
                       </div>
-                    )}
+                    ) : null}
                     
                     {index < proposal.items.length - 1 && <Separator className={styles.itemSeparator} />}
                   </div>

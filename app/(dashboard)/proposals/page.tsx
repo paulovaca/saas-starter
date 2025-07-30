@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
@@ -152,7 +152,8 @@ export default function ProposalsPage() {
       </div>
 
       {/* Filters */}
-      <SearchFilters
+      <Suspense fallback={<div>Carregando filtros...</div>}>
+        <SearchFilters
         searchPlaceholder="Buscar por cliente ou número da proposta..."
         defaultSearch={searchQuery}
         filters={[
@@ -174,7 +175,8 @@ export default function ProposalsPage() {
           setStatusFilter((filters.status as ProposalStatus) || 'all');
         }}
         showFilterButton={false}
-      />
+        />
+      </Suspense>
 
       {/* Content */}
       {loading ? (

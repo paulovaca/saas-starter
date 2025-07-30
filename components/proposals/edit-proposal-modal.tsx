@@ -69,14 +69,8 @@ export default function EditProposalModal({
         // Fetch the updated proposal data
         const updatedProposalResult = await getProposal({ proposalId: proposal.id });
         
-        if (updatedProposalResult.success && updatedProposalResult.data) {
-          // Handle double-nested data if needed
-          let proposalData = updatedProposalResult.data;
-          if (updatedProposalResult.data.data && typeof updatedProposalResult.data.data === 'object') {
-            proposalData = updatedProposalResult.data.data;
-          }
-          
-          onUpdate(proposalData);
+        if (updatedProposalResult.success) {
+          onUpdate(updatedProposalResult.data);
           onClose();
           
           // TODO: Show success notification
@@ -105,8 +99,8 @@ export default function EditProposalModal({
   // Check if proposal can be edited based on status
   const canEdit = () => {
     if (!proposal) return false;
-    const editableStatuses = [ProposalStatus.DRAFT, ProposalStatus.REJECTED, ProposalStatus.EXPIRED];
-    return editableStatuses.includes(proposal.status as ProposalStatus);
+    const editableStatuses: ProposalStatus[] = [ProposalStatus.DRAFT, ProposalStatus.REJECTED, ProposalStatus.EXPIRED];
+    return editableStatuses.includes(proposal.status);
   };
 
   const footer = (

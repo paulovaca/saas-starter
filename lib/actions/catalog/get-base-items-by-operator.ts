@@ -27,15 +27,12 @@ export const getBaseItemsByOperatorAction = createPermissionAction(
         id: item.id,
         name: item.name,
         description: item.description,
-        basePrice: item.basePrice ? parseFloat(item.basePrice) : undefined,
+        basePrice: item.basePrice,
         allowPriceEdit: item.allowPriceEdit,
         customFields: item.customFields || [],
       }));
 
-      return {
-        success: true,
-        data: transformedItems
-      };
+      return transformedItems;
 
     } catch (error) {
       console.error('Error fetching base items:', error);

@@ -47,6 +47,8 @@ export async function getProposalWithRelations(
         internalNotes: proposals.internalNotes,
         sentAt: proposals.sentAt,
         decidedAt: proposals.decidedAt,
+        paymentDueAt: proposals.paymentDueAt,
+        activatedAt: proposals.activatedAt,
         createdAt: proposals.createdAt,
         updatedAt: proposals.updatedAt,
         // Client fields
@@ -114,6 +116,8 @@ export async function getProposalWithRelations(
       internalNotes: proposalData.internalNotes,
       sentAt: proposalData.sentAt,
       decidedAt: proposalData.decidedAt,
+      paymentDueAt: proposalData.paymentDueAt,
+      activatedAt: proposalData.activatedAt,
       createdAt: proposalData.createdAt,
       updatedAt: proposalData.updatedAt,
       client: {

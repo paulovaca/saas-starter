@@ -132,8 +132,8 @@ export function generateProposalHTML(proposal: ProposalWithRelations): string {
                     ${item.description ? `<br><small>${item.description}</small>` : ''}
                   </td>
                   <td>${item.quantity}</td>
-                  <td>${formatCurrency(item.unitPrice)}</td>
-                  <td>${formatCurrency(item.subtotal)}</td>
+                  <td>${formatCurrency(parseFloat(item.unitPrice))}</td>
+                  <td>${formatCurrency(parseFloat(item.subtotal))}</td>
                 </tr>
               `).join('')}
             </tbody>
@@ -145,17 +145,17 @@ export function generateProposalHTML(proposal: ProposalWithRelations): string {
           <div class="financial-summary">
             <div class="summary-line">
               <span>Subtotal:</span>
-              <span>${formatCurrency(proposal.subtotal)}</span>
+              <span>${formatCurrency(parseFloat(proposal.subtotal))}</span>
             </div>
-            ${proposal.discountAmount && proposal.discountAmount > 0 ? `
+            ${proposal.discountAmount && parseFloat(proposal.discountAmount) > 0 ? `
               <div class="summary-line">
                 <span>Desconto ${proposal.discountPercent ? `(${proposal.discountPercent}%)` : ''}:</span>
-                <span>-${formatCurrency(proposal.discountAmount)}</span>
+                <span>-${formatCurrency(parseFloat(proposal.discountAmount))}</span>
               </div>
             ` : ''}
             <div class="summary-line total-line">
               <span><strong>Total:</strong></span>
-              <span><strong>${formatCurrency(proposal.totalAmount)}</strong></span>
+              <span><strong>${formatCurrency(parseFloat(proposal.totalAmount))}</strong></span>
             </div>
           </div>
         </section>
@@ -328,14 +328,14 @@ Responsável: ${proposal.user.name}
 ITENS:
 ------
 ${proposal.items.map(item => 
-  `${item.name} - Qtd: ${item.quantity} x ${formatCurrency(item.unitPrice)} = ${formatCurrency(item.subtotal)}`
+  `${item.name} - Qtd: ${item.quantity} x ${formatCurrency(parseFloat(item.unitPrice))} = ${formatCurrency(parseFloat(item.subtotal))}`
 ).join('\n')}
 
 RESUMO FINANCEIRO:
 ------------------
-Subtotal: ${formatCurrency(proposal.subtotal)}
-${proposal.discountAmount ? `Desconto: -${formatCurrency(proposal.discountAmount)}` : ''}
-TOTAL: ${formatCurrency(proposal.totalAmount)}
+Subtotal: ${formatCurrency(parseFloat(proposal.subtotal))}
+${proposal.discountAmount ? `Desconto: -${formatCurrency(parseFloat(proposal.discountAmount))}` : ''}
+TOTAL: ${formatCurrency(parseFloat(proposal.totalAmount))}
 
 Válida até: ${new Date(proposal.validUntil).toLocaleDateString('pt-BR')}
 

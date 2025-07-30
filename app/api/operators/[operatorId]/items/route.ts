@@ -5,7 +5,7 @@ import { getBaseItemsByOperator } from '@/lib/db/queries/catalog';
 // GET /api/operators/[operatorId]/items - Buscar itens base de uma operadora
 export async function GET(
   request: NextRequest,
-  { params }: { params: { operatorId: string } }
+  { params }: { params: Promise<{ operatorId: string }> }
 ) {
   try {
     const session = await auth();
@@ -18,7 +18,7 @@ export async function GET(
       return NextResponse.json({ error: 'Usuário não pertence a nenhuma agência' }, { status: 403 });
     }
 
-    const { operatorId } = params;
+    const { operatorId } = await params;
 
     if (!operatorId) {
       return NextResponse.json({ error: 'ID da operadora é obrigatório' }, { status: 400 });

@@ -17,7 +17,7 @@ interface Client {
 }
 
 interface ProposalItem {
-  id: string;
+  id?: string;
   operatorId: string;
   operatorName: string;
   baseItemId: string;
@@ -289,7 +289,7 @@ export default function CreateProposalModal({
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => handleRemoveItem(item.id)}
+                          onClick={() => item.id && handleRemoveItem(item.id)}
                         >
                           <Trash2 className={styles.actionIcon} />
                         </Button>

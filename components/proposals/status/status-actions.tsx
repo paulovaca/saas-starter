@@ -580,7 +580,7 @@ export default function ProposalStatusActions({
       <EditProposalModal
         isOpen={showEditModal}
         onClose={() => setShowEditModal(false)}
-        proposal={proposal}
+        proposal={proposal || null}
         onUpdate={handleProposalUpdate}
         onFullEdit={() => setShowFullEditModal(true)}
       />
@@ -604,7 +604,7 @@ export default function ProposalStatusActions({
       <EditExpirationModal
         isOpen={showExpirationModal}
         onClose={() => setShowExpirationModal(false)}
-        proposal={proposal}
+        proposal={proposal || null}
         onUpdate={handleProposalUpdate}
       />
     </>

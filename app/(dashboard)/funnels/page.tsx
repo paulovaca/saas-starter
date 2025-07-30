@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter } from 'next/navigation';
 import { Plus, Search, Star, Users, Settings, Copy, Trash2 } from 'lucide-react';
 import { getFunnels, setDefaultFunnel, duplicateFunnel, deleteFunnel } from '@/lib/actions/funnels';
@@ -223,7 +223,8 @@ export default function FunnelsPage() {
         </div>
       )}
 
-      <SearchFilters
+      <Suspense fallback={<div>Carregando filtros...</div>}>
+        <SearchFilters
         searchPlaceholder={funnelFiltersConfig.searchPlaceholder}
         defaultSearch={searchTerm}
         filters={[
@@ -247,7 +248,8 @@ export default function FunnelsPage() {
             setFilterDefault(null);
           }
         }}
-      />
+        />
+      </Suspense>
 
       <div className={styles.content}>
         {filteredFunnels.length === 0 ? (

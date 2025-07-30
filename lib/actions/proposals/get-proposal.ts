@@ -49,10 +49,7 @@ export const getProposal = createPermissionAction(
       }
 
       console.log('✅ Returning proposal data successfully');
-      return {
-        success: true,
-        data: proposal
-      };
+      return proposal;
 
     } catch (error) {
       console.error('❌ Error fetching proposal:', error);
@@ -96,10 +93,7 @@ export const getProposalTimelineAction = createPermissionAction(
       // Get timeline
       const timeline = await getProposalTimeline(proposalId, user.agencyId);
 
-      return {
-        success: true,
-        data: timeline
-      };
+      return timeline;
 
     } catch (error) {
       console.error('Error fetching proposal timeline:', error);

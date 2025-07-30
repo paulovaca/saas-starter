@@ -25,7 +25,7 @@ export const getClientsListAction = createPermissionAction(
           search,
           userId: user.role === 'AGENT' ? user.id : undefined,
         },
-        { page, limit }
+        { page: page || 1, limit: limit || 50 }
       );
 
       // Transform to expected format
@@ -37,10 +37,7 @@ export const getClientsListAction = createPermissionAction(
         documentType: client.documentType || 'cpf',
       }));
 
-      return {
-        success: true,
-        data: transformedClients
-      };
+      return transformedClients;
 
     } catch (error) {
       console.error('Error fetching clients list:', error);

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, Suspense } from 'react';
 import { Plus, Filter, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -357,7 +357,8 @@ export default function ClientsPageContent({ searchParams }: ClientsPageContentP
     }
 
     return (
-      <SearchFilters
+      <Suspense fallback={<div>Carregando filtros...</div>}>
+        <SearchFilters
         searchPlaceholder="Buscar por nome, email, telefone ou documento..."
         defaultSearch={searchTerm}
         filters={dynamicFilters}
@@ -367,7 +368,8 @@ export default function ClientsPageContent({ searchParams }: ClientsPageContentP
           setSelectedUser(filters.userId || '');
           setSearchTerm(filters.search || '');
         }}
-      />
+        />
+      </Suspense>
     );
   };
 

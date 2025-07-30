@@ -43,7 +43,7 @@ export const updateProposal = createPermissionAction(
 
       const now = new Date();
       // Check if proposal can still be edited
-      const fullEditableStatuses = [ProposalStatus.DRAFT, ProposalStatus.REJECTED, ProposalStatus.EXPIRED];
+      const fullEditableStatuses: ProposalStatus[] = [ProposalStatus.DRAFT, ProposalStatus.REJECTED, ProposalStatus.EXPIRED];
       const currentStatus = currentProposal.status as ProposalStatus;
       
       // For AWAITING_PAYMENT, only allow editing validUntil
