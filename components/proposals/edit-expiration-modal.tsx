@@ -105,7 +105,7 @@ export default function EditExpirationModal({
       variant="form"
       footer={footer}
       loading={loading}
-      preventClose={loading}
+      preventClose={true}
     >
       {proposal && (
         <div className={styles.editForm}>

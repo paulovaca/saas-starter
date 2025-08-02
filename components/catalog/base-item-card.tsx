@@ -48,9 +48,6 @@ export function BaseItemCard({ item, onItemDeleted }: BaseItemCardProps) {
                 {item.name}
               </Link>
             </h3>
-            {!item.isActive && (
-              <span className={styles.inactiveBadge}>Inativo</span>
-            )}
           </div>
           {item.description && (
             <p className={styles.description}>{item.description}</p>

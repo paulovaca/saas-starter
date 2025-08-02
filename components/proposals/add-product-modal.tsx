@@ -399,6 +399,7 @@ export default function AddProductModal({
       size="lg"
       footer={footer}
       className={styles.modal}
+      preventClose={true}
     >
       <div className={styles.content}>
         {currentStep === 'operator' && (
