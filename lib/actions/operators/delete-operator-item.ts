@@ -41,14 +41,29 @@ export async function deleteOperatorItem(data: DeleteOperatorItemInput) {
       throw new Error('Associação não encontrada.');
     }
 
+    console.log('Deletando associação item-operadora:', validatedData.operatorItemId);
+    
     // Delete association (hard delete)
-    await db
+    const deleteResult = await db
       .delete(operatorItems)
       .where(eq(operatorItems.id, validatedData.operatorItemId));
 
-    // Revalidate pages
-    revalidatePath('/dashboard/operators');
-    revalidatePath(`/dashboard/operators/${validatedData.operatorId}`);
+    console.log('Resultado da deleção:', deleteResult);
+
+    // Verificar se a deleção realmente aconteceu
+    const remainingItems = await db
+      .select()
+      .from(operatorItems)
+      .where(eq(operatorItems.id, validatedData.operatorItemId));
+    
+    console.log('Itens restantes após deleção:', remainingItems.length);
+
+    // Revalidate pages com timestamp para forçar refresh
+    const timestamp = Date.now();
+    revalidatePath('/operators', 'page');
+    revalidatePath(`/operators/${validatedData.operatorId}`, 'page');
+    
+    console.log(`Páginas revalidadas em ${timestamp}`);
 
     return {
       success: true,

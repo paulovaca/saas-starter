@@ -99,11 +99,13 @@ export function OperatorDetailsContent({ operator }: OperatorDetailsContentProps
 
       if (result.success) {
         toast.success(result.message);
-        router.refresh();
+        // Forçar refresh da página para garantir que os dados sejam atualizados
+        window.location.reload();
       } else {
         toast.error(result.error);
       }
     } catch (error) {
+      console.error('Erro ao excluir item:', error);
       toast.error('Erro ao excluir item da operadora');
     }
   };

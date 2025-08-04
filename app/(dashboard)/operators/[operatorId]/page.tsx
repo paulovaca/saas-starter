@@ -5,6 +5,9 @@ import { notFound, redirect } from 'next/navigation';
 import { Metadata } from 'next';
 import styles from './page.module.css';
 
+// Força a página a ser dinâmica e não usar cache
+export const dynamic = 'force-dynamic';
+
 interface OperatorDetailsPageProps {
   params: Promise<{
     operatorId: string;

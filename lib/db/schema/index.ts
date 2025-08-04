@@ -7,6 +7,8 @@ export * from './funnels';
 export * from './catalog';
 export * from './operators';
 export * from './clients';
+// export * from './proposals'; // TODO: adicionar quando o arquivo existir
+export * from './bookings';
 
 // Import tables for relations
 import { users, passwordResetTokens, emailVerificationTokens, userInvitations, activeSessions } from './auth';

@@ -1,0 +1,142 @@
+import { db } from "@/lib/db/drizzle";
+import { bookings, bookingTimeline } from "@/lib/db/schema/bookings";
+import { proposals } from "@/lib/db/schema/clients";
+import { eq } from "drizzle-orm";
+import { generateBookingNumber } from "./utils";
+import { BOOKING_STATUS } from "@/lib/types/booking-status";
+
+/**
+ * Criar reserva automaticamente quando proposta tem status active_travel (Negócio/Viagem Ativo)
+ */
+export async function createBookingFromProposal(
+  proposalId: string,
+  userId: string
+): Promise<string> {
+  // Buscar dados da proposta
+  const proposal = await db
+    .select()
+    .from(proposals)
+    .where(eq(proposals.id, proposalId))
+    .limit(1);
+
+  if (!proposal || proposal.length === 0) {
+    throw new Error("Proposta não encontrada");
+  }
+
+  const proposalData = proposal[0];
+
+  // Verificar se já existe uma reserva para esta proposta
+  const existingBooking = await db
+    .select()
+    .from(bookings)
+    .where(eq(bookings.proposalId, proposalId))
+    .limit(1);
+
+  if (existingBooking && existingBooking.length > 0) {
+    console.log("Reserva já existe para esta proposta:", existingBooking[0].id);
+    return existingBooking[0].id;
+  }
+
+  // Gerar número único de reserva
+  const bookingNumber = await generateBookingNumber(proposalData.agencyId);
+
+  // Criar a reserva
+  const [newBooking] = await db
+    .insert(bookings)
+    .values({
+      proposalId: proposalId,
+      agencyId: proposalData.agencyId,
+      bookingNumber: bookingNumber,
+      status: BOOKING_STATUS.PENDING_DOCUMENTS,
+      notes: proposalData.notes,
+      createdBy: userId,
+      metadata: {
+        proposalNumber: proposalData.proposalNumber,
+        clientId: proposalData.clientId,
+        operatorId: proposalData.operatorId,
+        totalAmount: proposalData.totalAmount,
+        paymentMethod: proposalData.paymentMethod
+      }
+    })
+    .returning();
+
+  // Adicionar evento na timeline
+  await db.insert(bookingTimeline).values({
+    bookingId: newBooking.id,
+    eventType: "created",
+    description: `Reserva criada automaticamente a partir da proposta ${proposalData.proposalNumber}`,
+    userId: userId,
+    metadata: {
+      proposalId: proposalId,
+      proposalNumber: proposalData.proposalNumber,
+      automaticCreation: true
+    }
+  });
+
+  console.log("Nova reserva criada:", newBooking.id, "Número:", bookingNumber);
+  
+  return newBooking.id;
+}
+
+/**
+ * Cancelar reserva quando proposta é cancelada
+ */
+export async function cancelBookingFromProposal(
+  proposalId: string,
+  userId: string,
+  reason: string
+): Promise<void> {
+  // Buscar reserva associada à proposta
+  const booking = await db
+    .select()
+    .from(bookings)
+    .where(eq(bookings.proposalId, proposalId))
+    .limit(1);
+
+  if (!booking || booking.length === 0) {
+    console.log("Nenhuma reserva encontrada para esta proposta");
+    return;
+  }
+
+  const bookingData = booking[0];
+
+  // Só cancela se não estiver já cancelada
+  if (bookingData.status === BOOKING_STATUS.CANCELLED) {
+    console.log("Reserva já está cancelada");
+    return;
+  }
+
+  // Atualizar status para cancelado
+  await db
+    .update(bookings)
+    .set({
+      status: BOOKING_STATUS.CANCELLED,
+      updatedAt: new Date()
+    })
+    .where(eq(bookings.id, bookingData.id));
+
+  // Adicionar evento na timeline
+  await db.insert(bookingTimeline).values({
+    bookingId: bookingData.id,
+    eventType: "status_changed",
+    description: `Reserva cancelada: ${reason}`,
+    userId: userId,
+    metadata: {
+      previousStatus: bookingData.status,
+      newStatus: BOOKING_STATUS.CANCELLED,
+      reason: reason,
+      automaticChange: true
+    }
+  });
+
+  console.log("Reserva cancelada:", bookingData.id);
+}
+
+/**
+ * Notificar responsáveis sobre nova reserva
+ */
+export async function notifyBookingCreated(bookingId: string): Promise<void> {
+  // TODO: Implementar sistema de notificações
+  // Por enquanto, apenas log
+  console.log("Notificação: Nova reserva criada -", bookingId);
+}

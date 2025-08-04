@@ -55,7 +55,9 @@ export async function getOperatorDetails(operatorId: string) {
     }
 
     // OPTIMIZED: Single query to get operator with all items and commission rules
+    console.log(`Buscando detalhes da operadora ${operatorId} em ${new Date().toISOString()}`);
     const operatorWithItemsQuery = await OperatorQueryBuilder.withItemsAndRules(operatorId, user.agencyId);
+    console.log(`Encontrados ${operatorWithItemsQuery.length} registros na query`);
     
     if (operatorWithItemsQuery.length === 0) {
       throw new Error('Operadora não encontrada.');

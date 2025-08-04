@@ -8,6 +8,7 @@ import { createPermissionAction } from '@/lib/actions/action-wrapper';
 import { Permission } from '@/lib/auth/permissions';
 import { ProposalStatus, canTransitionToStatus } from '@/lib/types/proposals';
 import { eq, and } from 'drizzle-orm';
+import { createBookingFromProposal } from '@/lib/actions/bookings/booking-triggers';
 
 const changeStatusSchema = z.object({
   proposalId: z.string().uuid('ID da proposta inválido'),
@@ -187,8 +188,15 @@ async function executeStatusAutomations(
         break;
         
       case ProposalStatus.ACTIVE_TRAVEL:
-        // TODO: Move to active business/travel management
-        console.log(`Activating travel/business for proposal ${proposalId}`);
+        // ✅ AUTOMATICAMENTE criar reserva quando proposta vira active_travel
+        console.log(`Criando reserva automaticamente para proposta ${proposalId}`);
+        try {
+          const bookingId = await createBookingFromProposal(proposalId, user.id);
+          console.log(`🎉 Reserva criada automaticamente: ${bookingId}`);
+        } catch (bookingError) {
+          console.error(`Erro ao criar reserva para proposta ${proposalId}:`, bookingError);
+          // Não bloquear o fluxo principal se der erro na criação da reserva
+        }
         break;
         
       case ProposalStatus.REJECTED:

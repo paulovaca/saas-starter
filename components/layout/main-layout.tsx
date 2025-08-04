@@ -19,7 +19,8 @@ import {
   Target,
   Package,
   Building2,
-  User
+  User,
+  Calendar
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -61,6 +62,11 @@ const mainNavigationItems: NavigationItem[] = [
     href: '/proposals',
     label: 'Propostas',
     icon: FileText,
+  },
+  {
+    href: '/bookings',
+    label: 'Reservas',
+    icon: Calendar,
   },
   {
     href: '/reports',

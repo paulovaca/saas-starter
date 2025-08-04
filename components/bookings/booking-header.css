@@ -1,0 +1,298 @@
+/* Booking Header Component Styles */
+.booking-header {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2rem;
+  margin: 2rem auto;
+  max-width: 1200px;
+  box-shadow: var(--shadow-sm);
+}
+
+.header-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.header-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.booking-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--foreground);
+  margin: 0 0 0.5rem 0;
+  line-height: 1.2;
+}
+
+.booking-subtitle {
+  font-size: 1rem;
+  color: var(--muted-foreground);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--background);
+  color: var(--foreground);
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.back-button:hover {
+  background: var(--accent);
+  border-color: var(--primary);
+  text-decoration: none;
+}
+
+.back-button svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* Status Badge - reusing from booking-list */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.status-orange {
+  background: var(--orange-100);
+  color: var(--orange-600);
+}
+
+.status-blue {
+  background: rgb(219 234 254);
+  color: rgb(29 78 216);
+}
+
+.status-green {
+  background: rgb(220 252 231);
+  color: rgb(22 101 52);
+}
+
+.status-purple {
+  background: rgb(233 213 255);
+  color: rgb(124 58 237);
+}
+
+.status-teal {
+  background: rgb(204 251 241);
+  color: rgb(13 148 136);
+}
+
+.status-red {
+  background: rgb(254 226 226);
+  color: rgb(185 28 28);
+}
+
+.status-gray {
+  background: rgb(229 231 235);
+  color: rgb(75 85 99);
+}
+
+/* Dark theme status badges */
+.dark .status-orange {
+  background: rgb(120 53 15);
+  color: rgb(251 191 36);
+}
+
+.dark .status-blue {
+  background: rgb(30 58 138);
+  color: rgb(147 197 253);
+}
+
+.dark .status-green {
+  background: rgb(20 83 45);
+  color: rgb(34 197 94);
+}
+
+.dark .status-purple {
+  background: rgb(76 29 149);
+  color: rgb(196 181 253);
+}
+
+.dark .status-teal {
+  background: rgb(19 78 74);
+  color: rgb(94 234 212);
+}
+
+.dark .status-red {
+  background: rgb(127 29 29);
+  color: rgb(248 113 113);
+}
+
+.dark .status-gray {
+  background: rgb(55 65 81);
+  color: rgb(156 163 175);
+}
+
+/* Info Grid */
+.header-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.info-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.info-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.info-value {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--foreground);
+  line-height: 1.4;
+}
+
+.info-value-large {
+  font-size: 1.5rem;
+  color: var(--success);
+  font-weight: 700;
+}
+
+.info-secondary {
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: var(--muted-foreground);
+  margin-top: 0.25rem;
+}
+
+/* Notes Section */
+.header-notes {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.notes-content {
+  background: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--foreground);
+  white-space: pre-wrap;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .booking-header {
+    margin: 1.5rem auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .booking-header {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+  
+  .header-top {
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: flex-start;
+  }
+  
+  .header-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .booking-title {
+    font-size: 1.5rem;
+  }
+  
+  .header-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .back-button {
+    flex: 1;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 640px) {
+  .booking-header {
+    padding: 1rem;
+  }
+  
+  .header-top {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+  }
+  
+  .booking-title {
+    font-size: 1.25rem;
+  }
+  
+  .booking-subtitle {
+    font-size: 0.875rem;
+  }
+  
+  .header-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .back-button {
+    font-size: 0.75rem;
+    padding: 0.5rem 0.75rem;
+  }
+  
+  .status-badge {
+    align-self: stretch;
+    justify-content: center;
+  }
+  
+  .header-grid {
+    gap: 1rem;
+  }
+  
+  .info-value-large {
+    font-size: 1.25rem;
+  }
+}
