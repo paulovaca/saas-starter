@@ -1,8 +1,8 @@
-import type { User } from "@/lib/types/auth";
+import type { CurrentUser } from "@/lib/types/auth";
 
 interface BookingNotesProps {
   bookingId: string;
-  user: User;
+  user: CurrentUser;
 }
 
 export async function BookingNotes({ bookingId, user }: BookingNotesProps) {

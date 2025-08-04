@@ -2,7 +2,7 @@ import Link from "next/link";
 import { getBookings } from "@/lib/actions/bookings/get-bookings";
 import { formatDate } from "@/lib/actions/bookings/utils";
 import { BOOKING_STATUS, BOOKING_STATUS_LABELS, BOOKING_STATUS_COLORS, type BookingStatus } from "@/lib/types/booking-status";
-import type { User } from "@/lib/types/auth";
+import type { CurrentUser } from "@/lib/types/auth";
 import "./bookings-list.css";
 
 interface BookingsListProps {
@@ -13,7 +13,7 @@ interface BookingsListProps {
     startDate?: string;
     endDate?: string;
   };
-  user: User;
+  user: CurrentUser;
 }
 
 export async function BookingsList({ searchParams, user }: BookingsListProps) {

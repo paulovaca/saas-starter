@@ -10,9 +10,9 @@ import { BookingNotes } from "@/components/bookings/booking-notes";
 import "./booking-details.css";
 
 interface BookingDetailsPageProps {
-  params: {
+  params: Promise<{
     bookingId: string;
-  };
+  }>;
 }
 
 export default async function BookingDetailsPage({ params }: BookingDetailsPageProps) {
@@ -22,8 +22,10 @@ export default async function BookingDetailsPage({ params }: BookingDetailsPageP
     redirect("/login");
   }
 
+  const { bookingId } = await params;
+
   try {
-    const booking = await getBookingDetails(params.bookingId, user.agencyId, user.id);
+    const booking = await getBookingDetails(bookingId, user.agencyId, user.id);
     
     if (!booking) {
       notFound();
@@ -38,11 +40,11 @@ export default async function BookingDetailsPage({ params }: BookingDetailsPageP
         <div className="booking-details-content">
           <div className="booking-main-column">
             <Suspense fallback={<div className="loading-section">Carregando timeline...</div>}>
-              <BookingTimeline bookingId={params.bookingId} />
+              <BookingTimeline bookingId={bookingId} />
             </Suspense>
 
             <Suspense fallback={<div className="loading-section">Carregando documentos...</div>}>
-              <BookingDocuments bookingId={params.bookingId} user={user} />
+              <BookingDocuments bookingId={bookingId} user={user} />
             </Suspense>
           </div>
 
@@ -52,7 +54,7 @@ export default async function BookingDetailsPage({ params }: BookingDetailsPageP
             </Suspense>
 
             <Suspense fallback={<div className="loading-section">Carregando anotações...</div>}>
-              <BookingNotes bookingId={params.bookingId} user={user} />
+              <BookingNotes bookingId={bookingId} user={user} />
             </Suspense>
           </div>
         </div>

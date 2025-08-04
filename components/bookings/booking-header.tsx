@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { formatDate } from "@/lib/actions/bookings/utils";
 import { BOOKING_STATUS_LABELS, BOOKING_STATUS_COLORS } from "@/lib/types/booking-status";
-import type { User } from "@/lib/types/auth";
+import type { CurrentUser } from "@/lib/types/auth";
 import "./booking-header.css";
 
 interface BookingHeaderProps {
@@ -20,7 +20,7 @@ interface BookingHeaderProps {
     operatorName: string | null;
     agentName: string | null;
   };
-  user: User;
+  user: CurrentUser;
 }
 
 export function BookingHeader({ booking, user }: BookingHeaderProps) {

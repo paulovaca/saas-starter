@@ -1,12 +1,12 @@
 import { BOOKING_STATUS_LABELS, getAvailableStatusTransitions } from "@/lib/types/booking-status";
-import type { User } from "@/lib/types/auth";
+import type { CurrentUser } from "@/lib/types/auth";
 
 interface BookingStatusChangerProps {
   booking: {
     id: string;
     status: string;
   };
-  user: User;
+  user: CurrentUser;
 }
 
 export async function BookingStatusChanger({ booking, user }: BookingStatusChangerProps) {

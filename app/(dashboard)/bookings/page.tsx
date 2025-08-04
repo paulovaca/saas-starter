@@ -7,13 +7,13 @@ import { PageHeader } from "@/components/ui/page-header";
 import "./bookings.css";
 
 interface BookingsPageProps {
-  searchParams: {
+  searchParams: Promise<{
     status?: string;
     search?: string;
     page?: string;
     startDate?: string;
     endDate?: string;
-  };
+  }>;
 }
 
 export default async function BookingsPage({ searchParams }: BookingsPageProps) {
@@ -22,6 +22,8 @@ export default async function BookingsPage({ searchParams }: BookingsPageProps) 
   if (!user) {
     redirect("/login");
   }
+
+  const params = await searchParams;
 
   return (
     <div className="bookings-page">
@@ -32,11 +34,11 @@ export default async function BookingsPage({ searchParams }: BookingsPageProps) 
       
       <div className="bookings-content">
         <Suspense fallback={<div className="loading-filters">Carregando filtros...</div>}>
-          <BookingFilters searchParams={searchParams} />
+          <BookingFilters searchParams={params} />
         </Suspense>
         
         <Suspense fallback={<div className="loading-list">Carregando reservas...</div>}>
-          <BookingsList searchParams={searchParams} user={user} />
+          <BookingsList searchParams={params} user={user} />
         </Suspense>
       </div>
     </div>

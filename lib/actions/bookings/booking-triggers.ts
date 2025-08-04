@@ -51,11 +51,13 @@ export async function createBookingFromProposal(
       notes: proposalData.notes,
       createdBy: userId,
       metadata: {
-        proposalNumber: proposalData.proposalNumber,
-        clientId: proposalData.clientId,
-        operatorId: proposalData.operatorId,
-        totalAmount: proposalData.totalAmount,
-        paymentMethod: proposalData.paymentMethod
+        additionalInfo: {
+          proposalNumber: proposalData.proposalNumber,
+          clientId: proposalData.clientId,
+          operatorId: proposalData.operatorId,
+          totalAmount: proposalData.totalAmount,
+          paymentMethod: proposalData.paymentMethod
+        }
       }
     })
     .returning();
@@ -67,9 +69,11 @@ export async function createBookingFromProposal(
     description: `Reserva criada automaticamente a partir da proposta ${proposalData.proposalNumber}`,
     userId: userId,
     metadata: {
-      proposalId: proposalId,
-      proposalNumber: proposalData.proposalNumber,
-      automaticCreation: true
+      additionalInfo: {
+        proposalId: proposalId,
+        proposalNumber: proposalData.proposalNumber,
+        automaticCreation: true
+      }
     }
   });
 
@@ -122,10 +126,12 @@ export async function cancelBookingFromProposal(
     description: `Reserva cancelada: ${reason}`,
     userId: userId,
     metadata: {
-      previousStatus: bookingData.status,
-      newStatus: BOOKING_STATUS.CANCELLED,
-      reason: reason,
-      automaticChange: true
+      previousValue: bookingData.status,
+      newValue: BOOKING_STATUS.CANCELLED,
+      additionalInfo: {
+        reason: reason,
+        automaticChange: true
+      }
     }
   });
 

@@ -1,0 +1,27 @@
+
+> prebuild
+> npm run validate:env
+
+
+> validate:env
+> tsx scripts/validate-env.ts
+
+🔍 Validando variáveis de ambiente...
+
+✅ Variáveis obrigatórias:
+   - DATABASE_URL: Configurado
+   - AUTH_SECRET: Configurado
+   - BASE_URL: http://localhost:3000
+
+📦 Variáveis opcionais:
+   - Stripe: Configurado
+   - Redis: Não configurado (usando cache em memória)
+
+🔌 Testando conexão com banco de dados...
+✅ Conexão com banco estabelecida!
+
+✨ Ambiente validado com sucesso!
+
+> build
+> next build 2
+

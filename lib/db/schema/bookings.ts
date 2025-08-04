@@ -17,7 +17,7 @@ export const bookingStatusEnum = pgEnum("booking_status", [
 ]);
 
 // Enum para tipos de documentos
-export const documentTypeEnum = pgEnum("document_type", [
+export const bookingDocumentTypeEnum = pgEnum("booking_document_type", [
   "rg_cpf",              // RG/CPF
   "proof_of_residence",  // Comprovante de residência
   "proof_of_income",     // Comprovante de renda
@@ -76,7 +76,7 @@ export const bookingStatusHistory = pgTable("booking_status_history", {
 export const bookingDocuments = pgTable("booking_documents", {
   id: uuid("id").primaryKey().defaultRandom(),
   bookingId: uuid("booking_id").notNull(), // .references(() => bookings.id),
-  documentType: documentTypeEnum("document_type").notNull(),
+  documentType: bookingDocumentTypeEnum("document_type").notNull(),
   fileName: varchar("file_name", { length: 255 }).notNull(),
   fileUrl: text("file_url").notNull(),
   fileSize: varchar("file_size", { length: 50 }),
