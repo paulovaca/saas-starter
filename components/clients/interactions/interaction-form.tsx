@@ -109,7 +109,14 @@ export function InteractionForm({
             }}
           >
             <SelectTrigger className={styles.select}>
-              <SelectValue placeholder="Selecione o tipo de interação" />
+              {watchedType ? (
+                <div className={styles.selectItem}>
+                  <span className={styles.selectIcon}>{INTERACTION_TYPES[watchedType].icon}</span>
+                  <span>{INTERACTION_TYPES[watchedType].label}</span>
+                </div>
+              ) : (
+                <SelectValue placeholder="Selecione o tipo de interação" />
+              )}
             </SelectTrigger>
             <SelectContent>
               {Object.entries(INTERACTION_TYPES).map(([key, config]) => (

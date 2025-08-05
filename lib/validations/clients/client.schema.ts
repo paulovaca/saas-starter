@@ -109,15 +109,17 @@ function validateBrazilianCEP(cep: string): boolean {
 
 // Função para formatar CPF
 export function formatCPF(cpf: string | null | undefined): string {
-  if (!cpf) return 'Não informado';
+  if (!cpf) return '';
   const cleanCPF = cpf.replace(/\D/g, '');
+  if (cleanCPF.length === 0) return '';
   return cleanCPF.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
 }
 
 // Função para formatar CNPJ
 export function formatCNPJ(cnpj: string | null | undefined): string {
-  if (!cnpj) return 'Não informado';
+  if (!cnpj) return '';
   const cleanCNPJ = cnpj.replace(/\D/g, '');
+  if (cleanCNPJ.length === 0) return '';
   return cleanCNPJ.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
 }
 
@@ -247,11 +249,22 @@ export const clientSchema = z.object({
   documentType: z.enum(['cpf', 'cnpj'], {
     required_error: 'Tipo de documento é obrigatório',
     invalid_type_error: 'Tipo de documento deve ser CPF ou CNPJ'
-  }).optional(),
+  }).optional().transform((value) => {
+    // Se não há documento, não precisa de tipo
+    return value;
+  }),
   
-  documentNumber: z.string().optional().or(z.literal('')),
+  documentNumber: z.string().optional().or(z.literal('')).transform((value) => {
+    return value === '' ? undefined : value;
+  }),
   
-  birthDate: z.date().optional(),
+  birthDate: z.string().optional().or(z.literal('')).transform((value) => {
+    if (!value || value === '') return undefined;
+    // Criar data no fuso horário local (meio-dia para evitar problemas de fuso)
+    const [year, month, day] = value.split('-').map(Number);
+    const date = new Date(year, month - 1, day, 12, 0, 0);
+    return isNaN(date.getTime()) ? undefined : date;
+  }),
   
   // Campos de endereço
   addressZipcode: z.string().optional().or(z.literal('')),
@@ -269,19 +282,6 @@ export const clientSchema = z.object({
   notes: z.string().max(2000, 'Observações devem ter no máximo 2000 caracteres').optional().or(z.literal('')),
   
   isActive: z.boolean().default(true)
-}).refine((data) => {
-  // Validação específica do documento baseado no tipo (apenas se documento estiver preenchido)
-  if (data.documentType && data.documentNumber && data.documentNumber.trim() !== '') {
-    if (data.documentType === 'cpf') {
-      return validateCPF(data.documentNumber);
-    } else {
-      return validateCNPJ(data.documentNumber);
-    }
-  }
-  return true;
-}, {
-  message: 'Número do documento inválido para o tipo selecionado',
-  path: ['documentNumber']
 });
 
 // Schema para interações com cliente
@@ -293,7 +293,11 @@ export const clientInteractionSchema = z.object({
   description: z.string()
     .min(10, 'Descrição deve ter pelo menos 10 caracteres')
     .max(2000, 'Descrição deve ter no máximo 2000 caracteres'),
-  contactDate: z.date(),
+  contactDate: z.string().transform((value) => {
+    const date = new Date(value);
+    if (isNaN(date.getTime())) throw new Error('Data de contato inválida');
+    return date;
+  }),
   durationMinutes: z.number().min(0, 'Duração não pode ser negativa').max(1440, 'Duração não pode ser maior que 24 horas').optional()
 });
 
@@ -309,7 +313,11 @@ export const clientTaskSchema = z.object({
   priority: z.enum(['low', 'medium', 'high'], {
     required_error: 'Prioridade é obrigatória'
   }),
-  dueDate: z.date().refine((date) => {
+  dueDate: z.string().transform((value) => {
+    const date = new Date(value);
+    if (isNaN(date.getTime())) throw new Error('Data de vencimento inválida');
+    return date;
+  }).refine((date) => {
     return date > new Date();
   }, {
     message: 'Data de vencimento deve ser futura'
@@ -367,7 +375,13 @@ export const clientUpdateSchema = z.object({
   phone: z.string().optional(),
   documentType: z.enum(['cpf', 'cnpj']).optional(),
   documentNumber: z.string().optional(),
-  birthDate: z.date().optional(),
+  birthDate: z.string().optional().transform((value) => {
+    if (!value || value === '') return undefined;
+    // Criar data no fuso horário local (meio-dia para evitar problemas de fuso)
+    const [year, month, day] = value.split('-').map(Number);
+    const date = new Date(year, month - 1, day, 12, 0, 0);
+    return isNaN(date.getTime()) ? undefined : date;
+  }),
   addressZipcode: z.string().optional(),
   addressStreet: z.string().optional(),
   addressNumber: z.string().optional(),

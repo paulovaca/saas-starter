@@ -1,4 +1,4 @@
-import { eq, and, desc, count, ilike, or, asc, isNull } from 'drizzle-orm';
+import { eq, and, desc, count, ilike, or, asc, isNull, ne } from 'drizzle-orm';
 import { db } from '../drizzle';
 import { clientsNew, clientInteractions, clientTasks, clientTransfers, proposals } from '../schema/clients';
 import { users } from '../schema/users';
@@ -492,7 +492,7 @@ export async function isEmailUnique(email: string, agencyId: string, excludeClie
   ];
 
   if (excludeClientId) {
-    conditions.push(eq(clientsNew.id, excludeClientId));
+    conditions.push(ne(clientsNew.id, excludeClientId));
   }
 
   const existingClient = await db
@@ -514,7 +514,7 @@ export async function isDocumentUnique(documentNumber: string, agencyId: string,
   ];
 
   if (excludeClientId) {
-    conditions.push(eq(clientsNew.id, excludeClientId));
+    conditions.push(ne(clientsNew.id, excludeClientId));
   }
 
   const existingClient = await db

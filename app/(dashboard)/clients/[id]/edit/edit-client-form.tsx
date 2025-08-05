@@ -53,7 +53,7 @@ export function EditClientForm({ clientId, initialData }: EditClientFormProps) {
     phone: initialData.phone || '',
     documentType: initialData.documentType,
     documentNumber: initialData.documentNumber,
-    birthDate: initialData.birthDate ? new Date(initialData.birthDate) : undefined,
+    birthDate: initialData.birthDate ? (typeof initialData.birthDate === 'string' ? initialData.birthDate.split('T')[0] : new Date(initialData.birthDate).toISOString().split('T')[0]) : '',
     addressZipcode: initialData.addressZipcode || '',
     addressStreet: initialData.addressStreet || '',
     addressNumber: initialData.addressNumber || '',

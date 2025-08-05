@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import useSWR from 'swr';
+import { INTERACTION_TYPES } from '@/lib/types/interactions';
+import { TASK_PRIORITIES, TASK_STATUS } from '@/lib/types/tasks';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -257,7 +259,7 @@ export default function ClientDetailsContent({ clientId }: ClientDetailsContentP
   };
 
   const handleNewProposal = () => {
-    router.push(`/proposals/new?clientId=${clientId}`);
+    router.push('/proposals');
   };
 
   const handleTransferSuccess = () => {
@@ -301,7 +303,24 @@ export default function ClientDetailsContent({ clientId }: ClientDetailsContentP
     if (!date) return '-';
     
     try {
-      const dateObj = typeof date === 'string' ? new Date(date) : date;
+      let dateObj: Date;
+      
+      if (typeof date === 'string') {
+        // Se a string contém 'T' é uma data ISO completa
+        if (date.includes('T')) {
+          // Extrair apenas a parte da data (YYYY-MM-DD) e criar a data no fuso local
+          const [datePart] = date.split('T');
+          const [year, month, day] = datePart.split('-').map(Number);
+          dateObj = new Date(year, month - 1, day, 12, 0, 0);
+        } else {
+          // Se é apenas data (YYYY-MM-DD), criar no fuso local
+          const [year, month, day] = date.split('-').map(Number);
+          dateObj = new Date(year, month - 1, day, 12, 0, 0);
+        }
+      } else {
+        dateObj = date;
+      }
+      
       if (isNaN(dateObj.getTime())) return '-';
       
       return new Intl.DateTimeFormat('pt-BR', {
@@ -331,6 +350,52 @@ export default function ClientDetailsContent({ clientId }: ClientDetailsContentP
     } catch (error) {
       return '-';
     }
+  };
+
+  // Função para obter o label do tipo de interação
+  const getInteractionTypeLabel = (type: string) => {
+    return INTERACTION_TYPES[type as keyof typeof INTERACTION_TYPES]?.label || type;
+  };
+
+  // Funções para obter labels das tarefas
+  const getTaskPriorityLabel = (priority: string) => {
+    return TASK_PRIORITIES[priority as keyof typeof TASK_PRIORITIES]?.label || priority;
+  };
+
+  const getTaskStatusLabel = (status: string) => {
+    return TASK_STATUS[status as keyof typeof TASK_STATUS]?.label || status;
+  };
+
+  // Função para encontrar a próxima tarefa pendente
+  const getNextPendingTask = () => {
+    if (!client?.tasks || client.tasks.length === 0) return null;
+    
+    const pendingTasks = client.tasks.filter(task => 
+      task.status === 'pending' || task.status === 'in_progress'
+    );
+    
+    if (pendingTasks.length === 0) return null;
+    
+    // Filtrar apenas tarefas futuras ou de hoje
+    const now = new Date();
+    now.setHours(0, 0, 0, 0); // Começar do início do dia
+    
+    const futureTasks = pendingTasks.filter(task => {
+      const taskDate = new Date(task.dueDate);
+      taskDate.setHours(0, 0, 0, 0);
+      return taskDate >= now;
+    });
+    
+    if (futureTasks.length === 0) return null;
+    
+    // Ordenar por data de vencimento (mais próxima primeiro)
+    const sortedTasks = futureTasks.sort((a, b) => {
+      const dateA = new Date(a.dueDate);
+      const dateB = new Date(b.dueDate);
+      return dateA.getTime() - dateB.getTime();
+    });
+    
+    return sortedTasks[0];
   };
 
   // Ícones para tipos de interação
@@ -511,6 +576,13 @@ export default function ClientDetailsContent({ clientId }: ClientDetailsContentP
               </div>
               <div className={styles.clientStatDivider} />
               <div className={styles.clientStatItem}>
+                <div className={styles.clientStatValue}>
+                  {getNextPendingTask() ? formatDate(getNextPendingTask()!.dueDate) : 'Nenhuma agendada'}
+                </div>
+                <div className={styles.clientStatLabel}>Próxima Tarefa</div>
+              </div>
+              <div className={styles.clientStatDivider} />
+              <div className={styles.clientStatItem}>
                 <div className={styles.clientStatValue}>{client.user?.name}</div>
                 <div className={styles.clientStatLabel}>Responsável</div>
               </div>
@@ -646,7 +718,7 @@ export default function ClientDetailsContent({ clientId }: ClientDetailsContentP
                           <div className={styles.clientInteractionHeader}>
                             <span className={styles.clientInteractionUser}>{interaction.user.name}</span>
                             <Badge variant="outline" className={badgeStyles.badgeSmall}>
-                              {interaction.type}
+                              {getInteractionTypeLabel(interaction.type)}
                             </Badge>
                             <span className={styles.clientInteractionTime}>
                               {formatDateTime(interaction.contactDate)}
@@ -685,10 +757,10 @@ export default function ClientDetailsContent({ clientId }: ClientDetailsContentP
                             <div className={styles.clientTaskHeader}>
                               <h4 className={styles.clientTaskTitle}>{task.title}</h4>
                               <Badge className={`${badgeStyles[`priority${task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}`] || badgeStyles.priorityLow}`}>
-                                {task.priority}
+                                {getTaskPriorityLabel(task.priority)}
                               </Badge>
                               <Badge variant="outline" className={`${badgeStyles[`status${task.status.charAt(0).toUpperCase() + task.status.slice(1).replace('_', '')}`] || badgeStyles.statusPending}`}>
-                                {task.status}
+                                {getTaskStatusLabel(task.status)}
                               </Badge>
                             </div>
                             {task.description && (

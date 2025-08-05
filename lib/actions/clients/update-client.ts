@@ -7,39 +7,10 @@ import { db } from '@/lib/db/drizzle'
 import { clientsNew, activityLog } from '@/lib/db/schema'
 import { eq, and, ne } from 'drizzle-orm'
 import { AppError } from '@/lib/services/error-handler'
-import { validateCPF, validateCNPJ } from '@/lib/validations/brazilian'
+import { clientUpdateSchema as baseClientUpdateSchema } from '@/lib/validations/clients/client.schema'
 
-const updateClientSchema = z.object({
-  clientId: z.string().uuid('ID do cliente inválido'),
-  name: z.string().min(3, 'Nome deve ter pelo menos 3 caracteres').optional(),
-  email: z.string().email('Email inválido').optional().or(z.literal('')),
-  phone: z.string().optional(),
-  documentType: z.enum(['cpf', 'cnpj']).optional(),
-  documentNumber: z.string().optional(),
-  birthDate: z.string().optional(),
-  addressZipcode: z.string().regex(/^\d{5}-?\d{3}$/, 'CEP inválido').optional().or(z.literal('')),
-  addressStreet: z.string().optional(),
-  addressNumber: z.string().optional(),
-  addressComplement: z.string().optional(),
-  addressNeighborhood: z.string().optional(),
-  addressCity: z.string().optional(),
-  addressState: z.string().length(2, 'Estado deve ter 2 caracteres').optional().or(z.literal('')),
-  funnelId: z.string().uuid('ID do funil inválido').optional(),
-  funnelStageId: z.string().uuid('ID da etapa inválido').optional(),
-  notes: z.string().optional(),
-  isActive: z.boolean().optional()
-}).refine(data => {
-  if (data.documentType && data.documentNumber) {
-    if (data.documentType === 'cpf') {
-      return validateCPF(data.documentNumber)
-    } else if (data.documentType === 'cnpj') {
-      return validateCNPJ(data.documentNumber)
-    }
-  }
-  return true
-}, {
-  message: 'Documento inválido',
-  path: ['documentNumber']
+const updateClientSchema = baseClientUpdateSchema.extend({
+  clientId: z.string().uuid('ID do cliente inválido')
 })
 
 export const updateClient = createPermissionAction(
@@ -102,9 +73,9 @@ export const updateClient = createPermissionAction(
       updatedAt: new Date()
     }
 
-    // Converter birthDate se fornecido
-    if (updateData.birthDate) {
-      dataToUpdate.birthDate = new Date(updateData.birthDate)
+    // birthDate vem como Date do schema, mas Drizzle espera string para o tipo date
+    if (updateData.birthDate instanceof Date) {
+      dataToUpdate.birthDate = updateData.birthDate.toISOString().split('T')[0];
     }
     
     // Converter strings vazias para null

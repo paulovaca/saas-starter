@@ -65,8 +65,7 @@ export default function ClientForm({
   // Estados
   const [isCheckingEmail, setIsCheckingEmail] = useState(false);
   const [isCheckingDocument, setIsCheckingDocument] = useState(false);
-  const [isLoadingAddress, setIsLoadingAddress] = useState(false);
-  const [addressError, setAddressError] = useState<string | null>(null);
+  // Removidos estados de loading de endereço
 
   // Form
   const form = useForm<ClientFormValues>({
@@ -77,7 +76,7 @@ export default function ClientForm({
       phone: initialData?.phone || '',
       documentType: initialData?.documentType || 'cpf',
       documentNumber: initialData?.documentNumber || '',
-      birthDate: initialData?.birthDate ? initialData.birthDate.toISOString().split('T')[0] : '',
+      birthDate: initialData?.birthDate ? (typeof initialData.birthDate === 'string' ? initialData.birthDate.split('T')[0] : initialData.birthDate.toISOString().split('T')[0]) : '',
       addressZipcode: initialData?.addressZipcode || '',
       addressStreet: initialData?.addressStreet || '',
       addressNumber: initialData?.addressNumber || '',
@@ -139,38 +138,7 @@ export default function ClientForm({
     }
   }, [addressZipcode, setValue]);
 
-  // Buscar endereço por CEP
-  useEffect(() => {
-    const fetchAddress = async () => {
-      if (addressZipcode && addressZipcode.length === 9) {
-        setIsLoadingAddress(true);
-        setAddressError(null);
-        
-        try {
-          const cleanCep = addressZipcode.replace(/\D/g, '');
-          const response = await fetch(`https://viacep.com.br/ws/${cleanCep}/json/`);
-          const data: AddressData = await response.json();
-          
-          if (data.erro) {
-            setAddressError('CEP não encontrado');
-          } else {
-            setValue('addressStreet', data.logradouro);
-            setValue('addressNeighborhood', data.bairro);
-            setValue('addressCity', data.localidade);
-            setValue('addressState', data.uf);
-            clearErrors(['addressStreet', 'addressNeighborhood', 'addressCity', 'addressState']);
-          }
-        } catch (error) {
-          console.error('Erro ao buscar CEP:', error);
-          setAddressError('Erro ao buscar CEP');
-        } finally {
-          setIsLoadingAddress(false);
-        }
-      }
-    };
-
-    fetchAddress();
-  }, [addressZipcode, setValue, clearErrors]);
+  // Removida busca automática de CEP por requisição do usuário
 
   // Validação de email único
   const validateEmail = async (email: string) => {
@@ -178,14 +146,16 @@ export default function ClientForm({
     
     setIsCheckingEmail(true);
     try {
-      // Verificar se email já existe
-      const params = new URLSearchParams();
-      params.set('search', email);
-      if (initialData?.id) {
-        params.set('excludeId', initialData.id);
-      }
-      
-      const response = await fetch(`/api/clients?${params.toString()}`);
+      const response = await fetch('/api/clients/check-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          excludeId: initialData?.id
+        }),
+      });
       
       if (!response.ok) {
         console.error('Erro ao validar email');
@@ -193,9 +163,8 @@ export default function ClientForm({
       }
       
       const data = await response.json();
-      const isUnique = data.totalClients === 0;
       
-      if (!isUnique) {
+      if (!data.isUnique) {
         setError('email', { message: 'Este email já está sendo usado por outro cliente' });
         return false;
       }
@@ -216,14 +185,16 @@ export default function ClientForm({
     
     setIsCheckingDocument(true);
     try {
-      // Verificar se documento já existe
-      const params = new URLSearchParams();
-      params.set('search', documentNumber);
-      if (initialData?.id) {
-        params.set('excludeId', initialData.id);
-      }
-      
-      const response = await fetch(`/api/clients?${params.toString()}`);
+      const response = await fetch('/api/clients/check-document', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          documentNumber,
+          excludeId: initialData?.id
+        }),
+      });
       
       if (!response.ok) {
         console.error('Erro ao validar documento');
@@ -231,9 +202,8 @@ export default function ClientForm({
       }
       
       const data = await response.json();
-      const isUnique = data.totalClients === 0;
       
-      if (!isUnique) {
+      if (!data.isUnique) {
         setError('documentNumber', { message: 'Este documento já está sendo usado por outro cliente' });
         return false;
       }
@@ -271,12 +241,13 @@ export default function ClientForm({
         }
       }
       
-      // Converter string de data para Date se necessário
+      // Limpar documentType se não houver documentNumber
       const processedData = {
         ...data,
-        birthDate: data.birthDate && data.birthDate !== '' ? new Date(data.birthDate) : undefined,
+        documentType: data.documentNumber && data.documentNumber.trim() !== '' ? data.documentType : undefined,
       };
       
+      // Enviar dados sem converter a data (o schema fará a conversão)
       await onSubmit(processedData);
     } catch (error) {
       console.error('Erro ao salvar cliente:', error);
@@ -426,15 +397,9 @@ export default function ClientForm({
                   placeholder="00000-000"
                   className={errors.addressZipcode ? styles.formInputError : ''}
                 />
-                {isLoadingAddress && (
-                  <Loader2 className={styles.formInputSpinner} />
-                )}
               </div>
               {errors.addressZipcode && (
                 <p className={styles.formError}>{errors.addressZipcode.message}</p>
-              )}
-              {addressError && (
-                <p className={styles.formError}>{addressError}</p>
               )}
             </div>
 

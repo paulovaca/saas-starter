@@ -163,7 +163,15 @@ export function TaskForm({
             onValueChange={(value) => setValue('priority', value as TaskPriority)}
           >
             <SelectTrigger className={styles.select}>
-              <SelectValue placeholder="Selecione a prioridade" />
+              {watchedPriority ? (
+                <div className={styles.selectItem}>
+                  <span className={`${styles.priorityBadge} ${styles[`priority${TASK_PRIORITIES[watchedPriority].color}`]}`}>
+                    {TASK_PRIORITIES[watchedPriority].label}
+                  </span>
+                </div>
+              ) : (
+                <SelectValue placeholder="Selecione a prioridade" />
+              )}
             </SelectTrigger>
             <SelectContent>
               {Object.entries(TASK_PRIORITIES).map(([key, config]) => (
@@ -194,7 +202,19 @@ export function TaskForm({
               onValueChange={(value) => setValue('assignedTo', value)}
             >
               <SelectTrigger className={styles.select}>
-                <SelectValue placeholder="Selecione o responsável" />
+                {watchedAssignedTo ? (
+                  <div className={styles.selectItem}>
+                    <span>{users.find(u => u.id === watchedAssignedTo)?.name || 'Usuário não encontrado'}</span>
+                    {watchedAssignedTo === currentUserId && (
+                      <span className={styles.currentUserBadge}>(Você)</span>
+                    )}
+                    {watchedAssignedTo === clientOwnerId && watchedAssignedTo !== currentUserId && (
+                      <span className={styles.currentUserBadge}>(Dono do Cliente)</span>
+                    )}
+                  </div>
+                ) : (
+                  <SelectValue placeholder="Selecione o responsável" />
+                )}
               </SelectTrigger>
               <SelectContent>
                 {users.map((user) => (
