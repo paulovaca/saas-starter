@@ -9,6 +9,9 @@ import { BookingStatusChanger } from "@/components/bookings/status/booking-statu
 import { BookingNotes } from "@/components/bookings/booking-notes";
 import "./booking-details.css";
 
+// Force dynamic rendering as this page uses authentication
+export const dynamic = 'force-dynamic';
+
 interface BookingDetailsPageProps {
   params: Promise<{
     bookingId: string;

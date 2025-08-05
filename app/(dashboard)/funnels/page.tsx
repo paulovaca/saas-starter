@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, Suspense } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, redirect } from 'next/navigation';
 import { Plus, Search, Star, Users, Settings, Copy, Trash2 } from 'lucide-react';
 import { getFunnels, setDefaultFunnel, duplicateFunnel, deleteFunnel } from '@/lib/actions/funnels';
 import { Button } from '@/components/ui/button';
@@ -176,8 +176,13 @@ export default function FunnelsPage() {
   };
 
   // Verificar permissões - redirecionar se não tiver acesso
+  useEffect(() => {
+    if (!canManageFunnels()) {
+      router.push('/');
+    }
+  }, [canManageFunnels, router]);
+
   if (!canManageFunnels()) {
-    router.push('/');
     return null;
   }
 

@@ -6,6 +6,9 @@ import { BookingFilters } from "@/components/bookings/booking-filters";
 import { PageHeader } from "@/components/ui/page-header";
 import "./bookings.css";
 
+// Force dynamic rendering as this page uses authentication
+export const dynamic = 'force-dynamic';
+
 interface BookingsPageProps {
   searchParams: Promise<{
     status?: string;

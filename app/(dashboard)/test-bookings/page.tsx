@@ -3,6 +3,9 @@ import { getCurrentUser } from "@/lib/auth/session";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 
+// Force dynamic rendering as this page uses authentication
+export const dynamic = 'force-dynamic';
+
 export default async function TestBookingsPage() {
   const user = await getCurrentUser();
   
