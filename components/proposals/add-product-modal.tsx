@@ -165,11 +165,18 @@ export default function AddProductModal({
     if (isOpen) {
       if (editingItem) {
         // Load editing item data will be handled when operators/baseItems load
-        // For now, just set the step to details
+        // Start from operator selection unless we don't have the IDs
         setQuantity(editingItem.quantity);
         setUnitPrice(editingItem.unitPrice);
         setCustomFieldValues(editingItem.customFields || {});
-        setCurrentStep('details');
+        
+        // If we have operator/base item IDs, start from operator step
+        // Otherwise go straight to details
+        if (editingItem.operatorId && editingItem.baseItemId) {
+          setCurrentStep('operator');
+        } else {
+          setCurrentStep('details');
+        }
       } else {
         resetForm();
       }
@@ -178,19 +185,32 @@ export default function AddProductModal({
 
   // Handle editing item data when operators load
   useEffect(() => {
-    if (editingItem && operators.length > 0) {
+    if (editingItem && editingItem.operatorId && operators.length > 0) {
       const operator = operators.find(op => op.id === editingItem.operatorId);
-      setSelectedOperator(operator || null);
+      if (operator) {
+        setSelectedOperator(operator);
+        // Auto advance to item selection if we have an operator
+        if (currentStep === 'operator') {
+          setCurrentStep('item');
+        }
+      }
     }
-  }, [editingItem, operators]);
+  }, [editingItem, operators, currentStep]);
 
   // Handle editing item data when base items load
   useEffect(() => {
-    if (editingItem && baseItems.length > 0) {
+    if (editingItem && editingItem.baseItemId && baseItems.length > 0) {
       const baseItem = baseItems.find(item => item.id === editingItem.baseItemId);
-      setSelectedItem(baseItem || null);
+      if (baseItem) {
+        setSelectedItem(baseItem);
+        setUnitPrice(editingItem.unitPrice);
+        // Auto advance to details if we have a base item
+        if (currentStep === 'item') {
+          setCurrentStep('details');
+        }
+      }
     }
-  }, [editingItem, baseItems]);
+  }, [editingItem, baseItems, currentStep]);
 
   const resetForm = () => {
     setCurrentStep('operator');

@@ -224,17 +224,12 @@ export function ItemAssociationModal({ isOpen, onClose, operatorId, operatorName
                       key={item.id}
                       className={`${styles.itemCard} ${
                         selectedItem?.id === item.id ? styles.itemCardSelected : ''
-                      } ${!item.isActive ? styles.itemCardInactive : ''}`}
+                      }`}
                       onClick={() => handleItemSelect(item)}
                     >
                       <div className={styles.itemInfo}>
                         <h5 className={styles.itemName}>
                           {item.name}
-                          {!item.isActive && (
-                            <span className={styles.inactiveIndicator}>
-                              {' '}(inativo)
-                            </span>
-                          )}
                         </h5>
                         {item.description && (
                           <p className={styles.itemDescription}>{item.description}</p>

@@ -325,13 +325,6 @@ export function OperatorDetailsContent({ operator }: OperatorDetailsContentProps
                         {item.customName || `Item ${item.catalogItemId.slice(-8)}`}
                       </CardTitle>
                       <div className={styles.itemActions}>
-                        <Badge 
-                          variant={item.isActive ? 'default' : 'secondary'}
-                          className={`${!item.isActive ? styles.inactiveBadge : styles.activeBadge}`}
-                          key={`${item.id}-${item.isActive}`}
-                        >
-                          {item.isActive ? 'Ativo' : 'Inativo'}
-                        </Badge>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="sm">

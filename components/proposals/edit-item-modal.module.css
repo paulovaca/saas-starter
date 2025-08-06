@@ -1,0 +1,206 @@
+.editForm {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  max-width: 100%;
+}
+
+.modalFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.buttonIcon {
+  width: 1rem;
+  height: 1rem;
+  margin-right: 0.5rem;
+}
+
+/* Sections */
+.itemInfoSection,
+.basicFields,
+.customFieldsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.sectionTitle {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--card-foreground);
+  margin: 0;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.sectionIcon {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-right: 0.5rem;
+  color: var(--muted-foreground);
+}
+
+/* Form Elements */
+.formGrid {
+  display: grid;
+  gap: 1rem;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.formField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.fieldLabel {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--card-foreground);
+}
+
+.input,
+.textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 0.375rem;
+  background-color: var(--background);
+  color: var(--card-foreground);
+  font-size: 0.875rem;
+  transition: all 0.2s;
+  box-sizing: border-box;
+}
+
+.input:focus,
+.textarea:focus {
+  outline: none;
+  border-color: var(--ring);
+  box-shadow: 0 0 0 2px var(--ring-alpha-20);
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 60px;
+  font-family: inherit;
+}
+
+.checkbox {
+  margin-right: 0.5rem;
+}
+
+/* Custom Fields */
+.customFieldsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+/* Total Preview */
+.totalPreview {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background-color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+}
+
+.totalLine {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--card-foreground);
+}
+
+.totalValue {
+  color: var(--primary);
+  font-size: 1.125rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .editForm {
+    gap: 1.5rem;
+  }
+
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+
+  .customFieldsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .modalFooter {
+    flex-direction: column-reverse;
+    gap: 0.5rem;
+  }
+
+  .modalFooter button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .editForm {
+    gap: 1rem;
+  }
+
+  .sectionTitle {
+    font-size: 1rem;
+  }
+
+  .input,
+  .textarea {
+    padding: 0.625rem;
+    font-size: 0.875rem;
+  }
+}
+
+/* Item Info Section */
+.itemInfoSection {
+  background-color: var(--muted);
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border);
+}
+
+.itemInfoSection .sectionTitle {
+  margin: 0;
+  border: none;
+  padding: 0;
+  color: var(--primary);
+}
+
+.itemDescription {
+  margin: 0.5rem 0 0 0;
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+/* Dark mode compatibility */
+@media (prefers-color-scheme: dark) {
+  .input,
+  .textarea {
+    border-color: var(--border);
+    background-color: var(--background);
+  }
+
+  .input:focus,
+  .textarea:focus {
+    border-color: var(--ring);
+  }
+}

@@ -117,10 +117,16 @@ export async function PUT(
       }
     }
 
+    // Converter birthDate string para Date se necessário
+    const dataToUpdate: any = { ...validatedData };
+    if (dataToUpdate.birthDate && typeof dataToUpdate.birthDate === 'string') {
+      dataToUpdate.birthDate = new Date(dataToUpdate.birthDate);
+    }
+
     // Atualizar cliente
     const updatedClient = await updateClientData(
       id,
-      validatedData,
+      dataToUpdate,
       session.user.agencyId
     );
 

@@ -138,6 +138,7 @@ export const proposals = pgTable('proposals', {
   activatedAt: timestamp('activated_at'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
+  deletedAt: timestamp('deleted_at'),
 }, (table) => ({
   // Índice único para número da proposta por agência
   proposalNumberUniqueIdx: unique('proposals_agency_number_unique').on(table.agencyId, table.proposalNumber),
@@ -155,8 +156,8 @@ export const proposals = pgTable('proposals', {
 export const proposalItems = pgTable('proposal_items', {
   id: uuid('id').primaryKey().defaultRandom(),
   proposalId: uuid('proposal_id').notNull(),
-  operatorProductId: uuid('operator_product_id').notNull(),
-  baseItemId: uuid('base_item_id').notNull(),
+  operatorProductId: uuid('operator_product_id'),
+  baseItemId: uuid('base_item_id'),
   name: varchar('name', { length: 255 }).notNull(),
   description: text('description'),
   quantity: integer('quantity').notNull(),

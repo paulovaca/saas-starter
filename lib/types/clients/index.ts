@@ -66,6 +66,27 @@ export interface ClientFormData {
   phone?: string;
   documentType?: DocumentType;
   documentNumber?: string;
+  birthDate?: string;
+  addressZipcode?: string;
+  addressStreet?: string;
+  addressNumber?: string;
+  addressComplement?: string;
+  addressNeighborhood?: string;
+  addressCity?: string;
+  addressState?: string;
+  funnelId?: string;
+  funnelStageId?: string;
+  notes?: string;
+  isActive?: boolean;
+}
+
+// Dados para atualização de cliente (com birthDate como Date para compatibilidade com queries antigas)
+export interface ClientUpdateData {
+  name?: string;
+  email?: string;
+  phone?: string;
+  documentType?: DocumentType;
+  documentNumber?: string;
   birthDate?: Date;
   addressZipcode?: string;
   addressStreet?: string;
@@ -78,6 +99,7 @@ export interface ClientFormData {
   funnelStageId?: string;
   notes?: string;
   isActive?: boolean;
+  customFields?: Record<string, any>;
 }
 
 // Interface para interações com clientes

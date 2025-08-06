@@ -371,17 +371,11 @@ export type PaginationOptions = z.infer<typeof paginationSchema>;
 // Schema para atualizações parciais (sem transformações)
 export const clientUpdateSchema = z.object({
   name: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres').optional(),
-  email: z.string().email('Email inválido').optional(),
+  email: z.string().optional().refine((val) => !val || val === '' || z.string().email().safeParse(val).success, 'Email inválido'),
   phone: z.string().optional(),
   documentType: z.enum(['cpf', 'cnpj']).optional(),
   documentNumber: z.string().optional(),
-  birthDate: z.string().optional().transform((value) => {
-    if (!value || value === '') return undefined;
-    // Criar data no fuso horário local (meio-dia para evitar problemas de fuso)
-    const [year, month, day] = value.split('-').map(Number);
-    const date = new Date(year, month - 1, day, 12, 0, 0);
-    return isNaN(date.getTime()) ? undefined : date;
-  }),
+  birthDate: z.string().optional(),
   addressZipcode: z.string().optional(),
   addressStreet: z.string().optional(),
   addressNumber: z.string().optional(),

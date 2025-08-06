@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import EditProposalModal from '@/components/proposals/edit-proposal-modal';
 import EditExpirationModal from '@/components/proposals/edit-expiration-modal';
-import CreateProposalModal from '@/components/proposals/create-proposal-modal';
+import { DeleteProposalModal } from '@/components/proposals/delete-proposal-modal';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -39,9 +39,14 @@ import {
 } from 'lucide-react';
 import { ProposalStatus, canTransitionToStatus, ProposalWithRelations } from '@/lib/types/proposals';
 import { changeProposalStatus } from '@/lib/actions/proposals/change-status';
+import { deleteProposal } from '@/lib/actions/proposals/delete-proposal';
 import { generateProposalPDF, downloadPDF } from '@/lib/services/pdf-generator';
 import { useRouter } from 'next/navigation';
+import { User as UserType } from '@/lib/db/schema';
+import useSWR from 'swr';
 import styles from './status-actions.module.css';
+
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 interface ProposalStatusActionsProps {
   proposalId: string;
@@ -61,10 +66,10 @@ export default function ProposalStatusActions({
   // Component working correctly
 
   const router = useRouter();
+  const { data: user } = useSWR<UserType>('/api/user', fetcher);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showExpirationModal, setShowExpirationModal] = useState(false);
-  const [showFullEditModal, setShowFullEditModal] = useState(false);
   const [showStatusDialog, setShowStatusDialog] = useState<{
     show: boolean;
     newStatus?: ProposalStatus;
@@ -128,18 +133,7 @@ export default function ProposalStatusActions({
     router.push(`/proposals/new?duplicate=${proposalId}`);
   };
 
-  const handleDelete = async () => {
-    setLoading(true);
-    try {
-      // TODO: Implement delete functionality
-      console.log('Deleting proposal...');
-      setShowDeleteDialog(false);
-    } catch (error) {
-      console.error('Error deleting proposal:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Remove the old handleDelete function - we'll use the modal now
 
   const getStatusDialogContent = (newStatus: ProposalStatus) => {
     switch (newStatus) {
@@ -285,10 +279,22 @@ export default function ProposalStatusActions({
             <RefreshCw className={styles.menuIcon} />
             Reenviar
           </DropdownMenuItem>
-          <DropdownMenuItem>
+          <DropdownMenuItem onClick={handleDuplicate}>
             <Copy className={styles.menuIcon} />
             Duplicar
           </DropdownMenuItem>
+          {(user?.role === 'MASTER' || user?.role === 'DEVELOPER') && (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem 
+                className={styles.destructiveItem}
+                onClick={() => setShowDeleteDialog(true)}
+              >
+                <Trash2 className={styles.menuIcon} />
+                Excluir Definitivamente
+              </DropdownMenuItem>
+            </>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
     </>
@@ -333,6 +339,18 @@ export default function ProposalStatusActions({
             <Copy className={styles.menuIcon} />
             Duplicar
           </DropdownMenuItem>
+          {(user?.role === 'MASTER' || user?.role === 'DEVELOPER') && (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem 
+                className={styles.destructiveItem}
+                onClick={() => setShowDeleteDialog(true)}
+              >
+                <Trash2 className={styles.menuIcon} />
+                Excluir Definitivamente
+              </DropdownMenuItem>
+            </>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
     </>
@@ -366,15 +384,31 @@ export default function ProposalStatusActions({
         Duplicar
       </Button>
       
-      <Button 
-        variant="outline" 
-        size="sm" 
-        className={styles.actionButton}
-        disabled={loading}
-      >
-        <Archive className={styles.actionIcon} />
-        Arquivar
-      </Button>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="outline" size="sm" disabled={loading}>
+            <MoreHorizontal className={styles.actionIcon} />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem disabled>
+            <Archive className={styles.menuIcon} />
+            Arquivar
+          </DropdownMenuItem>
+          {(user?.role === 'MASTER' || user?.role === 'DEVELOPER') && (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem 
+                className={styles.destructiveItem}
+                onClick={() => setShowDeleteDialog(true)}
+              >
+                <Trash2 className={styles.menuIcon} />
+                Excluir Definitivamente
+              </DropdownMenuItem>
+            </>
+          )}
+        </DropdownMenuContent>
+      </DropdownMenu>
     </>
   );
 
@@ -406,15 +440,31 @@ export default function ProposalStatusActions({
         Duplicar
       </Button>
       
-      <Button 
-        variant="outline" 
-        size="sm" 
-        className={styles.actionButton}
-        disabled={loading}
-      >
-        <Archive className={styles.actionIcon} />
-        Arquivar
-      </Button>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="outline" size="sm" disabled={loading}>
+            <MoreHorizontal className={styles.actionIcon} />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem disabled>
+            <Archive className={styles.menuIcon} />
+            Arquivar
+          </DropdownMenuItem>
+          {(user?.role === 'MASTER' || user?.role === 'DEVELOPER') && (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem 
+                className={styles.destructiveItem}
+                onClick={() => setShowDeleteDialog(true)}
+              >
+                <Trash2 className={styles.menuIcon} />
+                Excluir Definitivamente
+              </DropdownMenuItem>
+            </>
+          )}
+        </DropdownMenuContent>
+      </DropdownMenu>
     </>
   );
 
@@ -478,6 +528,22 @@ export default function ProposalStatusActions({
             <FileText className={styles.menuIcon} />
             Gerar PDF
           </DropdownMenuItem>
+          <DropdownMenuItem onClick={handleDuplicate}>
+            <Copy className={styles.menuIcon} />
+            Duplicar
+          </DropdownMenuItem>
+          {(user?.role === 'MASTER' || user?.role === 'DEVELOPER') && (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem 
+                className={styles.destructiveItem}
+                onClick={() => setShowDeleteDialog(true)}
+              >
+                <Trash2 className={styles.menuIcon} />
+                Excluir Definitivamente
+              </DropdownMenuItem>
+            </>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
     </>
@@ -505,6 +571,32 @@ export default function ProposalStatusActions({
         <FileText className={styles.actionIcon} />
         Gerar PDF
       </Button>
+
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="outline" size="sm" disabled={loading}>
+            <MoreHorizontal className={styles.actionIcon} />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem onClick={handleDuplicate}>
+            <Copy className={styles.menuIcon} />
+            Duplicar
+          </DropdownMenuItem>
+          {(user?.role === 'MASTER' || user?.role === 'DEVELOPER') && (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem 
+                className={styles.destructiveItem}
+                onClick={() => setShowDeleteDialog(true)}
+              >
+                <Trash2 className={styles.menuIcon} />
+                Excluir Definitivamente
+              </DropdownMenuItem>
+            </>
+          )}
+        </DropdownMenuContent>
+      </DropdownMenu>
     </>
   );
 
@@ -554,27 +646,15 @@ export default function ProposalStatusActions({
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Delete Dialog */}
-      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Excluir Proposta</AlertDialogTitle>
-            <AlertDialogDescription>
-              Tem certeza que deseja excluir esta proposta? Esta ação não pode ser desfeita.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={loading}>Cancelar</AlertDialogCancel>
-            <AlertDialogAction 
-              onClick={handleDelete}
-              disabled={loading}
-              className={styles.destructiveAction}
-            >
-              {loading ? 'Excluindo...' : 'Excluir'}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      {/* Delete Proposal Modal */}
+      {proposal && (
+        <DeleteProposalModal
+          isOpen={showDeleteDialog}
+          onClose={() => setShowDeleteDialog(false)}
+          proposal={proposal}
+          userRole={user?.role}
+        />
+      )}
 
       {/* Edit Proposal Modal */}
       <EditProposalModal
@@ -582,22 +662,6 @@ export default function ProposalStatusActions({
         onClose={() => setShowEditModal(false)}
         proposal={proposal || null}
         onUpdate={handleProposalUpdate}
-        onFullEdit={() => setShowFullEditModal(true)}
-      />
-
-      {/* Full Edit Proposal Modal */}
-      <CreateProposalModal
-        isOpen={showFullEditModal}
-        onClose={() => setShowFullEditModal(false)}
-        onSubmit={(proposalData) => {
-          // TODO: Handle full proposal update
-          console.log('Full proposal update:', proposalData);
-          setShowFullEditModal(false);
-          // Refresh the page data
-          if (onProposalUpdate && proposal) {
-            onStatusChange(proposal.status as ProposalStatus);
-          }
-        }}
       />
 
       {/* Edit Expiration Modal */}

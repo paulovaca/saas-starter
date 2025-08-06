@@ -45,7 +45,7 @@ export async function getBaseItems(): Promise<(BaseItem & { customFields: BaseIt
     .from(baseItems)
     .leftJoin(baseItemFields, eq(baseItems.id, baseItemFields.baseItemId))
     .where(eq(baseItems.agencyId, session.user.agencyId))
-    .orderBy(desc(baseItems.createdAt));
+    .orderBy(desc(baseItems.createdAt), baseItemFields.createdAt);
 
   // Group results to reconstruct the nested structure
   const itemsWithFields = itemsWithFieldsQuery.reduce((acc: any[], row) => {
@@ -115,7 +115,8 @@ export async function getBaseItemById(itemId: string): Promise<(BaseItem & { cus
   const customFields = await db
     .select()
     .from(baseItemFields)
-    .where(eq(baseItemFields.baseItemId, item.id));
+    .where(eq(baseItemFields.baseItemId, item.id))
+    .orderBy(baseItemFields.createdAt);
 
   return {
     ...item,

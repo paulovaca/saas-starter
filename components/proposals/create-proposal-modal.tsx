@@ -46,6 +46,13 @@ export default function CreateProposalModal({
     date.setDate(date.getDate() + 30); // 30 days from now
     return date.toISOString().split('T')[0];
   });
+  
+  // Get tomorrow's date for validation
+  const getTomorrowDate = () => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow.toISOString().split('T')[0];
+  };
   const [items, setItems] = useState<ProposalItem[]>([]);
   const [showAddProductModal, setShowAddProductModal] = useState(false);
   const [editingItem, setEditingItem] = useState<ProposalItem | null>(null);
@@ -143,6 +150,18 @@ export default function CreateProposalModal({
       return;
     }
 
+    // Validate date - must be at least tomorrow
+    const selectedDate = new Date(validUntil);
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0); // Reset time to start of day
+    selectedDate.setHours(0, 0, 0, 0);
+
+    if (selectedDate < tomorrow) {
+      alert('A data de validade deve ser a partir de amanhã');
+      return;
+    }
+
     const proposalData = {
       clientId: selectedClient.id,
       operatorId: items.length > 0 ? items[0].operatorId : '', // Use operator from first item
@@ -155,7 +174,7 @@ export default function CreateProposalModal({
     console.log('🚀 Sending proposal data:', JSON.stringify(proposalData, null, 2));
     onSubmit?.(proposalData);
     handleClose();
-  }, [selectedClient, items, validUntil, calculateTotal, onSubmit]);
+  }, [selectedClient, items, validUntil, onSubmit]);
 
   const handleClose = useCallback(() => {
     setSelectedClient(null);
@@ -243,8 +262,9 @@ export default function CreateProposalModal({
               type="date"
               value={validUntil}
               onChange={(e) => setValidUntil(e.target.value)}
-              min={new Date().toISOString().split('T')[0]}
+              min={getTomorrowDate()}
               className={styles.input}
+              title="A data deve ser a partir de amanhã"
             />
           </div>
 

@@ -48,7 +48,17 @@ export async function GET(request: NextRequest) {
 const createProposalSchema = z.object({
   clientId: z.string().uuid('ID do cliente inválido'),
   operatorId: z.string().uuid('ID da operadora inválido'), 
-  validUntil: z.string().datetime('Data de validade inválida'),
+  validUntil: z.string().datetime('Data de validade inválida').refine((dateString) => {
+    const selectedDate = new Date(dateString);
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0); // Reset time to start of day
+    selectedDate.setHours(0, 0, 0, 0);
+    
+    return selectedDate >= tomorrow;
+  }, {
+    message: 'A data de validade deve ser a partir de amanhã'
+  }),
   items: z.array(z.object({
     operatorId: z.string(),
     operatorName: z.string(),

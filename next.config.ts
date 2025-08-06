@@ -6,6 +6,14 @@ const nextConfig: NextConfig = {
     clientSegmentCache: true,
     nodeMiddleware: true
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
+    ],
+  },
   webpack: (config, { isServer }) => {
     // Exclude server-only modules from client bundle
     if (!isServer) {

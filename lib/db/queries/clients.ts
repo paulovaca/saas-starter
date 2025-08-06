@@ -4,7 +4,7 @@ import { clientsNew, clientInteractions, clientTasks, clientTransfers, proposals
 import { users } from '../schema/users';
 import { salesFunnels, salesFunnelStages } from '../schema/funnels';
 import { operators } from '../schema/operators';
-import { ClientFormData, ClientFilters, PaginationOptions } from '@/lib/types/clients';
+import { ClientFormData, ClientUpdateData, ClientFilters, PaginationOptions } from '@/lib/types/clients/index';
 import { getDefaultFunnelForAgency, getFirstStageForFunnel } from './sales-funnels';
 
 export interface ClientWithRelations {
@@ -132,7 +132,7 @@ export async function getClientsWithFilters(
       funnelStage: {
         id: salesFunnelStages.id,
         name: salesFunnelStages.name,
-        instructions: salesFunnelStages.description,
+        instructions: salesFunnelStages.guidelines,
         color: salesFunnelStages.color,
       },
     })
@@ -255,7 +255,7 @@ export async function getClientWithDetails(clientId: string, agencyId: string) {
       funnelStage: {
         id: salesFunnelStages.id,
         name: salesFunnelStages.name,
-        instructions: salesFunnelStages.description,
+        instructions: salesFunnelStages.guidelines,
         color: salesFunnelStages.color,
       },
     })
@@ -430,7 +430,7 @@ export async function createNewClient(data: ClientFormData, agencyId: string, us
 }
 
 // Atualizar cliente
-export async function updateClientData(clientId: string, data: Partial<ClientFormData>, agencyId: string) {
+export async function updateClientData(clientId: string, data: Partial<ClientUpdateData>, agencyId: string) {
   // Verificar se o cliente existe e pertence à agência
   const existingClient = await db
     .select({ id: clientsNew.id })

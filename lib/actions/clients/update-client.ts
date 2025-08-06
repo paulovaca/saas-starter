@@ -67,25 +67,48 @@ export const updateClient = createPermissionAction(
       }
     }
 
-    // Preparar dados para atualização
+    // Preparar dados para atualização - só incluir campos que mudaram
     const dataToUpdate: any = {
-      ...updateData,
       updatedAt: new Date()
     }
 
-    // birthDate vem como Date do schema, mas Drizzle espera string para o tipo date
-    if (updateData.birthDate instanceof Date) {
-      dataToUpdate.birthDate = updateData.birthDate.toISOString().split('T')[0];
+    // Só incluir campos que realmente mudaram
+    Object.keys(updateData).forEach(key => {
+      const newValue = updateData[key as keyof typeof updateData];
+      const currentValue = client[key as keyof typeof client];
+      
+      if (newValue !== currentValue) {
+        dataToUpdate[key] = newValue;
+      }
+    });
+
+    // birthDate vem como string do formulário, validar e converter se necessário
+    if ('birthDate' in dataToUpdate && dataToUpdate.birthDate) {
+      // Se for uma string válida de data, manter como está (já está no formato YYYY-MM-DD)
+      if (typeof dataToUpdate.birthDate === 'string' && dataToUpdate.birthDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
+        // Validar se a data é válida
+        const date = new Date(dataToUpdate.birthDate);
+        if (isNaN(date.getTime())) {
+          dataToUpdate.birthDate = null;
+        }
+      } else if (dataToUpdate.birthDate instanceof Date) {
+        dataToUpdate.birthDate = dataToUpdate.birthDate.toISOString().split('T')[0];
+      } else {
+        dataToUpdate.birthDate = null;
+      }
     }
     
-    // Converter strings vazias para null
-    if (updateData.email === '') {
+    // Converter strings vazias para null apenas para campos que estão sendo atualizados
+    if ('email' in dataToUpdate && dataToUpdate.email === '') {
       dataToUpdate.email = null
     }
-    if (updateData.addressZipcode === '') {
+    if ('documentNumber' in dataToUpdate && dataToUpdate.documentNumber === '') {
+      dataToUpdate.documentNumber = null
+    }
+    if ('addressZipcode' in dataToUpdate && dataToUpdate.addressZipcode === '') {
       dataToUpdate.addressZipcode = null
     }
-    if (updateData.addressState === '') {
+    if ('addressState' in dataToUpdate && dataToUpdate.addressState === '') {
       dataToUpdate.addressState = null
     }
 

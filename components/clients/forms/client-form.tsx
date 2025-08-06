@@ -36,7 +36,7 @@ const clientFormSchema = z.object({
 });
 
 type ClientFormValues = z.infer<typeof clientFormSchema>;
-type ProcessedClientFormData = Omit<ClientFormValues, 'birthDate'> & { birthDate?: Date };
+type ProcessedClientFormData = ClientFormValues;
 
 interface ClientFormProps {
   initialData?: Partial<ClientFormData> & { id?: string };
@@ -76,7 +76,11 @@ export default function ClientForm({
       phone: initialData?.phone || '',
       documentType: initialData?.documentType || 'cpf',
       documentNumber: initialData?.documentNumber || '',
-      birthDate: initialData?.birthDate ? (typeof initialData.birthDate === 'string' ? initialData.birthDate.split('T')[0] : initialData.birthDate.toISOString().split('T')[0]) : '',
+      birthDate: (() => {
+        if (!initialData?.birthDate) return '';
+        if (typeof initialData.birthDate === 'string') return (initialData.birthDate as string).split('T')[0];
+        return (initialData.birthDate as Date).toISOString().split('T')[0];
+      })(),
       addressZipcode: initialData?.addressZipcode || '',
       addressStreet: initialData?.addressStreet || '',
       addressNumber: initialData?.addressNumber || '',
@@ -242,12 +246,13 @@ export default function ClientForm({
       }
       
       // Limpar documentType se não houver documentNumber
-      const processedData = {
+      const processedData: ProcessedClientFormData = {
         ...data,
         documentType: data.documentNumber && data.documentNumber.trim() !== '' ? data.documentType : undefined,
+        birthDate: data.birthDate && data.birthDate.trim() !== '' ? data.birthDate : undefined,
       };
       
-      // Enviar dados sem converter a data (o schema fará a conversão)
+      // Enviar dados processados
       await onSubmit(processedData);
     } catch (error) {
       console.error('Erro ao salvar cliente:', error);

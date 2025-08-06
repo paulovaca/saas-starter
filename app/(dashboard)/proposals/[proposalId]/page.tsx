@@ -28,6 +28,7 @@ import { getProposal } from '@/lib/actions/proposals/get-proposal';
 import ProposalStatusBadge from '@/components/proposals/status/status-badge';
 import ProposalStatusActions from '@/components/proposals/status/status-actions';
 import ProposalTimeline from '@/components/proposals/status/status-timeline';
+import { CustomFieldsDisplay } from '@/components/proposals/custom-fields-display';
 import styles from './proposal-details.module.css';
 
 interface ProposalDetailsPageProps {}
@@ -113,7 +114,7 @@ export default function ProposalDetailsPage({}: ProposalDetailsPageProps) {
     }).format(date);
   };
 
-  const renderCustomField = (key: string, value: any) => {
+  const renderCustomField = (key: string, value: any, getFieldName: (id: string) => string) => {
     if (typeof value === 'boolean') {
       return value ? 'Sim' : 'Não';
     }
@@ -228,6 +229,13 @@ export default function ProposalDetailsPage({}: ProposalDetailsPageProps) {
                   <p className={styles.notesText}>{proposal.notes}</p>
                 </div>
               )}
+
+              {proposal.internalNotes && (
+                <div className={styles.notesSection}>
+                  <h4 className={styles.notesTitle}>Observações Internas</h4>
+                  <p className={styles.notesText}>{proposal.internalNotes}</p>
+                </div>
+              )}
             </CardContent>
           </Card>
 
@@ -256,20 +264,10 @@ export default function ProposalDetailsPage({}: ProposalDetailsPageProps) {
                       <span>Valor unitário: {formatCurrency(parseFloat(item.unitPrice || '0'))}</span>
                     </div>
                     
-                    {item.customFields && Object.keys(item.customFields).length > 0 ? (
-                      <div className={styles.customFields}>
-                        {Object.entries(item.customFields).map(([key, value]) => (
-                          <div key={key} className={styles.customField}>
-                            <span className={styles.customFieldLabel}>
-                              {key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}:
-                            </span>
-                            <span className={styles.customFieldValue}>
-                              {typeof value === 'object' ? JSON.stringify(value) : String(value)}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    ) : null}
+                    <CustomFieldsDisplay 
+                      customFields={item.customFields as Record<string, any> | null | undefined}
+                      className={styles.customFields}
+                    />
                     
                     {index < proposal.items.length - 1 && <Separator className={styles.itemSeparator} />}
                   </div>

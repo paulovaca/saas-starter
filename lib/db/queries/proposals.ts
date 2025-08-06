@@ -51,6 +51,7 @@ export async function getProposalWithRelations(
         activatedAt: proposals.activatedAt,
         createdAt: proposals.createdAt,
         updatedAt: proposals.updatedAt,
+        deletedAt: proposals.deletedAt,
         // Client fields
         clientName: clientsNew.name,
         clientEmail: clientsNew.email,
@@ -120,6 +121,7 @@ export async function getProposalWithRelations(
       activatedAt: proposalData.activatedAt,
       createdAt: proposalData.createdAt,
       updatedAt: proposalData.updatedAt,
+      deletedAt: proposalData.deletedAt,
       client: {
         id: proposalData.clientId,
         name: proposalData.clientName,

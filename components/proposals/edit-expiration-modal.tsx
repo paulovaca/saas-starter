@@ -37,6 +37,18 @@ export default function EditExpirationModal({
   const handleSubmit = async () => {
     if (!proposal || !validUntil) return;
 
+    // Validate date - must be at least tomorrow
+    const selectedDate = new Date(validUntil);
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0); // Reset time to start of day
+    selectedDate.setHours(0, 0, 0, 0);
+
+    if (selectedDate < tomorrow) {
+      alert('A data de validade deve ser a partir de amanhã');
+      return;
+    }
+
     setLoading(true);
     try {
       const result = await updateProposal({
@@ -75,7 +87,12 @@ export default function EditExpirationModal({
     }
   };
 
-  const today = new Date().toISOString().split('T')[0];
+  // Get tomorrow's date for validation
+  const getTomorrowDate = () => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow.toISOString().split('T')[0];
+  };
 
   const footer = (
     <div className={styles.modalFooter}>
@@ -120,7 +137,8 @@ export default function EditExpirationModal({
               value={validUntil}
               onChange={(e) => setValidUntil(e.target.value)}
               disabled={loading}
-              min={today}
+              min={getTomorrowDate()}
+              title="A data deve ser a partir de amanhã"
             />
             <p className={styles.helperText}>
               Data atual de expiração: {' '}

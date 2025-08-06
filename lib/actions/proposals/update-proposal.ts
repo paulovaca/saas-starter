@@ -2,7 +2,7 @@
 
 import { z } from 'zod';
 import { db } from '@/lib/db/drizzle';
-import { proposals, proposalStatusHistory } from '@/lib/db/schema/clients';
+import { proposals, proposalStatusHistory, proposalItems } from '@/lib/db/schema/clients';
 import { createPermissionAction } from '@/lib/actions/action-wrapper';
 import { Permission } from '@/lib/auth/permissions';
 import { ProposalStatus, canTransitionToStatus } from '@/lib/types/proposals';
@@ -11,17 +11,43 @@ import { revalidatePath } from 'next/cache';
 
 const updateProposalSchema = z.object({
   proposalId: z.string().uuid('ID da proposta inválido'),
-  validUntil: z.string().optional(),
+  validUntil: z.string().optional().refine((dateString) => {
+    if (!dateString) return true; // Optional field, so undefined/empty is ok
+    
+    const selectedDate = new Date(dateString);
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0); // Reset time to start of day
+    selectedDate.setHours(0, 0, 0, 0);
+    
+    return selectedDate >= tomorrow;
+  }, {
+    message: 'A data de validade deve ser a partir de amanhã'
+  }),
   paymentMethod: z.string().optional(),
   notes: z.string().optional(),
   internalNotes: z.string().optional(),
+  items: z.array(z.object({
+    id: z.string().uuid(),
+    operatorProductId: z.string().uuid().nullable(),
+    baseItemId: z.string().uuid().nullable(),
+    name: z.string(),
+    description: z.string().nullable().optional(),
+    quantity: z.number().int().positive(),
+    unitPrice: z.string(),
+    subtotal: z.string(),
+    customFields: z.record(z.any()).nullable().optional()
+  })).optional(),
+  subtotal: z.string().optional(),
+  totalAmount: z.string().optional(),
+  commissionAmount: z.string().optional(),
 });
 
 export const updateProposal = createPermissionAction(
   updateProposalSchema,
   Permission.PROPOSAL_UPDATE,
   async (input, user) => {
-    const { proposalId, validUntil, paymentMethod, notes, internalNotes } = input;
+    const { proposalId, validUntil, paymentMethod, notes, internalNotes, items, subtotal, totalAmount, commissionAmount } = input;
 
     try {
       // Get current proposal
@@ -49,7 +75,7 @@ export const updateProposal = createPermissionAction(
       // For AWAITING_PAYMENT, only allow editing validUntil
       if (currentStatus === ProposalStatus.AWAITING_PAYMENT) {
         // Check if trying to edit fields other than validUntil
-        const isEditingOtherFields = paymentMethod !== undefined || notes !== undefined || internalNotes !== undefined;
+        const isEditingOtherFields = paymentMethod !== undefined || notes !== undefined || internalNotes !== undefined || items !== undefined;
         if (isEditingOtherFields) {
           throw new Error('Para propostas aguardando pagamento, apenas a data de expiração pode ser editada');
         }
@@ -78,12 +104,52 @@ export const updateProposal = createPermissionAction(
         updateData.internalNotes = internalNotes || null;
       }
 
+      // Update financial values if items were modified
+      if (subtotal !== undefined) {
+        updateData.subtotal = subtotal;
+      }
+      
+      if (totalAmount !== undefined) {
+        updateData.totalAmount = totalAmount;
+      }
+      
+      if (commissionAmount !== undefined) {
+        updateData.commissionAmount = commissionAmount;
+      }
+
       await db.transaction(async (tx) => {
         // Update proposal
         await tx
           .update(proposals)
           .set(updateData)
           .where(eq(proposals.id, proposalId));
+
+        // Update items if provided
+        if (items && items.length > 0) {
+          // Delete existing items
+          await tx
+            .delete(proposalItems)
+            .where(eq(proposalItems.proposalId, proposalId));
+          
+          // Insert updated items
+          const itemsToInsert = items.map((item, index) => ({
+            id: item.id,
+            proposalId,
+            operatorProductId: item.operatorProductId,
+            baseItemId: item.baseItemId,
+            name: item.name,
+            description: item.description,
+            quantity: item.quantity,
+            unitPrice: item.unitPrice,
+            subtotal: item.subtotal,
+            customFields: item.customFields,
+            sortOrder: index,
+            createdAt: now,
+            updatedAt: now,
+          }));
+          
+          await tx.insert(proposalItems).values(itemsToInsert);
+        }
 
         // No status change logic needed - status is handled separately
       });

@@ -100,9 +100,15 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Converter birthDate string para Date se necessário
+    const dataToCreate: any = { ...validatedData };
+    if (dataToCreate.birthDate && typeof dataToCreate.birthDate === 'string') {
+      dataToCreate.birthDate = new Date(dataToCreate.birthDate);
+    }
+
     // Criar cliente
     const newClient = await createNewClient(
-      validatedData,
+      dataToCreate,
       session.user.agencyId,
       session.user.id
     );
