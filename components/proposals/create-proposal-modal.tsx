@@ -33,12 +33,16 @@ interface CreateProposalModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit?: (proposalData: any) => void;
+  initialData?: any;
+  isDuplicate?: boolean;
 }
 
 export default function CreateProposalModal({ 
   isOpen, 
   onClose, 
-  onSubmit 
+  onSubmit,
+  initialData,
+  isDuplicate = false
 }: CreateProposalModalProps) {
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
   const [validUntil, setValidUntil] = useState(() => {
@@ -65,6 +69,45 @@ export default function CreateProposalModal({
       loadAllClients();
     }
   }, [isOpen]);
+
+  // Load initial data for duplication
+  React.useEffect(() => {
+    if (isOpen && initialData) {
+      console.log('🔄 Loading initial data for duplication:', initialData);
+      
+      // Set client if provided
+      if (initialData.clientId && clients.length > 0) {
+        const client = clients.find(c => c.id === initialData.clientId);
+        if (client) {
+          setSelectedClient(client);
+        }
+      }
+      
+      // Set other fields
+      if (initialData.validUntil) {
+        setValidUntil(initialData.validUntil);
+      }
+      
+      // Set items if provided
+      if (initialData.items && Array.isArray(initialData.items)) {
+        const formattedItems = initialData.items.map((item: any, index: number) => ({
+          id: `temp_${index}`, // Temporary ID for UI
+          operatorId: item.operatorId || '',
+          operatorName: item.operatorName || '',
+          baseItemId: item.baseItemId || '',
+          baseItemName: item.baseItemName || item.name || '',
+          name: item.name || '',
+          quantity: Number(item.quantity) || 1,
+          unitPrice: Number(item.unitPrice) || 0,
+          subtotal: Number(item.quantity || 1) * Number(item.unitPrice || 0),
+          customFields: item.customFields || {}
+        }));
+        setItems(formattedItems);
+      }
+      
+      console.log('✅ Initial data loaded successfully');
+    }
+  }, [isOpen, initialData, clients]);
 
   const loadAllClients = async () => {
     try {
@@ -150,6 +193,16 @@ export default function CreateProposalModal({
       return;
     }
 
+    // Validate items have required fields
+    const invalidItems = items.filter(item => 
+      !item.operatorId || !item.operatorName || !item.baseItemId || !item.baseItemName || !item.name
+    );
+    
+    if (invalidItems.length > 0) {
+      alert('Alguns produtos estão com dados incompletos. Verifique se todos os campos obrigatórios estão preenchidos.');
+      return;
+    }
+
     // Validate date - must be at least tomorrow
     const selectedDate = new Date(validUntil);
     const tomorrow = new Date();
@@ -165,8 +218,17 @@ export default function CreateProposalModal({
     const proposalData = {
       clientId: selectedClient.id,
       operatorId: items.length > 0 ? items[0].operatorId : '', // Use operator from first item
-      validUntil: new Date(validUntil).toISOString(), // Convert to ISO string for API
-      items,
+      validUntil: validUntil, // Keep as YYYY-MM-DD format
+      items: items.map(item => ({
+        operatorId: item.operatorId,
+        operatorName: item.operatorName,
+        baseItemId: item.baseItemId,
+        baseItemName: item.baseItemName,
+        name: item.name,
+        quantity: Number(item.quantity),
+        unitPrice: Number(item.unitPrice),
+        customFields: item.customFields || {}
+      })),
       paymentMethod: '', // Default empty - could add form field later
       notes: '' // Default empty - could add form field later
     };
@@ -198,7 +260,7 @@ export default function CreateProposalModal({
         Cancelar
       </Button>
       <Button onClick={handleSubmit}>
-        Criar Proposta
+        {isDuplicate ? 'Duplicar Proposta' : 'Criar Proposta'}
       </Button>
     </div>
   );
@@ -208,7 +270,7 @@ export default function CreateProposalModal({
       <Modal
         isOpen={isOpen}
         onClose={handleClose}
-        title="Nova Proposta"
+        title={isDuplicate ? "Duplicar Proposta" : "Nova Proposta"}
         size="lg"
         footer={footer}
         className={styles.modal}

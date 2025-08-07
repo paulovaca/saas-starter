@@ -79,6 +79,18 @@
   border: 1px solid rgb(249 115 22 / 0.2);
 }
 
+.badgeYellow {
+  background: rgb(234 179 8 / 0.1);
+  color: rgb(234 179 8);
+  border: 1px solid rgb(234 179 8 / 0.2);
+}
+
+.badgePurple {
+  background: rgb(147 51 234 / 0.1);
+  color: rgb(147 51 234);
+  border: 1px solid rgb(147 51 234 / 0.2);
+}
+
 /* Hover Effects */
 .statusBadge:hover {
   transform: translateY(-1px);
@@ -104,6 +116,14 @@
 
 .dark .badgeOrange {
   background: rgb(249 115 22 / 0.15);
+}
+
+.dark .badgeYellow {
+  background: rgb(234 179 8 / 0.15);
+}
+
+.dark .badgePurple {
+  background: rgb(147 51 234 / 0.15);
 }
 
 /* Animation for Status Changes */

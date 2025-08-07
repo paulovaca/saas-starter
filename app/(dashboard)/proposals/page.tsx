@@ -2,10 +2,10 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
-import { getStatusLabel, getStatusColor, ProposalStatus } from '@/lib/types/proposals';
-import CreateProposalModal from '@/components/proposals/create-proposal-modal';
+import { ProposalStatus, ProposalStatusLabels, ProposalStatusType } from '@/lib/types/proposal';
 import { SearchFilters } from '@/components/shared/search-filters';
 import { formatCurrency } from '@/lib/services/proposal-calculator';
 import { getProposalsListAction } from '@/lib/actions/proposals/get-proposals-list';
@@ -17,7 +17,7 @@ interface ProposalListItem {
   clientName: string;
   operatorName: string;
   totalAmount: number;
-  status: ProposalStatus;
+  status: ProposalStatusType;
   createdAt: Date | string;
   validUntil: Date | string;
   userName: string;
@@ -25,9 +25,9 @@ interface ProposalListItem {
 
 
 export default function ProposalsPage() {
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState<ProposalStatus | 'all'>('all');
-  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [statusFilter, setStatusFilter] = useState<ProposalStatusType | 'all'>('all');
   const [proposals, setProposals] = useState<ProposalListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -76,35 +76,6 @@ export default function ProposalsPage() {
 
   const filteredProposals = Array.isArray(proposals) ? proposals : [];
 
-  const handleCreateProposal = async (proposalData: any) => {
-    try {
-      console.log('🚀 Creating proposal:', proposalData);
-      
-      const response = await fetch('/api/proposals', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(proposalData)
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || `HTTP ${response.status}`);
-      }
-
-      const newProposal = await response.json();
-      console.log('✅ Proposal created:', newProposal);
-      
-      // Refetch proposals to show the new one
-      await fetchProposals();
-      alert('Proposta criada com sucesso!');
-      
-    } catch (error) {
-      console.error('❌ Error creating proposal:', error);
-      alert('Erro ao criar proposta: ' + (error instanceof Error ? error.message : 'Erro desconhecido'));
-    }
-  };
 
 
   const formatDate = (date: Date | string) => {
@@ -114,21 +85,29 @@ export default function ProposalsPage() {
     return new Intl.DateTimeFormat('pt-BR').format(dateObj);
   };
 
-  const StatusBadge = ({ status }: { status: ProposalStatus }) => {
-    const label = getStatusLabel(status);
+  const StatusBadge = ({ status }: { status: ProposalStatusType }) => {
+    const label = ProposalStatusLabels[status] || status;
     
-    const getStatusClass = (status: ProposalStatus) => {
+    const getStatusClass = (status: ProposalStatusType) => {
       switch (status) {
         case ProposalStatus.DRAFT:
           return styles.statusDraft;
         case ProposalStatus.SENT:
           return styles.statusSent;
-        case ProposalStatus.ACCEPTED:
-          return styles.statusAccepted;
+        case ProposalStatus.APPROVED:
+          return styles.statusApproved;
+        case ProposalStatus.CONTRACT:
+          return styles.statusContract;
         case ProposalStatus.REJECTED:
           return styles.statusRejected;
         case ProposalStatus.EXPIRED:
           return styles.statusExpired;
+        case ProposalStatus.AWAITING_PAYMENT:
+          return styles.statusAwaitingPayment;
+        case ProposalStatus.ACTIVE_BOOKING:
+          return styles.statusActiveBooking;
+        case ProposalStatus.CANCELLED:
+          return styles.statusCancelled;
         default:
           return styles.statusDraft;
       }
@@ -145,7 +124,7 @@ export default function ProposalsPage() {
     <div className={styles.proposalsContainer}>
       <div className={styles.proposalsHeader}>
         <h1 className={styles.proposalsTitle}>Propostas</h1>
-        <Button onClick={() => setShowCreateModal(true)}>
+        <Button onClick={() => router.push('/proposals/new')}>
           <Plus className={styles.buttonIcon} />
           Nova Proposta
         </Button>
@@ -163,16 +142,20 @@ export default function ProposalsPage() {
             options: [
               { value: ProposalStatus.DRAFT, label: 'Rascunho' },
               { value: ProposalStatus.SENT, label: 'Enviada' },
-              { value: ProposalStatus.ACCEPTED, label: 'Aceita' },
+              { value: ProposalStatus.APPROVED, label: 'Aprovada' },
+              { value: ProposalStatus.CONTRACT, label: 'Contrato' },
               { value: ProposalStatus.REJECTED, label: 'Recusada' },
-              { value: ProposalStatus.EXPIRED, label: 'Expirada' }
+              { value: ProposalStatus.EXPIRED, label: 'Expirada' },
+              { value: ProposalStatus.AWAITING_PAYMENT, label: 'Aguardando Pagamento' },
+              { value: ProposalStatus.ACTIVE_BOOKING, label: 'Reserva Ativa' },
+              { value: ProposalStatus.CANCELLED, label: 'Cancelada' }
             ],
             defaultValue: statusFilter === 'all' ? '' : statusFilter
           }
         ]}
         onFiltersChange={(filters) => {
           setSearchQuery(filters.search || '');
-          setStatusFilter((filters.status as ProposalStatus) || 'all');
+          setStatusFilter((filters.status as ProposalStatusType) || 'all');
         }}
         showFilterButton={false}
         />
@@ -196,7 +179,7 @@ export default function ProposalsPage() {
               : 'Nenhuma proposta criada ainda'
             }
           </div>
-          <Button onClick={() => setShowCreateModal(true)}>
+          <Button onClick={() => router.push('/proposals/new')}>
             <Plus className={styles.buttonIcon} />
             Criar Primeira Proposta
           </Button>
@@ -260,12 +243,6 @@ export default function ProposalsPage() {
         </div>
       )}
 
-      {/* Create Proposal Modal */}
-      <CreateProposalModal
-        isOpen={showCreateModal}
-        onClose={() => setShowCreateModal(false)}
-        onSubmit={handleCreateProposal}
-      />
     </div>
   );
 }

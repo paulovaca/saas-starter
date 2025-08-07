@@ -6,7 +6,7 @@ import { generateBookingNumber } from "./utils";
 import { BOOKING_STATUS } from "@/lib/types/booking-status";
 
 /**
- * Criar reserva automaticamente quando proposta tem status active_travel (Negócio/Viagem Ativo)
+ * Criar reserva automaticamente quando proposta tem status ACTIVE_BOOKING (Negócio/Viagem Ativo)
  */
 export async function createBookingFromProposal(
   proposalId: string,

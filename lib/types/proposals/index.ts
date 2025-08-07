@@ -10,11 +10,13 @@ import type {
 export const ProposalStatus = {
   DRAFT: 'draft',
   SENT: 'sent',
-  ACCEPTED: 'accepted',
+  APPROVED: 'approved',
+  CONTRACT: 'contract',
   REJECTED: 'rejected',
   EXPIRED: 'expired',
   AWAITING_PAYMENT: 'awaiting_payment',
-  ACTIVE_TRAVEL: 'active_travel'
+  ACTIVE_BOOKING: 'active_booking',
+  CANCELLED: 'cancelled'
 } as const;
 
 export type ProposalStatus = typeof ProposalStatus[keyof typeof ProposalStatus];
@@ -148,13 +150,15 @@ export const proposalFormSchema = z.object({
 
 // Status transition rules
 export const ALLOWED_STATUS_TRANSITIONS: Record<ProposalStatus, ProposalStatus[]> = {
-  [ProposalStatus.DRAFT]: [ProposalStatus.SENT],
-  [ProposalStatus.SENT]: [ProposalStatus.ACCEPTED, ProposalStatus.REJECTED, ProposalStatus.EXPIRED],
-  [ProposalStatus.ACCEPTED]: [ProposalStatus.AWAITING_PAYMENT],
-  [ProposalStatus.REJECTED]: [ProposalStatus.DRAFT],
+  [ProposalStatus.DRAFT]: [ProposalStatus.SENT, ProposalStatus.CANCELLED],
+  [ProposalStatus.SENT]: [ProposalStatus.APPROVED, ProposalStatus.REJECTED, ProposalStatus.EXPIRED, ProposalStatus.CANCELLED],
+  [ProposalStatus.APPROVED]: [ProposalStatus.CONTRACT],
+  [ProposalStatus.CONTRACT]: [ProposalStatus.AWAITING_PAYMENT, ProposalStatus.CANCELLED],
+  [ProposalStatus.REJECTED]: [ProposalStatus.DRAFT, ProposalStatus.CANCELLED],
   [ProposalStatus.EXPIRED]: [ProposalStatus.DRAFT],
-  [ProposalStatus.AWAITING_PAYMENT]: [ProposalStatus.ACTIVE_TRAVEL, ProposalStatus.EXPIRED],
-  [ProposalStatus.ACTIVE_TRAVEL]: []
+  [ProposalStatus.AWAITING_PAYMENT]: [ProposalStatus.ACTIVE_BOOKING, ProposalStatus.CANCELLED],
+  [ProposalStatus.ACTIVE_BOOKING]: [ProposalStatus.CANCELLED],
+  [ProposalStatus.CANCELLED]: []
 };
 
 // Helper functions
@@ -169,11 +173,13 @@ export function getStatusLabel(status: ProposalStatus): string {
   const labels: Record<ProposalStatus, string> = {
     [ProposalStatus.DRAFT]: 'Rascunho',
     [ProposalStatus.SENT]: 'Enviada',
-    [ProposalStatus.ACCEPTED]: 'Aceita',
+    [ProposalStatus.APPROVED]: 'Aprovada',
+    [ProposalStatus.CONTRACT]: 'Contrato',
     [ProposalStatus.REJECTED]: 'Recusada',
     [ProposalStatus.EXPIRED]: 'Expirada',
     [ProposalStatus.AWAITING_PAYMENT]: 'Aguardando Pagamento',
-    [ProposalStatus.ACTIVE_TRAVEL]: 'Negócio/Viagem Ativo'
+    [ProposalStatus.ACTIVE_BOOKING]: 'Reserva Ativa',
+    [ProposalStatus.CANCELLED]: 'Cancelada'
   };
   return labels[status] || 'Status Desconhecido'; // Default label if status is invalid
 }
@@ -182,11 +188,13 @@ export function getStatusColor(status: ProposalStatus): string {
   const colors: Record<ProposalStatus, string> = {
     [ProposalStatus.DRAFT]: 'gray',
     [ProposalStatus.SENT]: 'blue',
-    [ProposalStatus.ACCEPTED]: 'green',
+    [ProposalStatus.APPROVED]: 'green',
+    [ProposalStatus.CONTRACT]: 'purple',
     [ProposalStatus.REJECTED]: 'red',
     [ProposalStatus.EXPIRED]: 'orange',
     [ProposalStatus.AWAITING_PAYMENT]: 'yellow',
-    [ProposalStatus.ACTIVE_TRAVEL]: 'purple'
+    [ProposalStatus.ACTIVE_BOOKING]: 'green',
+    [ProposalStatus.CANCELLED]: 'red'
   };
   return colors[status] || 'gray'; // Default to gray if status is invalid
 }

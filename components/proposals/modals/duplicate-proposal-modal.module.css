@@ -1,0 +1,185 @@
+/* Modal Layout */
+.modal {
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+/* Header */
+.title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.titleIcon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--primary);
+}
+
+/* Content */
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.label {
+  font-weight: 500;
+}
+
+.select {
+  min-height: 2.75rem;
+}
+
+/* Client Selection */
+.clientOption {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.25rem 0;
+}
+
+.clientIcon {
+  width: 1rem;
+  height: 1rem;
+  color: var(--muted-foreground);
+  flex-shrink: 0;
+}
+
+.clientName {
+  font-weight: 500;
+  color: var(--foreground);
+}
+
+.clientMeta {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+}
+
+/* Warning */
+.warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: hsl(var(--warning) / 0.1);
+  border: 1px solid hsl(var(--warning) / 0.2);
+  border-radius: 0.5rem;
+}
+
+.warningIcon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: hsl(var(--warning));
+  flex-shrink: 0;
+  margin-top: 0.125rem;
+}
+
+.warningContent {
+  flex: 1;
+}
+
+.warningTitle {
+  font-weight: 500;
+  color: hsl(var(--warning));
+  margin-bottom: 0.25rem;
+}
+
+.warningText {
+  font-size: 0.875rem;
+  color: var(--foreground);
+  line-height: 1.4;
+}
+
+/* Info Boxes */
+.infoBox {
+  padding: 1rem;
+  background: var(--muted);
+  border-radius: 0.5rem;
+  border: 1px solid var(--border);
+}
+
+.infoTitle {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--foreground);
+  margin-bottom: 0.5rem;
+}
+
+.infoList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.infoList li {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  position: relative;
+  padding-left: 1rem;
+}
+
+.infoList li::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: var(--primary);
+  font-weight: bold;
+}
+
+/* Footer */
+.footer {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.duplicateButton {
+  flex: 1;
+}
+
+.buttonIcon {
+  width: 1rem;
+  height: 1rem;
+  margin-right: 0.5rem;
+}
+
+/* Dark Mode Support */
+.dark .warning {
+  background: hsl(var(--warning) / 0.15);
+}
+
+.dark .infoBox {
+  background: var(--muted);
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .modal {
+    max-width: 95vw;
+    margin: 1rem;
+  }
+  
+  .content {
+    gap: 1rem;
+  }
+  
+  .footer {
+    flex-direction: column;
+  }
+  
+  .duplicateButton {
+    order: -1;
+  }
+}

@@ -97,7 +97,7 @@ export default function ProposalTimeline({ proposalId }: ProposalTimelineProps) 
         switch (event.status) {
           case ProposalStatus.SENT:
             return <Send className={styles.eventIcon} />;
-          case ProposalStatus.ACCEPTED:
+          case ProposalStatus.APPROVED:
             return <CheckCircle className={styles.eventIcon} />;
           case ProposalStatus.REJECTED:
             return <XCircle className={styles.eventIcon} />;
@@ -125,7 +125,7 @@ export default function ProposalTimeline({ proposalId }: ProposalTimelineProps) 
         switch (event.status) {
           case ProposalStatus.SENT:
             return `${baseClass} ${styles.eventSent}`;
-          case ProposalStatus.ACCEPTED:
+          case ProposalStatus.APPROVED:
             return `${baseClass} ${styles.eventAccepted}`;
           case ProposalStatus.REJECTED:
             return `${baseClass} ${styles.eventRejected}`;

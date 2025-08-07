@@ -1,9 +1,3 @@
-/* Page wrapper */
-.proposalDetailsPage {
-  width: 100%;
-  min-height: 100vh;
-}
-
 /* Loading and Error States */
 .loadingContainer {
   display: flex;

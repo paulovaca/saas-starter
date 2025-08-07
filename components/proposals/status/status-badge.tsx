@@ -1,18 +1,26 @@
 'use client';
 
 import { Badge } from '@/components/ui/badge';
-import { ProposalStatus, getStatusLabel, getStatusColor } from '@/lib/types/proposals';
+import { 
+  ProposalStatusType,
+  ProposalStatusLabels,
+  ProposalStatusColors
+} from '@/lib/types/proposal';
 import { 
   Clock, 
   Send, 
   CheckCircle, 
   XCircle, 
-  AlertTriangle 
+  AlertTriangle,
+  FileText,
+  CreditCard,
+  Calendar,
+  Ban
 } from 'lucide-react';
 import styles from './status-badge.module.css';
 
 interface ProposalStatusBadgeProps {
-  status: ProposalStatus;
+  status: ProposalStatusType;
   showIcon?: boolean;
   size?: 'sm' | 'md' | 'lg';
 }
@@ -22,23 +30,29 @@ export default function ProposalStatusBadge({
   showIcon = true, 
   size = 'md' 
 }: ProposalStatusBadgeProps) {
-  // Ensure we have a valid status, default to DRAFT if invalid
-  const validStatus = status || ProposalStatus.DRAFT;
-  const label = getStatusLabel(validStatus);
-  const color = getStatusColor(validStatus) || 'gray';
+  const label = ProposalStatusLabels[status] || 'Desconhecido';
+  const color = ProposalStatusColors[status] || 'gray';
   
   const getStatusIcon = () => {
-    switch (validStatus) {
-      case ProposalStatus.DRAFT:
+    switch (status) {
+      case 'draft':
         return <Clock className={styles.badgeIcon} />;
-      case ProposalStatus.SENT:
+      case 'sent':
         return <Send className={styles.badgeIcon} />;
-      case ProposalStatus.ACCEPTED:
+      case 'approved':
         return <CheckCircle className={styles.badgeIcon} />;
-      case ProposalStatus.REJECTED:
+      case 'contract':
+        return <FileText className={styles.badgeIcon} />;
+      case 'rejected':
         return <XCircle className={styles.badgeIcon} />;
-      case ProposalStatus.EXPIRED:
+      case 'expired':
         return <AlertTriangle className={styles.badgeIcon} />;
+      case 'awaiting_payment':
+        return <CreditCard className={styles.badgeIcon} />;
+      case 'active_booking':
+        return <Calendar className={styles.badgeIcon} />;
+      case 'cancelled':
+        return <Ban className={styles.badgeIcon} />;
       default:
         return null;
     }

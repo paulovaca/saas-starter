@@ -1,0 +1,334 @@
+/* Card Layout */
+.title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.count {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  font-weight: 400;
+}
+
+.content {
+  padding: 0;
+}
+
+/* Timeline */
+.timeline {
+  position: relative;
+  padding: 0;
+}
+
+.timelineItem {
+  position: relative;
+  padding-bottom: 1.5rem;
+}
+
+.timelineItem:last-child {
+  padding-bottom: 0;
+}
+
+.timelinePoint {
+  position: absolute;
+  left: 0;
+  top: 0.25rem;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: var(--background);
+  border: 2px solid var(--border);
+}
+
+.timelinePoint::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  width: 2px;
+  height: calc(100% + 1.5rem);
+  background: var(--border);
+  transform: translateX(-50%);
+}
+
+.timelineItem:last-child .timelinePoint::after {
+  display: none;
+}
+
+.timelineContent {
+  margin-left: 3rem;
+  padding: 0.5rem 0;
+}
+
+/* Status Icons */
+.statusIcon {
+  width: 1rem;
+  height: 1rem;
+  color: var(--foreground);
+}
+
+/* Entry Layout */
+.entryHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.statusChange {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.arrow {
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+}
+
+.statusBadge {
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* Status Colors */
+.status-gray {
+  background: var(--muted);
+  color: var(--muted-foreground);
+}
+
+.status-blue {
+  background: hsl(var(--primary) / 0.1);
+  color: var(--primary);
+  border-color: hsl(var(--primary) / 0.2);
+}
+
+.status-green {
+  background: hsl(142 76% 36% / 0.1);
+  color: hsl(142 76% 36%);
+  border-color: hsl(142 76% 36% / 0.2);
+}
+
+.status-purple {
+  background: hsl(262 83% 58% / 0.1);
+  color: hsl(262 83% 58%);
+  border-color: hsl(262 83% 58% / 0.2);
+}
+
+.status-red {
+  background: hsl(var(--destructive) / 0.1);
+  color: var(--destructive);
+  border-color: hsl(var(--destructive) / 0.2);
+}
+
+.status-orange {
+  background: hsl(25 95% 53% / 0.1);
+  color: hsl(25 95% 53%);
+  border-color: hsl(25 95% 53% / 0.2);
+}
+
+.status-yellow {
+  background: hsl(48 96% 53% / 0.1);
+  color: hsl(48 96% 53%);
+  border-color: hsl(48 96% 53% / 0.2);
+}
+
+.metadata {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.timestamp {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+}
+
+/* Entry Details */
+.entryDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.changedBy {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+}
+
+.userIcon {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+.reason {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.375rem;
+  font-size: 0.875rem;
+  color: var(--foreground);
+  line-height: 1.4;
+}
+
+.reasonIcon {
+  width: 0.875rem;
+  height: 0.875rem;
+  margin-top: 0.125rem;
+  flex-shrink: 0;
+  color: var(--muted-foreground);
+}
+
+/* Expand Button */
+.expandContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.expandButton {
+  font-size: 0.875rem;
+}
+
+.buttonIcon {
+  width: 0.875rem;
+  height: 0.875rem;
+  margin-right: 0.375rem;
+}
+
+/* Loading States */
+.skeletonContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.skeletonItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.skeletonIcon {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+}
+
+.skeletonContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.skeletonTitle {
+  width: 60%;
+  height: 1rem;
+}
+
+.skeletonText {
+  width: 40%;
+  height: 0.875rem;
+}
+
+/* Error States */
+.errorContainer {
+  text-align: center;
+  padding: 2rem;
+}
+
+.errorText {
+  color: var(--destructive);
+  margin-bottom: 1rem;
+}
+
+.retryButton {
+  margin: 0 auto;
+}
+
+/* Empty State */
+.emptyContainer {
+  text-align: center;
+  padding: 2rem;
+}
+
+.emptyIcon {
+  width: 3rem;
+  height: 3rem;
+  color: var(--muted-foreground);
+  margin-bottom: 1rem;
+}
+
+.emptyText {
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .entryHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .statusChange {
+    flex-wrap: wrap;
+  }
+
+  .timelineContent {
+    margin-left: 2.5rem;
+  }
+
+  .timelinePoint {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .statusIcon {
+    width: 0.875rem;
+    height: 0.875rem;
+  }
+}
+
+/* Dark Mode */
+.dark .timelinePoint {
+  background: var(--background);
+  border-color: var(--border);
+}
+
+.dark .status-blue {
+  background: hsl(var(--primary) / 0.15);
+}
+
+.dark .status-green {
+  background: hsl(142 76% 36% / 0.15);
+}
+
+.dark .status-purple {
+  background: hsl(262 83% 58% / 0.15);
+}
+
+.dark .status-red {
+  background: hsl(var(--destructive) / 0.15);
+}
+
+.dark .status-orange {
+  background: hsl(25 95% 53% / 0.15);
+}
+
+.dark .status-yellow {
+  background: hsl(48 96% 53% / 0.15);
+}

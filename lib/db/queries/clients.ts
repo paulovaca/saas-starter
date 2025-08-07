@@ -171,9 +171,9 @@ export async function getClientsWithFilters(
             eq(proposals.clientId, client.id),
             eq(proposals.agencyId, agencyId),
             or(
-              eq(proposals.status, 'accepted'),
+              eq(proposals.status, 'approved'),
               eq(proposals.status, 'awaiting_payment'),
-              eq(proposals.status, 'active_travel')
+              eq(proposals.status, 'active_booking')
             )
           )
         )

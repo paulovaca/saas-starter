@@ -20,7 +20,7 @@ export const clientDocumentTypeEnum = pgEnum('client_document_type', ['cpf', 'cn
 export const interactionTypeEnum = pgEnum('interaction_type', ['call', 'email', 'whatsapp', 'meeting', 'note']);
 export const taskPriorityEnum = pgEnum('task_priority', ['low', 'medium', 'high']);
 export const taskStatusEnum = pgEnum('task_status', ['pending', 'in_progress', 'completed', 'cancelled']);
-export const proposalStatusEnum = pgEnum('proposal_status', ['draft', 'sent', 'accepted', 'rejected', 'expired', 'awaiting_payment', 'active_travel']);
+export const proposalStatusEnum = pgEnum('proposal_status', ['draft', 'sent', 'approved', 'contract', 'rejected', 'expired', 'awaiting_payment', 'active_booking', 'cancelled']);
 
 // Tabela de clientes - versão atualizada
 export const clientsNew = pgTable('clients_new', {
@@ -132,10 +132,25 @@ export const proposals = pgTable('proposals', {
   validUntil: date('valid_until').notNull(),
   notes: text('notes'),
   internalNotes: text('internal_notes'),
+  
+  // Datas de transição de status
   sentAt: timestamp('sent_at'),
+  approvedAt: timestamp('approved_at'),
+  contractAt: timestamp('contract_at'),
   decidedAt: timestamp('decided_at'),
   paymentDueAt: timestamp('payment_due_at'),
   activatedAt: timestamp('activated_at'),
+  cancelledAt: timestamp('cancelled_at'),
+  
+  // Campos do contrato
+  contractData: jsonb('contract_data'), // Dados adicionais do cliente para o contrato
+  contractUrl: text('contract_url'), // URL do contrato gerado
+  approvalEvidence: text('approval_evidence'), // Print ou evidência de aprovação
+  
+  // Motivos e observações
+  rejectionReason: varchar('rejection_reason', { length: 255 }),
+  cancellationReason: varchar('cancellation_reason', { length: 255 }),
+  
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
   deletedAt: timestamp('deleted_at'),

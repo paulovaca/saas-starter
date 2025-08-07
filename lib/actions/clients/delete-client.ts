@@ -37,7 +37,7 @@ export const deleteClient = createPermissionAction(
     const activeProposals = await db.query.proposals.findMany({
       where: and(
         eq(proposals.clientId, input.clientId),
-        eq(proposals.status, 'accepted')
+        eq(proposals.status, 'approved')
       )
     })
 

@@ -84,14 +84,14 @@ export default async function TestBookingsPage() {
       <div style={{ marginTop: "2rem", padding: "1rem", backgroundColor: "#f9fafb", borderRadius: "6px" }}>
         <h4>🎯 Fluxo Automático Implementado:</h4>
         <ol>
-          <li><strong>Proposta aceita</strong> → Status muda para "active_travel" (Negócio/Viagem Ativo)</li>
+          <li><strong>Proposta aceita</strong> → Status muda para "ACTIVE_BOOKING" (Negócio/Viagem Ativo)</li>
           <li><strong>AUTOMÁTICO:</strong> Sistema cria reserva automaticamente</li>
           <li><strong>Reserva criada</strong> com status "pending_documents"</li>
           <li><strong>Gestão:</strong> Use a página de Reservas para gerenciar o processo</li>
         </ol>
         
         <h4>🧪 Teste Manual:</h4>
-        <p>Esta página tenta encontrar uma proposta com status "active_travel" e criar uma reserva manualmente para demonstração.</p>
+        <p>Esta página tenta encontrar uma proposta com status "ACTIVE_BOOKING" e criar uma reserva manualmente para demonstração.</p>
       </div>
     </div>
   );

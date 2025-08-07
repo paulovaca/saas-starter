@@ -92,7 +92,7 @@ interface ClientWithDetails extends Client {
   proposals: Array<{
     id: string;
     proposalNumber: string;
-    status: 'draft' | 'sent' | 'accepted' | 'rejected' | 'expired';
+    status: 'draft' | 'sent' | 'approved' | 'contract' | 'rejected' | 'expired' | 'awaiting_payment' | 'active_booking' | 'cancelled';
     totalAmount: number;
     createdAt: Date;
     operator: {
@@ -443,8 +443,16 @@ export default function ClientDetailsContent({ clientId }: ClientDetailsContentP
         return badgeStyles.statusCancelled;
       case 'sent':
         return badgeStyles.statusSent;
-      case 'accepted':
+      case 'approved':
         return badgeStyles.statusAccepted;
+      case 'contract':
+        return badgeStyles.statusAccepted;
+      case 'awaiting_payment':
+        return badgeStyles.statusPending;
+      case 'active_booking':
+        return badgeStyles.statusCompleted;
+      case 'cancelled':
+        return badgeStyles.statusCancelled;
       case 'rejected':
         return badgeStyles.statusRejected;
       case 'expired':

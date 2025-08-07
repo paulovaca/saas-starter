@@ -37,8 +37,17 @@ import {
   Calendar,
   Plane
 } from 'lucide-react';
-import { ProposalStatus, canTransitionToStatus, ProposalWithRelations } from '@/lib/types/proposals';
-import { changeProposalStatus } from '@/lib/actions/proposals/change-status';
+import { ProposalStatus, isValidTransition, ProposalStatusType } from '@/lib/types/proposal';
+import { 
+  approveProposal,
+  rejectProposal,
+  sendProposal,
+  setAwaitingPayment,
+  cancelProposal,
+  confirmPayment,
+  reactivateProposal,
+  transitionProposalStatus
+} from '@/lib/actions/proposals/status-transitions';
 import { deleteProposal } from '@/lib/actions/proposals/delete-proposal';
 import { generateProposalPDF, downloadPDF } from '@/lib/services/pdf-generator';
 import { useRouter } from 'next/navigation';
@@ -50,10 +59,10 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 interface ProposalStatusActionsProps {
   proposalId: string;
-  currentStatus: ProposalStatus;
-  proposal?: ProposalWithRelations | null;
-  onStatusChange: (newStatus: ProposalStatus) => void;
-  onProposalUpdate?: (updatedProposal: ProposalWithRelations) => void;
+  currentStatus: ProposalStatusType;
+  proposal?: any | null;
+  onStatusChange: (newStatus: ProposalStatusType) => void;
+  onProposalUpdate?: (updatedProposal: any) => void;
 }
 
 export default function ProposalStatusActions({ 
@@ -72,21 +81,21 @@ export default function ProposalStatusActions({
   const [showExpirationModal, setShowExpirationModal] = useState(false);
   const [showStatusDialog, setShowStatusDialog] = useState<{
     show: boolean;
-    newStatus?: ProposalStatus;
+    newStatus?: ProposalStatusType;
   }>({ show: false });
   const [loading, setLoading] = useState(false);
 
-  const handleStatusChange = async (newStatus: ProposalStatus) => {
-    if (!canTransitionToStatus(currentStatus, newStatus)) {
+  const handleStatusChange = async (newStatus: ProposalStatusType) => {
+    if (!isValidTransition(currentStatus, newStatus)) {
       alert(`Não é possível alterar o status de ${currentStatus} para ${newStatus}`);
       return;
     }
 
     setLoading(true);
     try {
-      const result = await changeProposalStatus({
+      const result = await transitionProposalStatus({
         proposalId,
-        newStatus
+        toStatus: newStatus
       });
 
       if (result.success) {
@@ -98,6 +107,164 @@ export default function ProposalStatusActions({
     } catch (error) {
       console.error('Erro ao alterar status:', error);
       alert(error instanceof Error ? error.message : 'Erro ao alterar status. Tente novamente.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSend = async () => {
+    setLoading(true);
+    try {
+      const result = await sendProposal({ proposalId });
+      if (result.success) {
+        onStatusChange(ProposalStatus.SENT);
+      } else {
+        throw new Error('Erro ao enviar proposta');
+      }
+    } catch (error) {
+      console.error('Erro ao enviar proposta:', error);
+      alert(error instanceof Error ? error.message : 'Erro ao enviar proposta. Tente novamente.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleApprove = async () => {
+    setLoading(true);
+    try {
+      const result = await approveProposal({ proposalId });
+      if (result.success) {
+        onStatusChange(ProposalStatus.CONTRACT); // Vai automaticamente para contrato
+      } else {
+        throw new Error('Erro ao aprovar proposta');
+      }
+    } catch (error) {
+      console.error('Erro ao aprovar proposta:', error);
+      alert(error instanceof Error ? error.message : 'Erro ao aprovar proposta. Tente novamente.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleReject = async () => {
+    const reason = prompt('Informe o motivo da recusa:');
+    if (!reason?.trim()) {
+      alert('Motivo é obrigatório para recusar proposta');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const result = await rejectProposal({ 
+        proposalId, 
+        reason: reason.trim() 
+      });
+      if (result.success) {
+        onStatusChange(ProposalStatus.REJECTED);
+      } else {
+        throw new Error('Erro ao recusar proposta');
+      }
+    } catch (error) {
+      console.error('Erro ao recusar proposta:', error);
+      alert(error instanceof Error ? error.message : 'Erro ao recusar proposta. Tente novamente.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAwaitingPayment = async () => {
+    setLoading(true);
+    try {
+      const result = await setAwaitingPayment({ proposalId });
+      if (result.success) {
+        onStatusChange(ProposalStatus.AWAITING_PAYMENT);
+      } else {
+        throw new Error('Erro ao definir como aguardando pagamento');
+      }
+    } catch (error) {
+      console.error('Erro ao definir aguardando pagamento:', error);
+      alert(error instanceof Error ? error.message : 'Erro ao definir aguardando pagamento. Tente novamente.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCancel = async (reason: string) => {
+    setLoading(true);
+    try {
+      const result = await cancelProposal({ 
+        proposalId, 
+        reason 
+      });
+      if (result.success) {
+        onStatusChange(ProposalStatus.CANCELLED);
+      } else {
+        throw new Error('Erro ao cancelar proposta');
+      }
+    } catch (error) {
+      console.error('Erro ao cancelar proposta:', error);
+      alert(error instanceof Error ? error.message : 'Erro ao cancelar proposta. Tente novamente.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRefund = async (reason: string) => {
+    setLoading(true);
+    try {
+      const result = await cancelProposal({ 
+        proposalId, 
+        reason 
+      });
+      if (result.success) {
+        onStatusChange(ProposalStatus.CANCELLED);
+      } else {
+        throw new Error('Erro ao processar reembolso');
+      }
+    } catch (error) {
+      console.error('Erro ao processar reembolso:', error);
+      alert(error instanceof Error ? error.message : 'Erro ao processar reembolso. Tente novamente.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Helper function to render cancel/refund button based on permissions
+  const renderCancelRefundButton = (isRefund = false) => {
+    const buttonText = isRefund ? 'Reembolsar' : 'Cancelar';
+    const promptText = isRefund 
+      ? 'Informe o motivo do reembolso:' 
+      : 'Informe o motivo do cancelamento:';
+    const handler = isRefund ? handleRefund : handleCancel;
+
+    return (
+      <DropdownMenuItem 
+        className={styles.destructiveItem}
+        onClick={() => {
+          const reason = prompt(promptText);
+          if (reason?.trim()) {
+            handler(reason.trim());
+          }
+        }}
+      >
+        <Trash2 className={styles.menuIcon} />
+        {buttonText}
+      </DropdownMenuItem>
+    );
+  };
+
+  const handleConfirmPayment = async () => {
+    setLoading(true);
+    try {
+      const result = await confirmPayment({ proposalId });
+      if (result.success) {
+        onStatusChange(ProposalStatus.ACTIVE_BOOKING);
+      } else {
+        throw new Error('Erro ao confirmar pagamento');
+      }
+    } catch (error) {
+      console.error('Erro ao confirmar pagamento:', error);
+      alert(error instanceof Error ? error.message : 'Erro ao confirmar pagamento. Tente novamente.');
     } finally {
       setLoading(false);
     }
@@ -124,9 +291,9 @@ export default function ProposalStatusActions({
     setShowEditModal(true);
   };
 
-  const handleProposalUpdate = (updatedProposal: ProposalWithRelations) => {
+  const handleProposalUpdate = (updatedProposal: any) => {
     onProposalUpdate?.(updatedProposal);
-    onStatusChange(updatedProposal.status as ProposalStatus);
+    onStatusChange(updatedProposal.status as ProposalStatusType);
   };
 
   const handleDuplicate = () => {
@@ -135,7 +302,7 @@ export default function ProposalStatusActions({
 
   // Remove the old handleDelete function - we'll use the modal now
 
-  const getStatusDialogContent = (newStatus: ProposalStatus) => {
+  const getStatusDialogContent = (newStatus: ProposalStatusType) => {
     switch (newStatus) {
       case ProposalStatus.SENT:
         return {
@@ -143,7 +310,7 @@ export default function ProposalStatusActions({
           description: 'Tem certeza que deseja enviar esta proposta? O cliente será notificado por email.',
           action: 'Enviar'
         };
-      case ProposalStatus.ACCEPTED:
+      case ProposalStatus.APPROVED:
         return {
           title: 'Marcar como Aceita',
           description: 'Confirma que o cliente aceitou esta proposta? Isso irá mover para "Aguardando Pagamento".',
@@ -167,7 +334,7 @@ export default function ProposalStatusActions({
           description: 'Confirma que a proposta foi aceita e está aguardando pagamento.',
           action: 'Aguardar Pagamento'
         };
-      case ProposalStatus.ACTIVE_TRAVEL:
+      case ProposalStatus.ACTIVE_BOOKING:
         return {
           title: 'Marcar como Negócio/Viagem Ativo',
           description: 'Confirma que o pagamento foi recebido e a viagem está ativa.',
@@ -201,7 +368,7 @@ export default function ProposalStatusActions({
         onClick={() => {
           const confirm = window.confirm('Tem certeza que deseja enviar esta proposta? O cliente será notificado por email.');
           if (confirm) {
-            handleStatusChange(ProposalStatus.SENT);
+            handleSend();
           }
         }}
         disabled={loading}
@@ -222,13 +389,19 @@ export default function ProposalStatusActions({
             Duplicar
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem 
-            className={styles.destructiveItem}
-            onClick={() => setShowDeleteDialog(true)}
-          >
-            <Trash2 className={styles.menuIcon} />
-            Excluir
-          </DropdownMenuItem>
+          {renderCancelRefundButton(false)}
+          {(user?.role === 'MASTER' || user?.role === 'DEVELOPER') && (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem 
+                className={styles.destructiveItem}
+                onClick={() => setShowDeleteDialog(true)}
+              >
+                <Trash2 className={styles.menuIcon} />
+                Excluir Definitivamente
+              </DropdownMenuItem>
+            </>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
     </>
@@ -243,7 +416,7 @@ export default function ProposalStatusActions({
         onClick={() => {
           const confirm = window.confirm('Confirma que o cliente aceitou esta proposta? Isso irá mover para "Aguardando Pagamento".');
           if (confirm) {
-            handleStatusChange(ProposalStatus.ACCEPTED);
+            handleApprove();
           }
         }}
         disabled={loading}
@@ -259,7 +432,7 @@ export default function ProposalStatusActions({
         onClick={() => {
           const confirm = window.confirm('Confirma que o cliente recusou esta proposta? Esta ação não pode ser desfeita.');
           if (confirm) {
-            handleStatusChange(ProposalStatus.REJECTED);
+            handleReject();
           }
         }}
         disabled={loading}
@@ -283,6 +456,8 @@ export default function ProposalStatusActions({
             <Copy className={styles.menuIcon} />
             Duplicar
           </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          {renderCancelRefundButton(false)}
           {(user?.role === 'MASTER' || user?.role === 'DEVELOPER') && (
             <>
               <DropdownMenuSeparator />
@@ -339,6 +514,8 @@ export default function ProposalStatusActions({
             <Copy className={styles.menuIcon} />
             Duplicar
           </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          {renderCancelRefundButton(false)}
           {(user?.role === 'MASTER' || user?.role === 'DEVELOPER') && (
             <>
               <DropdownMenuSeparator />
@@ -351,6 +528,54 @@ export default function ProposalStatusActions({
               </DropdownMenuItem>
             </>
           )}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </>
+  );
+
+  const renderContractActions = () => (
+    <>
+      <Button 
+        size="sm" 
+        className={styles.actionButton}
+        onClick={() => {
+          router.push(`/proposals/${proposalId}/contract`);
+        }}
+        disabled={loading}
+      >
+        <FileText className={styles.actionIcon} />
+        Dados do Contrato
+      </Button>
+      
+      <Button 
+        variant="outline"
+        size="sm" 
+        className={styles.actionButton}
+        onClick={() => {
+          const confirm = window.confirm('Confirma que o contrato foi enviado e está aguardando pagamento?');
+          if (confirm) {
+            handleAwaitingPayment();
+          }
+        }}
+        disabled={loading}
+      >
+        <CreditCard className={styles.actionIcon} />
+        Aguardar Pagamento
+      </Button>
+
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="outline" size="sm" disabled={loading}>
+            <MoreHorizontal className={styles.actionIcon} />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem onClick={handleDuplicate}>
+            <Copy className={styles.menuIcon} />
+            Duplicar
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          {renderCancelRefundButton(false)}
         </DropdownMenuContent>
       </DropdownMenu>
     </>
@@ -474,16 +699,20 @@ export default function ProposalStatusActions({
         return renderDraftActions();
       case ProposalStatus.SENT:
         return renderSentActions();
-      case ProposalStatus.ACCEPTED:
+      case ProposalStatus.APPROVED:
         return renderAcceptedActions();
+      case ProposalStatus.CONTRACT:
+        return renderContractActions();
       case ProposalStatus.REJECTED:
         return renderRejectedActions();
       case ProposalStatus.EXPIRED:
         return renderExpiredActions();
       case ProposalStatus.AWAITING_PAYMENT:
         return renderAwaitingPaymentActions();
-      case ProposalStatus.ACTIVE_TRAVEL:
-        return renderActiveTravelActions();
+      case ProposalStatus.ACTIVE_BOOKING:
+        return renderActiveBookingActions();
+      case ProposalStatus.CANCELLED:
+        return renderCancelledActions();
       default:
         return null;
     }
@@ -497,7 +726,7 @@ export default function ProposalStatusActions({
         onClick={() => {
           const confirm = window.confirm('Confirma que o pagamento foi recebido e a viagem está ativa?');
           if (confirm) {
-            handleStatusChange(ProposalStatus.ACTIVE_TRAVEL);
+            handleConfirmPayment();
           }
         }}
         disabled={loading}
@@ -532,6 +761,8 @@ export default function ProposalStatusActions({
             <Copy className={styles.menuIcon} />
             Duplicar
           </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          {renderCancelRefundButton(false)}
           {(user?.role === 'MASTER' || user?.role === 'DEVELOPER') && (
             <>
               <DropdownMenuSeparator />
@@ -549,7 +780,7 @@ export default function ProposalStatusActions({
     </>
   );
 
-  const renderActiveTravelActions = () => (
+  const renderActiveBookingActions = () => (
     <>
       <Button 
         variant="outline" 
@@ -582,6 +813,49 @@ export default function ProposalStatusActions({
           <DropdownMenuItem onClick={handleDuplicate}>
             <Copy className={styles.menuIcon} />
             Duplicar
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          {renderCancelRefundButton(true)}
+          {(user?.role === 'MASTER' || user?.role === 'DEVELOPER') && (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem 
+                className={styles.destructiveItem}
+                onClick={() => setShowDeleteDialog(true)}
+              >
+                <Trash2 className={styles.menuIcon} />
+                Excluir Definitivamente
+              </DropdownMenuItem>
+            </>
+          )}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </>
+  );
+
+  const renderCancelledActions = () => (
+    <>
+      <Button 
+        variant="outline" 
+        size="sm" 
+        className={styles.actionButton}
+        onClick={handleDuplicate}
+        disabled={loading}
+      >
+        <Copy className={styles.actionIcon} />
+        Duplicar
+      </Button>
+      
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="outline" size="sm" disabled={loading}>
+            <MoreHorizontal className={styles.actionIcon} />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem onClick={handleGeneratePDF}>
+            <FileText className={styles.menuIcon} />
+            Gerar PDF
           </DropdownMenuItem>
           {(user?.role === 'MASTER' || user?.role === 'DEVELOPER') && (
             <>

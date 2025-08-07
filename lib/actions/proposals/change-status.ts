@@ -15,11 +15,11 @@ const changeStatusSchema = z.object({
   newStatus: z.enum([
     ProposalStatus.DRAFT,
     ProposalStatus.SENT,
-    ProposalStatus.ACCEPTED,
+    ProposalStatus.APPROVED,
     ProposalStatus.REJECTED,
     ProposalStatus.EXPIRED,
     ProposalStatus.AWAITING_PAYMENT,
-    ProposalStatus.ACTIVE_TRAVEL
+    ProposalStatus.ACTIVE_BOOKING
   ] as const),
   reason: z.string().optional(),
 });
@@ -66,7 +66,7 @@ export const changeProposalStatus = createPermissionAction(
         updateData.sentAt = now;
       }
       
-      if (newStatus === ProposalStatus.ACCEPTED || newStatus === ProposalStatus.REJECTED) {
+      if (newStatus === ProposalStatus.APPROVED || newStatus === ProposalStatus.REJECTED) {
         updateData.decidedAt = now;
       }
       
@@ -74,7 +74,7 @@ export const changeProposalStatus = createPermissionAction(
         updateData.paymentDueAt = now;
       }
       
-      if (newStatus === ProposalStatus.ACTIVE_TRAVEL) {
+      if (newStatus === ProposalStatus.ACTIVE_BOOKING) {
         updateData.activatedAt = now;
       }
 
@@ -176,7 +176,7 @@ async function executeStatusAutomations(
         console.log(`Sending proposal ${proposalId} to client via email`);
         break;
         
-      case ProposalStatus.ACCEPTED:
+      case ProposalStatus.APPROVED:
         // TODO: Create reservation/booking
         // TODO: Move client to next funnel stage
         console.log(`Creating reservation for accepted proposal ${proposalId}`);
@@ -187,7 +187,7 @@ async function executeStatusAutomations(
         console.log(`Setting up payment tracking for proposal ${proposalId}`);
         break;
         
-      case ProposalStatus.ACTIVE_TRAVEL:
+      case ProposalStatus.ACTIVE_BOOKING:
         // ✅ AUTOMATICAMENTE criar reserva quando proposta vira active_travel
         console.log(`Criando reserva automaticamente para proposta ${proposalId}`);
         try {
@@ -221,11 +221,13 @@ function getStatusLabel(status: ProposalStatus): string {
   const labels: Record<ProposalStatus, string> = {
     [ProposalStatus.DRAFT]: 'Rascunho',
     [ProposalStatus.SENT]: 'Enviada',
-    [ProposalStatus.ACCEPTED]: 'Aceita',
+    [ProposalStatus.APPROVED]: 'Aprovada',
+    [ProposalStatus.CONTRACT]: 'Contrato',
     [ProposalStatus.REJECTED]: 'Recusada',
     [ProposalStatus.EXPIRED]: 'Expirada',
     [ProposalStatus.AWAITING_PAYMENT]: 'Aguardando Pagamento',
-    [ProposalStatus.ACTIVE_TRAVEL]: 'Negócio/Viagem Ativo'
+    [ProposalStatus.ACTIVE_BOOKING]: 'Negócio/Viagem Ativo',
+    [ProposalStatus.CANCELLED]: 'Cancelada'
   };
   return labels[status];
 }

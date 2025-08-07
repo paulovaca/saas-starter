@@ -3154,7 +3154,7 @@
         "rejected",
         "expired",
         "awaiting_payment",
-        "active_travel"
+        "ACTIVE_BOOKING"
       ]
     },
     "public.task_priority": {

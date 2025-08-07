@@ -15,20 +15,20 @@ export async function testBookingCreation() {
       throw new Error("Usuário não autenticado");
     }
 
-    // Buscar uma proposta existente com status "active_travel" (Negócio/Viagem Ativo)
+    // Buscar uma proposta existente com status "active_booking" (Negócio/Viagem Ativo)
     const existingProposal = await db
       .select()
       .from(proposals)
       .where(
         and(
           eq(proposals.agencyId, user.agencyId),
-          eq(proposals.status, "active_travel")
+          eq(proposals.status, "active_booking")
         )
       )
       .limit(1);
 
     if (existingProposal.length === 0) {
-      throw new Error("Nenhuma proposta com status 'active_travel' encontrada para teste");
+      throw new Error("Nenhuma proposta com status 'active_booking' encontrada para teste");
     }
 
     const proposal = existingProposal[0];

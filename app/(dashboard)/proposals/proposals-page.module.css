@@ -33,6 +33,29 @@
   font-size: 0.875rem;
 }
 
+/* Loading State */
+.loadingState {
+  text-align: center;
+  padding: 3rem 1rem;
+}
+
+.loadingMessage {
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+}
+
+/* Error State */
+.errorState {
+  text-align: center;
+  padding: 3rem 1rem;
+}
+
+.errorMessage {
+  color: var(--destructive);
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+}
+
 /* Table Container */
 .tableContainer {
   background: var(--card);
@@ -150,9 +173,14 @@
   color: var(--primary);
 }
 
-.statusAccepted {
+.statusApproved {
   background: rgb(from var(--success) r g b / 0.1);
   color: var(--success);
+}
+
+.statusContract {
+  background: rgb(147 51 234 / 0.1);
+  color: rgb(147 51 234);
 }
 
 .statusRejected {
@@ -163,6 +191,21 @@
 .statusExpired {
   background: rgb(from var(--warning) r g b / 0.1);
   color: var(--warning);
+}
+
+.statusAwaitingPayment {
+  background: rgb(251 191 36 / 0.1);
+  color: rgb(217 119 6);
+}
+
+.statusActiveBooking {
+  background: rgb(34 197 94 / 0.1);
+  color: rgb(21 128 61);
+}
+
+.statusCancelled {
+  background: rgb(from var(--destructive) r g b / 0.1);
+  color: var(--destructive);
 }
 
 /* Button Icon */

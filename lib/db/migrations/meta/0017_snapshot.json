@@ -1,6 +1,6 @@
 {
-  "id": "0e7ca5df-2e01-40b7-833e-590928125b67",
-  "prevId": "c5bbd58d-7aeb-4c74-8e5a-528adf30bf7f",
+  "id": "43d8416d-2e10-4dd3-b68b-372081fbe9fb",
+  "prevId": "c5ec5af0-10e5-403d-9281-ff697b7dfc03",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -2499,13 +2499,13 @@
           "name": "operator_product_id",
           "type": "uuid",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "base_item_id": {
           "name": "base_item_id",
           "type": "uuid",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "name": {
           "name": "name",
@@ -2895,6 +2895,18 @@
           "primaryKey": false,
           "notNull": false
         },
+        "approved_at": {
+          "name": "approved_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "contract_at": {
+          "name": "contract_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
         "decided_at": {
           "name": "decided_at",
           "type": "timestamp",
@@ -2913,6 +2925,42 @@
           "primaryKey": false,
           "notNull": false
         },
+        "cancelled_at": {
+          "name": "cancelled_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "contract_data": {
+          "name": "contract_data",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "contract_url": {
+          "name": "contract_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "approval_evidence": {
+          "name": "approval_evidence",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "rejection_reason": {
+          "name": "rejection_reason",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cancellation_reason": {
+          "name": "cancellation_reason",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp",
@@ -2926,6 +2974,12 @@
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {
@@ -3073,7 +3127,7 @@
         },
         "document_type": {
           "name": "document_type",
-          "type": "document_type",
+          "type": "booking_document_type",
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": true
@@ -3441,11 +3495,13 @@
       "values": [
         "draft",
         "sent",
-        "accepted",
+        "approved",
+        "contract",
         "rejected",
         "expired",
         "awaiting_payment",
-        "ACTIVE_BOOKING"
+        "active_booking",
+        "cancelled"
       ]
     },
     "public.task_priority": {
@@ -3465,6 +3521,17 @@
         "in_progress",
         "completed",
         "cancelled"
+      ]
+    },
+    "public.booking_document_type": {
+      "name": "booking_document_type",
+      "schema": "public",
+      "values": [
+        "rg_cpf",
+        "proof_of_residence",
+        "proof_of_income",
+        "signed_contract",
+        "other"
       ]
     },
     "public.booking_status": {

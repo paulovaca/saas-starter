@@ -1,0 +1,32 @@
+/* Container */
+.container {
+  min-height: 100vh;
+  background: var(--background);
+}
+
+/* Header */
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Content */
+.content {
+  padding: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .content {
+    padding: 1rem;
+  }
+  
+  .headerActions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+}

@@ -48,16 +48,22 @@ export async function GET(request: NextRequest) {
 const createProposalSchema = z.object({
   clientId: z.string().uuid('ID do cliente inválido'),
   operatorId: z.string().uuid('ID da operadora inválido'), 
-  validUntil: z.string().datetime('Data de validade inválida').refine((dateString) => {
-    const selectedDate = new Date(dateString);
+  validUntil: z.string().refine((dateString) => {
+    // Check if it's a valid date format (YYYY-MM-DD)
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (!dateRegex.test(dateString)) return false;
+    
+    const selectedDate = new Date(dateString + 'T00:00:00');
+    if (isNaN(selectedDate.getTime())) return false;
+    
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
-    tomorrow.setHours(0, 0, 0, 0); // Reset time to start of day
+    tomorrow.setHours(0, 0, 0, 0);
     selectedDate.setHours(0, 0, 0, 0);
     
     return selectedDate >= tomorrow;
   }, {
-    message: 'A data de validade deve ser a partir de amanhã'
+    message: 'A data de validade deve ser no formato YYYY-MM-DD e a partir de amanhã'
   }),
   items: z.array(z.object({
     operatorId: z.string(),
@@ -133,8 +139,13 @@ export async function POST(request: NextRequest) {
     console.error('Erro ao criar proposta:', error);
     
     if (error instanceof z.ZodError) {
+      const errorMessages = error.errors.map(err => {
+        const field = err.path.join('.');
+        return `${field}: ${err.message}`;
+      }).join('; ');
+      
       return NextResponse.json(
-        { error: 'Dados inválidos', details: error.errors },
+        { error: `Erro de validação: ${errorMessages}`, details: error.errors },
         { status: 400 }
       );
     }

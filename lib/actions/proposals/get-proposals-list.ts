@@ -11,7 +11,7 @@ const getProposalsListSchema = z.object({
   status: z.enum([
     ProposalStatus.DRAFT,
     ProposalStatus.SENT,
-    ProposalStatus.ACCEPTED,
+    ProposalStatus.APPROVED,
     ProposalStatus.REJECTED,
     ProposalStatus.EXPIRED,
     'all'
