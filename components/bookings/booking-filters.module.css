@@ -1,5 +1,5 @@
 /* Booking Filters Component Styles */
-.booking-filters {
+.bookingFilters {
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -8,27 +8,27 @@
   transition: all 0.2s;
 }
 
-.filters-header {
+.filtersHeader {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 1rem;
 }
 
-.filters-title {
+.filtersTitle {
   font-size: 1.125rem;
   font-weight: 600;
   color: var(--foreground);
   margin: 0;
 }
 
-.filters-actions {
+.filtersActions {
   display: flex;
   align-items: center;
   gap: 0.75rem;
 }
 
-.filters-clear {
+.filtersClear {
   background: none;
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -39,13 +39,13 @@
   transition: all 0.2s;
 }
 
-.filters-clear:hover {
+.filtersClear:hover {
   background: var(--destructive);
   color: var(--destructive-foreground);
   border-color: var(--destructive);
 }
 
-.filters-toggle {
+.filtersToggle {
   background: var(--primary);
   border: 1px solid var(--primary);
   border-radius: var(--radius);
@@ -57,12 +57,12 @@
   transition: all 0.2s;
 }
 
-.filters-toggle:hover {
+.filtersToggle:hover {
   background: rgb(29 78 216);
   border-color: rgb(29 78 216);
 }
 
-.filters-grid {
+.filtersGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 1.5rem;
@@ -72,21 +72,21 @@
   animation: slideDown 0.3s ease-out;
 }
 
-.filter-group {
+.filterGroup {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
-.filter-label {
+.filterLabel {
   font-size: 0.875rem;
   font-weight: 500;
   color: var(--foreground);
   margin: 0;
 }
 
-.filter-input,
-.filter-select {
+.filterInput,
+.filterSelect {
   padding: 0.75rem;
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -97,64 +97,64 @@
   outline: none;
 }
 
-.filter-input:focus,
-.filter-select:focus {
+.filterInput:focus,
+.filterSelect:focus {
   border-color: var(--primary);
   box-shadow: 0 0 0 2px var(--ring);
 }
 
-.filter-input::placeholder {
+.filterInput::placeholder {
   color: var(--muted-foreground);
 }
 
-.filter-select {
+.filterSelect {
   cursor: pointer;
 }
 
-.filter-select option {
+.filterSelect option {
   background: var(--background);
   color: var(--foreground);
 }
 
 /* Dark theme adjustments */
-.dark .filter-input,
-.dark .filter-select {
+.dark .filterInput,
+.dark .filterSelect {
   color-scheme: dark;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .filters-header {
+  .filtersHeader {
     flex-direction: column;
     gap: 1rem;
     align-items: flex-start;
   }
   
-  .filters-actions {
+  .filtersActions {
     width: 100%;
     justify-content: flex-end;
   }
   
-  .filters-grid {
+  .filtersGrid {
     grid-template-columns: 1fr;
     gap: 1rem;
   }
   
-  .filters-clear,
-  .filters-toggle {
+  .filtersClear,
+  .filtersToggle {
     font-size: 0.75rem;
     padding: 0.5rem 0.75rem;
   }
 }
 
 @media (max-width: 480px) {
-  .filters-actions {
+  .filtersActions {
     flex-direction: column;
     width: 100%;
   }
   
-  .filters-clear,
-  .filters-toggle {
+  .filtersClear,
+  .filtersToggle {
     width: 100%;
     text-align: center;
   }

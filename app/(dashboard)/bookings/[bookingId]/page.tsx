@@ -7,7 +7,7 @@ import { BookingTimeline } from "@/components/bookings/booking-timeline";
 import { BookingDocuments } from "@/components/bookings/documents/booking-documents";
 import { BookingStatusChanger } from "@/components/bookings/status/booking-status-changer";
 import { BookingNotes } from "@/components/bookings/booking-notes";
-import "./booking-details.css";
+import styles from "./booking-details.module.css";
 
 // Force dynamic rendering as this page uses authentication
 export const dynamic = 'force-dynamic';
@@ -35,28 +35,28 @@ export default async function BookingDetailsPage({ params }: BookingDetailsPageP
     }
 
     return (
-      <div className="booking-details-page">
-        <Suspense fallback={<div className="loading-header">Carregando...</div>}>
+      <div className={styles.bookingDetailsPage}>
+        <Suspense fallback={<div className={styles.loadingHeader}>Carregando...</div>}>
           <BookingHeader booking={booking} user={user} />
         </Suspense>
 
-        <div className="booking-details-content">
-          <div className="booking-main-column">
-            <Suspense fallback={<div className="loading-section">Carregando timeline...</div>}>
+        <div className={styles.bookingDetailsContent}>
+          <div className={styles.bookingMainColumn}>
+            <Suspense fallback={<div className={styles.loadingSection}>Carregando timeline...</div>}>
               <BookingTimeline bookingId={bookingId} />
             </Suspense>
 
-            <Suspense fallback={<div className="loading-section">Carregando documentos...</div>}>
+            <Suspense fallback={<div className={styles.loadingSection}>Carregando documentos...</div>}>
               <BookingDocuments bookingId={bookingId} user={user} />
             </Suspense>
           </div>
 
-          <div className="booking-sidebar">
-            <Suspense fallback={<div className="loading-section">Carregando status...</div>}>
+          <div className={styles.bookingSidebar}>
+            <Suspense fallback={<div className={styles.loadingSection}>Carregando status...</div>}>
               <BookingStatusChanger booking={booking} user={user} />
             </Suspense>
 
-            <Suspense fallback={<div className="loading-section">Carregando anotações...</div>}>
+            <Suspense fallback={<div className={styles.loadingSection}>Carregando anotações...</div>}>
               <BookingNotes bookingId={bookingId} user={user} />
             </Suspense>
           </div>

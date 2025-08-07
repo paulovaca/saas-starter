@@ -1,7 +1,7 @@
 import { getBookingTimeline } from "@/lib/actions/bookings/get-booking-timeline";
 import { formatDate } from "@/lib/actions/bookings/utils";
 import { TIMELINE_EVENT_LABELS } from "@/lib/types/booking-status";
-import "./booking-timeline.css";
+import styles from "./booking-timeline.module.css";
 
 interface BookingTimelineProps {
   bookingId: string;
@@ -12,25 +12,25 @@ export async function BookingTimeline({ bookingId }: BookingTimelineProps) {
     const timelineEvents = await getBookingTimeline(bookingId);
 
     return (
-      <div className="booking-card">
-        <div className="card-header">
-          <h3 className="card-title">Timeline de Eventos</h3>
-          <span className="timeline-count">{timelineEvents.length} eventos</span>
+      <div className={styles.bookingCard}>
+        <div className={styles.cardHeader}>
+          <h3 className={styles.cardTitle}>Timeline de Eventos</h3>
+          <span className={styles.timelineCount}>{timelineEvents.length} eventos</span>
         </div>
         
-        <div className="card-content">
+        <div className={styles.cardContent}>
           {timelineEvents.length === 0 ? (
-            <div className="empty-state-small">
-              <svg className="empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className={styles.emptyStateSmall}>
+              <svg className={styles.emptyIcon} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <p className="empty-title">Nenhum evento registrado</p>
+              <p className={styles.emptyTitle}>Nenhum evento registrado</p>
             </div>
           ) : (
-            <div className="timeline-list">
+            <div className={styles.timelineList}>
               {timelineEvents.map((event) => (
-                <div key={event.id} className="timeline-item">
-                  <div className="timeline-icon">
+                <div key={event.id} className={styles.timelineItem}>
+                  <div className={styles.timelineIcon}>
                     <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
                       {event.eventType === "created" && (
                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
@@ -47,12 +47,12 @@ export async function BookingTimeline({ bookingId }: BookingTimelineProps) {
                     </svg>
                   </div>
                   
-                  <div className="timeline-content">
-                    <p className="timeline-description">{event.description}</p>
-                    <div className="timeline-meta">
-                      <span className="timeline-date">{formatDate(event.createdAt)}</span>
-                      <span className="timeline-user">por {event.userName || "Sistema"}</span>
-                      <span className="timeline-type">{TIMELINE_EVENT_LABELS[event.eventType]}</span>
+                  <div className={styles.timelineContent}>
+                    <p className={styles.timelineDescription}>{event.description}</p>
+                    <div className={styles.timelineMeta}>
+                      <span className={styles.timelineDate}>{formatDate(event.createdAt)}</span>
+                      <span className={styles.timelineUser}>por {event.userName || "Sistema"}</span>
+                      <span className={styles.timelineType}>{TIMELINE_EVENT_LABELS[event.eventType]}</span>
                     </div>
                   </div>
                 </div>
@@ -66,17 +66,17 @@ export async function BookingTimeline({ bookingId }: BookingTimelineProps) {
     console.error("Erro ao carregar timeline:", error);
     
     return (
-      <div className="booking-card">
-        <div className="card-header">
-          <h3 className="card-title">Timeline de Eventos</h3>
+      <div className={styles.bookingCard}>
+        <div className={styles.cardHeader}>
+          <h3 className={styles.cardTitle}>Timeline de Eventos</h3>
         </div>
         
-        <div className="card-content">
-          <div className="error-state">
-            <svg className="error-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className={styles.cardContent}>
+          <div className={styles.errorState}>
+            <svg className={styles.errorIcon} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <p className="error-title">Erro ao carregar timeline</p>
+            <p className={styles.errorTitle}>Erro ao carregar timeline</p>
           </div>
         </div>
       </div>

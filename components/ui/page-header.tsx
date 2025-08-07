@@ -1,4 +1,4 @@
-import "./page-header.css";
+import styles from "./page-header.module.css";
 
 interface PageHeaderProps {
   title: string;
@@ -8,17 +8,17 @@ interface PageHeaderProps {
 
 export function PageHeader({ title, description, children }: PageHeaderProps) {
   return (
-    <div className="page-header">
-      <div className="page-header-content">
-        <div className="page-header-text">
-          <h1 className="page-title">{title}</h1>
+    <div className={styles.pageHeader}>
+      <div className={styles.pageHeaderContent}>
+        <div className={styles.pageHeaderText}>
+          <h1 className={styles.pageTitle}>{title}</h1>
           {description && (
-            <p className="page-description">{description}</p>
+            <p className={styles.pageDescription}>{description}</p>
           )}
         </div>
         
         {children && (
-          <div className="page-header-actions">
+          <div className={styles.pageHeaderActions}>
             {children}
           </div>
         )}

@@ -1,0 +1,161 @@
+/* Booking Status Changer Component Styles */
+
+/* Shared booking card styles */
+.bookingCard {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 1.5rem;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--muted);
+}
+
+.cardTitle {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--foreground);
+  margin: 0;
+}
+
+.cardContent {
+  padding: 1.5rem;
+}
+
+/* Status changer specific styles */
+.statusChangerForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.formLabel {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--foreground);
+  margin: 0;
+}
+
+.formSelect {
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--background);
+  color: var(--foreground);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  outline: none;
+}
+
+.formSelect:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px var(--ring);
+}
+
+.formSelect option {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.formTextarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--background);
+  color: var(--foreground);
+  font-size: 0.875rem;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 100px;
+  transition: all 0.2s;
+  outline: none;
+}
+
+.formTextarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px var(--ring);
+}
+
+.formTextarea::placeholder {
+  color: var(--muted-foreground);
+}
+
+.formButton {
+  background: var(--primary);
+  border: 1px solid var(--primary);
+  border-radius: var(--radius);
+  padding: 0.75rem 1.5rem;
+  color: var(--primary-foreground);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  align-self: flex-start;
+}
+
+.formButton:hover {
+  background: rgb(29 78 216);
+  border-color: rgb(29 78 216);
+}
+
+/* Empty state styles */
+.emptyStateSmall {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+  text-align: center;
+}
+
+.emptyTitle {
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin: 0;
+  color: var(--muted-foreground);
+}
+
+/* Dark theme adjustments */
+.dark .formSelect,
+.dark .formTextarea {
+  color-scheme: dark;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .cardHeader {
+    padding: 1rem;
+  }
+  
+  .cardContent {
+    padding: 1rem;
+  }
+  
+  .statusChangerForm {
+    gap: 1rem;
+  }
+  
+  .formTextarea {
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+  
+  .formButton {
+    align-self: stretch;
+  }
+}

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { formatDate } from "@/lib/actions/bookings/utils";
 import { BOOKING_STATUS_LABELS, BOOKING_STATUS_COLORS } from "@/lib/types/booking-status";
 import type { CurrentUser } from "@/lib/types/auth";
-import "./booking-header.css";
+import styles from "./booking-header.module.css";
 
 interface BookingHeaderProps {
   booking: {
@@ -34,69 +34,69 @@ export function BookingHeader({ booking, user }: BookingHeaderProps) {
   };
 
   return (
-    <div className="booking-header">
-      <div className="header-top">
-        <div className="header-info">
-          <h1 className="booking-title">Reserva {booking.bookingNumber}</h1>
-          <p className="booking-subtitle">
+    <div className={styles.bookingHeader}>
+      <div className={styles.headerTop}>
+        <div className={styles.headerInfo}>
+          <h1 className={styles.bookingTitle}>Reserva {booking.bookingNumber}</h1>
+          <p className={styles.bookingSubtitle}>
             {booking.proposalNumber && `Proposta: ${booking.proposalNumber} • `}
             Criada em {formatDate(booking.createdAt)}
           </p>
         </div>
         
-        <div className="header-actions">
-          <Link href="/bookings" className="back-button">
+        <div className={styles.headerActions}>
+          <Link href="/bookings" className={styles.backButton}>
             <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
             Voltar
           </Link>
           
-          <div className={`status-badge status-${BOOKING_STATUS_COLORS[booking.status as keyof typeof BOOKING_STATUS_COLORS]}`}>
+          <div className={`${styles.statusBadge} ${styles[`status${BOOKING_STATUS_COLORS[booking.status as keyof typeof BOOKING_STATUS_COLORS].charAt(0).toUpperCase() + BOOKING_STATUS_COLORS[booking.status as keyof typeof BOOKING_STATUS_COLORS].slice(1)}`]}`}>
             {BOOKING_STATUS_LABELS[booking.status as keyof typeof BOOKING_STATUS_LABELS]}
           </div>
         </div>
       </div>
       
-      <div className="header-grid">
-        <div className="info-group">
-          <span className="info-label">Cliente</span>
-          <div className="info-value">
+      <div className={styles.headerGrid}>
+        <div className={styles.infoGroup}>
+          <span className={styles.infoLabel}>Cliente</span>
+          <div className={styles.infoValue}>
             {booking.clientName || "Nome não informado"}
             {booking.clientEmail && (
-              <div className="info-secondary">{booking.clientEmail}</div>
+              <div className={styles.infoSecondary}>{booking.clientEmail}</div>
             )}
             {booking.clientPhone && (
-              <div className="info-secondary">{booking.clientPhone}</div>
+              <div className={styles.infoSecondary}>{booking.clientPhone}</div>
             )}
           </div>
         </div>
         
-        <div className="info-group">
-          <span className="info-label">Operadora</span>
-          <div className="info-value">
+        <div className={styles.infoGroup}>
+          <span className={styles.infoLabel}>Operadora</span>
+          <div className={styles.infoValue}>
             {booking.operatorName || "Não informada"}
           </div>
         </div>
         
-        <div className="info-group">
-          <span className="info-label">Agente Responsável</span>
-          <div className="info-value">
+        <div className={styles.infoGroup}>
+          <span className={styles.infoLabel}>Agente Responsável</span>
+          <div className={styles.infoValue}>
             {booking.agentName || "Não atribuído"}
           </div>
         </div>
         
-        <div className="info-group">
-          <span className="info-label">Valor Total</span>
-          <div className="info-value info-value-large">
+        <div className={styles.infoGroup}>
+          <span className={styles.infoLabel}>Valor Total</span>
+          <div className={`${styles.infoValue} ${styles.infoValueLarge}`}>
             {formatCurrency(booking.totalAmount)}
           </div>
         </div>
         
         {booking.paymentMethod && (
-          <div className="info-group">
-            <span className="info-label">Forma de Pagamento</span>
-            <div className="info-value">
+          <div className={styles.infoGroup}>
+            <span className={styles.infoLabel}>Forma de Pagamento</span>
+            <div className={styles.infoValue}>
               {booking.paymentMethod}
             </div>
           </div>
@@ -104,9 +104,9 @@ export function BookingHeader({ booking, user }: BookingHeaderProps) {
       </div>
       
       {booking.notes && (
-        <div className="header-notes">
-          <span className="info-label">Observações da Proposta</span>
-          <div className="notes-content">
+        <div className={styles.headerNotes}>
+          <span className={styles.infoLabel}>Observações da Proposta</span>
+          <div className={styles.notesContent}>
             {booking.notes}
           </div>
         </div>

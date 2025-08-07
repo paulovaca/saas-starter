@@ -1,5 +1,6 @@
 import { BOOKING_STATUS_LABELS, getAvailableStatusTransitions } from "@/lib/types/booking-status";
 import type { CurrentUser } from "@/lib/types/auth";
+import styles from "./booking-status-changer.module.css";
 
 interface BookingStatusChangerProps {
   booking: {
@@ -13,21 +14,21 @@ export async function BookingStatusChanger({ booking, user }: BookingStatusChang
   const availableTransitions = getAvailableStatusTransitions(booking.status as any);
 
   return (
-    <div className="booking-card">
-      <div className="card-header">
-        <h3 className="card-title">Alterar Status</h3>
+    <div className={styles.bookingCard}>
+      <div className={styles.cardHeader}>
+        <h3 className={styles.cardTitle}>Alterar Status</h3>
       </div>
       
-      <div className="card-content">
+      <div className={styles.cardContent}>
         {availableTransitions.length === 0 ? (
-          <div className="empty-state-small">
-            <p className="empty-title">Status final - não pode ser alterado</p>
+          <div className={styles.emptyStateSmall}>
+            <p className={styles.emptyTitle}>Status final - não pode ser alterado</p>
           </div>
         ) : (
-          <form className="status-changer-form">
-            <div className="form-group">
-              <label className="form-label">Novo Status</label>
-              <select className="form-select" required>
+          <form className={styles.statusChangerForm}>
+            <div className={styles.formGroup}>
+              <label className={styles.formLabel}>Novo Status</label>
+              <select className={styles.formSelect} required>
                 <option value="">Selecione um status</option>
                 {availableTransitions.map((status) => (
                   <option key={status} value={status}>
@@ -37,16 +38,16 @@ export async function BookingStatusChanger({ booking, user }: BookingStatusChang
               </select>
             </div>
             
-            <div className="form-group">
-              <label className="form-label">Justificativa</label>
+            <div className={styles.formGroup}>
+              <label className={styles.formLabel}>Justificativa</label>
               <textarea 
-                className="form-textarea" 
+                className={styles.formTextarea} 
                 placeholder="Descreva o motivo da mudança..."
                 required
               />
             </div>
             
-            <button type="submit" className="form-button">
+            <button type="submit" className={styles.formButton}>
               Alterar Status
             </button>
           </form>

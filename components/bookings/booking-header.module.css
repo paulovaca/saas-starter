@@ -1,5 +1,5 @@
 /* Booking Header Component Styles */
-.booking-header {
+.bookingHeader {
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -9,7 +9,7 @@
   box-shadow: var(--shadow-sm);
 }
 
-.header-top {
+.headerTop {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -18,12 +18,12 @@
   border-bottom: 1px solid var(--border);
 }
 
-.header-info {
+.headerInfo {
   flex: 1;
   min-width: 0;
 }
 
-.booking-title {
+.bookingTitle {
   font-size: 1.75rem;
   font-weight: 700;
   color: var(--foreground);
@@ -31,21 +31,21 @@
   line-height: 1.2;
 }
 
-.booking-subtitle {
+.bookingSubtitle {
   font-size: 1rem;
   color: var(--muted-foreground);
   margin: 0;
   line-height: 1.4;
 }
 
-.header-actions {
+.headerActions {
   display: flex;
   align-items: center;
   gap: 1rem;
   flex-shrink: 0;
 }
 
-.back-button {
+.backButton {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
@@ -60,19 +60,19 @@
   transition: all 0.2s ease;
 }
 
-.back-button:hover {
+.backButton:hover {
   background: var(--accent);
   border-color: var(--primary);
   text-decoration: none;
 }
 
-.back-button svg {
+.backButton svg {
   width: 1rem;
   height: 1rem;
 }
 
 /* Status Badge - reusing from booking-list */
-.status-badge {
+.statusBadge {
   display: inline-flex;
   align-items: center;
   padding: 0.5rem 1rem;
@@ -84,92 +84,92 @@
   white-space: nowrap;
 }
 
-.status-orange {
+.statusOrange {
   background: var(--orange-100);
   color: var(--orange-600);
 }
 
-.status-blue {
+.statusBlue {
   background: rgb(219 234 254);
   color: rgb(29 78 216);
 }
 
-.status-green {
+.statusGreen {
   background: rgb(220 252 231);
   color: rgb(22 101 52);
 }
 
-.status-purple {
+.statusPurple {
   background: rgb(233 213 255);
   color: rgb(124 58 237);
 }
 
-.status-teal {
+.statusTeal {
   background: rgb(204 251 241);
   color: rgb(13 148 136);
 }
 
-.status-red {
+.statusRed {
   background: rgb(254 226 226);
   color: rgb(185 28 28);
 }
 
-.status-gray {
+.statusGray {
   background: rgb(229 231 235);
   color: rgb(75 85 99);
 }
 
 /* Dark theme status badges */
-.dark .status-orange {
+.dark .statusOrange {
   background: rgb(120 53 15);
   color: rgb(251 191 36);
 }
 
-.dark .status-blue {
+.dark .statusBlue {
   background: rgb(30 58 138);
   color: rgb(147 197 253);
 }
 
-.dark .status-green {
+.dark .statusGreen {
   background: rgb(20 83 45);
   color: rgb(34 197 94);
 }
 
-.dark .status-purple {
+.dark .statusPurple {
   background: rgb(76 29 149);
   color: rgb(196 181 253);
 }
 
-.dark .status-teal {
+.dark .statusTeal {
   background: rgb(19 78 74);
   color: rgb(94 234 212);
 }
 
-.dark .status-red {
+.dark .statusRed {
   background: rgb(127 29 29);
   color: rgb(248 113 113);
 }
 
-.dark .status-gray {
+.dark .statusGray {
   background: rgb(55 65 81);
   color: rgb(156 163 175);
 }
 
 /* Info Grid */
-.header-grid {
+.headerGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 2rem;
   margin-bottom: 1.5rem;
 }
 
-.info-group {
+.infoGroup {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
-.info-label {
+.infoLabel {
   font-size: 0.75rem;
   font-weight: 600;
   color: var(--muted-foreground);
@@ -177,20 +177,20 @@
   letter-spacing: 0.05em;
 }
 
-.info-value {
+.infoValue {
   font-size: 1rem;
   font-weight: 600;
   color: var(--foreground);
   line-height: 1.4;
 }
 
-.info-value-large {
+.infoValueLarge {
   font-size: 1.5rem;
   color: var(--success);
   font-weight: 700;
 }
 
-.info-secondary {
+.infoSecondary {
   font-size: 0.875rem;
   font-weight: 400;
   color: var(--muted-foreground);
@@ -198,13 +198,13 @@
 }
 
 /* Notes Section */
-.header-notes {
+.headerNotes {
   margin-top: 1.5rem;
   padding-top: 1.5rem;
   border-top: 1px solid var(--border);
 }
 
-.notes-content {
+.notesContent {
   background: var(--muted);
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -218,81 +218,81 @@
 
 /* Responsive Design */
 @media (max-width: 1024px) {
-  .booking-header {
+  .bookingHeader {
     margin: 1.5rem auto;
   }
 }
 
 @media (max-width: 768px) {
-  .booking-header {
+  .bookingHeader {
     padding: 1.5rem;
     margin: 1rem;
   }
   
-  .header-top {
+  .headerTop {
     flex-direction: column;
     gap: 1.5rem;
     align-items: flex-start;
   }
   
-  .header-actions {
+  .headerActions {
     width: 100%;
     justify-content: space-between;
   }
   
-  .booking-title {
+  .bookingTitle {
     font-size: 1.5rem;
   }
   
-  .header-grid {
+  .headerGrid {
     grid-template-columns: 1fr;
     gap: 1.5rem;
   }
   
-  .back-button {
+  .backButton {
     flex: 1;
     justify-content: center;
   }
 }
 
 @media (max-width: 640px) {
-  .booking-header {
+  .bookingHeader {
     padding: 1rem;
   }
   
-  .header-top {
+  .headerTop {
     margin-bottom: 1.5rem;
     padding-bottom: 1rem;
   }
   
-  .booking-title {
+  .bookingTitle {
     font-size: 1.25rem;
   }
   
-  .booking-subtitle {
+  .bookingSubtitle {
     font-size: 0.875rem;
   }
   
-  .header-actions {
+  .headerActions {
     flex-direction: column;
     gap: 0.75rem;
   }
   
-  .back-button {
+  .backButton {
     font-size: 0.75rem;
     padding: 0.5rem 0.75rem;
   }
   
-  .status-badge {
+  .statusBadge {
     align-self: stretch;
     justify-content: center;
   }
   
-  .header-grid {
+  .headerGrid {
     gap: 1rem;
   }
   
-  .info-value-large {
+  .infoValueLarge {
     font-size: 1.25rem;
   }
 }

@@ -1,11 +1,11 @@
 /* Page Header Component Styles */
-.page-header {
+.pageHeader {
   background: var(--card);
   border-bottom: 1px solid var(--border);
   padding: 2rem 0;
 }
 
-.page-header-content {
+.pageHeaderContent {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 1rem;
@@ -15,12 +15,12 @@
   gap: 2rem;
 }
 
-.page-header-text {
+.pageHeaderText {
   flex: 1;
   min-width: 0;
 }
 
-.page-title {
+.pageTitle {
   font-size: 1.875rem;
   font-weight: 700;
   color: var(--foreground);
@@ -28,7 +28,7 @@
   line-height: 1.2;
 }
 
-.page-description {
+.pageDescription {
   font-size: 1rem;
   color: var(--muted-foreground);
   margin: 0;
@@ -36,7 +36,7 @@
   max-width: 600px;
 }
 
-.page-header-actions {
+.pageHeaderActions {
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -45,45 +45,45 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .page-header {
+  .pageHeader {
     padding: 1.5rem 0;
   }
   
-  .page-header-content {
+  .pageHeaderContent {
     flex-direction: column;
     align-items: flex-start;
     gap: 1.5rem;
   }
   
-  .page-title {
+  .pageTitle {
     font-size: 1.5rem;
   }
   
-  .page-description {
+  .pageDescription {
     font-size: 0.875rem;
   }
   
-  .page-header-actions {
+  .pageHeaderActions {
     width: 100%;
     justify-content: flex-end;
   }
 }
 
 @media (max-width: 640px) {
-  .page-header {
+  .pageHeader {
     padding: 1rem 0;
   }
   
-  .page-header-content {
+  .pageHeaderContent {
     padding: 0 1rem;
     gap: 1rem;
   }
   
-  .page-title {
+  .pageTitle {
     font-size: 1.25rem;
   }
   
-  .page-header-actions {
+  .pageHeaderActions {
     flex-direction: column;
     align-items: stretch;
   }

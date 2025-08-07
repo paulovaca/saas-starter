@@ -1,5 +1,5 @@
 /* Bookings List Component Styles */
-.bookings-list {
+.bookingsList {
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -7,7 +7,7 @@
   box-shadow: var(--shadow-sm);
 }
 
-.list-header {
+.listHeader {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -16,35 +16,35 @@
   background: var(--muted);
 }
 
-.list-title {
+.listTitle {
   font-size: 1.125rem;
   font-weight: 600;
   color: var(--foreground);
   margin: 0;
 }
 
-.list-count {
+.listCount {
   font-size: 0.875rem;
   color: var(--muted-foreground);
   font-weight: 500;
 }
 
 /* Table Container */
-.table-container {
+.tableContainer {
   overflow-x: auto;
 }
 
-.bookings-table {
+.bookingsTable {
   width: 100%;
   border-collapse: collapse;
   background: var(--background);
 }
 
-.table-header {
+.tableHeader {
   background: var(--muted);
 }
 
-.table-header th {
+.tableHeader th {
   padding: 1rem;
   text-align: left;
   font-weight: 600;
@@ -54,20 +54,20 @@
   white-space: nowrap;
 }
 
-.table-row {
+.tableRow {
   border-bottom: 1px solid var(--border);
   transition: background-color 0.2s ease;
 }
 
-.table-row:hover {
+.tableRow:hover {
   background: var(--accent);
 }
 
-.table-row:last-child {
+.tableRow:last-child {
   border-bottom: none;
 }
 
-.table-cell {
+.tableCell {
   padding: 1rem;
   font-size: 0.875rem;
   color: var(--foreground);
@@ -75,36 +75,36 @@
 }
 
 /* Booking Number */
-.booking-number {
+.bookingNumber {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
 }
 
-.booking-number strong {
+.bookingNumber strong {
   font-weight: 600;
   color: var(--primary);
 }
 
-.proposal-ref {
+.proposalRef {
   font-size: 0.75rem;
   color: var(--muted-foreground);
 }
 
 /* Client Info */
-.client-info {
+.clientInfo {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
 }
 
-.client-email {
+.clientEmail {
   font-size: 0.75rem;
   color: var(--muted-foreground);
 }
 
 /* Status Badge */
-.status-badge {
+.statusBadge {
   display: inline-flex;
   align-items: center;
   padding: 0.25rem 0.75rem;
@@ -116,73 +116,73 @@
   white-space: nowrap;
 }
 
-.status-orange {
+.statusOrange {
   background: var(--orange-100);
   color: var(--orange-600);
 }
 
-.status-blue {
+.statusBlue {
   background: rgb(219 234 254);
   color: rgb(29 78 216);
 }
 
-.status-green {
+.statusGreen {
   background: rgb(220 252 231);
   color: rgb(22 101 52);
 }
 
-.status-purple {
+.statusPurple {
   background: rgb(233 213 255);
   color: rgb(124 58 237);
 }
 
-.status-teal {
+.statusTeal {
   background: rgb(204 251 241);
   color: rgb(13 148 136);
 }
 
-.status-red {
+.statusRed {
   background: rgb(254 226 226);
   color: rgb(185 28 28);
 }
 
-.status-gray {
+.statusGray {
   background: rgb(229 231 235);
   color: rgb(75 85 99);
 }
 
 /* Dark theme status badges */
-.dark .status-orange {
+.dark .statusOrange {
   background: rgb(120 53 15);
   color: rgb(251 191 36);
 }
 
-.dark .status-blue {
+.dark .statusBlue {
   background: rgb(30 58 138);
   color: rgb(147 197 253);
 }
 
-.dark .status-green {
+.dark .statusGreen {
   background: rgb(20 83 45);
   color: rgb(34 197 94);
 }
 
-.dark .status-purple {
+.dark .statusPurple {
   background: rgb(76 29 149);
   color: rgb(196 181 253);
 }
 
-.dark .status-teal {
+.dark .statusTeal {
   background: rgb(19 78 74);
   color: rgb(94 234 212);
 }
 
-.dark .status-red {
+.dark .statusRed {
   background: rgb(127 29 29);
   color: rgb(248 113 113);
 }
 
-.dark .status-gray {
+.dark .statusGray {
   background: rgb(55 65 81);
   color: rgb(156 163 175);
 }
@@ -193,18 +193,18 @@
   color: var(--success);
 }
 
-.amount-na {
+.amountNa {
   color: var(--muted-foreground);
 }
 
 /* Date Info */
-.date-info {
+.dateInfo {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
 }
 
-.created-by {
+.createdBy {
   font-size: 0.75rem;
   color: var(--muted-foreground);
 }
@@ -216,7 +216,7 @@
   gap: 0.5rem;
 }
 
-.action-button {
+.actionButton {
   display: inline-flex;
   align-items: center;
   padding: 0.5rem 1rem;
@@ -231,25 +231,25 @@
   white-space: nowrap;
 }
 
-.action-button:hover {
+.actionButton:hover {
   background: var(--accent);
   border-color: var(--primary);
   text-decoration: none;
 }
 
-.action-button-primary {
+.actionButtonPrimary {
   background: var(--primary);
   color: var(--primary-foreground);
   border-color: var(--primary);
 }
 
-.action-button-primary:hover {
+.actionButtonPrimary:hover {
   background: rgb(29 78 216);
   border-color: rgb(29 78 216);
 }
 
 /* Empty State */
-.empty-state {
+.emptyState {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -258,7 +258,7 @@
   text-align: center;
 }
 
-.empty-state-icon {
+.emptyStateIcon {
   width: 4rem;
   height: 4rem;
   margin-bottom: 1rem;
@@ -266,14 +266,14 @@
   opacity: 0.5;
 }
 
-.empty-state-title {
+.emptyStateTitle {
   font-size: 1.125rem;
   font-weight: 600;
   margin: 0 0 0.5rem 0;
   color: var(--foreground);
 }
 
-.empty-state-description {
+.emptyStateDescription {
   font-size: 0.875rem;
   max-width: 400px;
   color: var(--muted-foreground);
@@ -282,7 +282,7 @@
 }
 
 /* Error State */
-.error-state {
+.errorState {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -291,7 +291,7 @@
   text-align: center;
 }
 
-.error-icon {
+.errorIcon {
   width: 4rem;
   height: 4rem;
   margin-bottom: 1rem;
@@ -299,14 +299,14 @@
   opacity: 0.7;
 }
 
-.error-title {
+.errorTitle {
   font-size: 1.125rem;
   font-weight: 600;
   margin: 0 0 0.5rem 0;
   color: var(--destructive);
 }
 
-.error-description {
+.errorDescription {
   font-size: 0.875rem;
   max-width: 400px;
   color: var(--muted-foreground);
@@ -325,7 +325,7 @@
   background: var(--muted);
 }
 
-.pagination-button {
+.paginationButton {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -341,19 +341,19 @@
   transition: all 0.2s ease;
 }
 
-.pagination-button:hover {
+.paginationButton:hover {
   background: var(--accent);
   border-color: var(--primary);
   text-decoration: none;
 }
 
-.pagination-button.active {
+.paginationButton.active {
   background: var(--primary);
   color: var(--primary-foreground);
   border-color: var(--primary);
 }
 
-.pagination-ellipsis {
+.paginationEllipsis {
   display: flex;
   align-items: center;
   padding: 0 0.5rem;
@@ -363,13 +363,13 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .list-header {
+  .listHeader {
     flex-direction: column;
     gap: 1rem;
     align-items: flex-start;
   }
   
-  .table-cell {
+  .tableCell {
     padding: 0.75rem 0.5rem;
   }
   
@@ -377,35 +377,35 @@
     flex-direction: column;
   }
   
-  .action-button {
+  .actionButton {
     font-size: 0.75rem;
     padding: 0.5rem 0.75rem;
   }
   
-  .booking-number,
-  .client-info,
-  .date-info {
+  .bookingNumber,
+  .clientInfo,
+  .dateInfo {
     gap: 0.125rem;
   }
   
-  .proposal-ref,
-  .client-email,
-  .created-by {
+  .proposalRef,
+  .clientEmail,
+  .createdBy {
     font-size: 0.625rem;
   }
 }
 
 @media (max-width: 640px) {
-  .table-container {
+  .tableContainer {
     font-size: 0.75rem;
   }
   
-  .table-header th,
-  .table-cell {
+  .tableHeader th,
+  .tableCell {
     padding: 0.5rem 0.25rem;
   }
   
-  .status-badge {
+  .statusBadge {
     font-size: 0.625rem;
     padding: 0.125rem 0.5rem;
   }
@@ -415,7 +415,7 @@
     gap: 0.25rem;
   }
   
-  .pagination-button {
+  .paginationButton {
     min-width: 2rem;
     height: 2rem;
     font-size: 0.75rem;

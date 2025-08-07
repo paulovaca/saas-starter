@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { BOOKING_STATUS, BOOKING_STATUS_LABELS } from "@/lib/types/booking-status";
-import "./booking-filters.css";
+import styles from "./booking-filters.module.css";
 
 interface BookingFiltersProps {
   searchParams: {
@@ -47,15 +47,15 @@ export function BookingFilters({ searchParams }: BookingFiltersProps) {
   );
 
   return (
-    <div className="booking-filters">
-      <div className="filters-header">
-        <h3 className="filters-title">Filtros</h3>
-        <div className="filters-actions">
+    <div className={styles.bookingFilters}>
+      <div className={styles.filtersHeader}>
+        <h3 className={styles.filtersTitle}>Filtros</h3>
+        <div className={styles.filtersActions}>
           {hasActiveFilters && (
             <button
               type="button"
               onClick={clearFilters}
-              className="filters-clear"
+              className={styles.filtersClear}
             >
               Limpar Filtros
             </button>
@@ -63,7 +63,7 @@ export function BookingFilters({ searchParams }: BookingFiltersProps) {
           <button
             type="button"
             onClick={() => setShowFilters(!showFilters)}
-            className="filters-toggle"
+            className={styles.filtersToggle}
           >
             {showFilters ? "Ocultar" : "Mostrar"} Filtros
           </button>
@@ -71,22 +71,22 @@ export function BookingFilters({ searchParams }: BookingFiltersProps) {
       </div>
       
       {showFilters && (
-        <div className="filters-grid">
-          <div className="filter-group">
-            <label className="filter-label">Busca</label>
+        <div className={styles.filtersGrid}>
+          <div className={styles.filterGroup}>
+            <label className={styles.filterLabel}>Busca</label>
             <input
               type="text"
               placeholder="Número da reserva, cliente..."
-              className="filter-input"
+              className={styles.filterInput}
               defaultValue={searchParams.search || ""}
               onChange={(e) => updateFilter("search", e.target.value)}
             />
           </div>
           
-          <div className="filter-group">
-            <label className="filter-label">Status</label>
+          <div className={styles.filterGroup}>
+            <label className={styles.filterLabel}>Status</label>
             <select
-              className="filter-select"
+              className={styles.filterSelect}
               defaultValue={searchParams.status || ""}
               onChange={(e) => updateFilter("status", e.target.value)}
             >
@@ -99,21 +99,21 @@ export function BookingFilters({ searchParams }: BookingFiltersProps) {
             </select>
           </div>
           
-          <div className="filter-group">
-            <label className="filter-label">Data Início</label>
+          <div className={styles.filterGroup}>
+            <label className={styles.filterLabel}>Data Início</label>
             <input
               type="date"
-              className="filter-input"
+              className={styles.filterInput}
               defaultValue={searchParams.startDate || ""}
               onChange={(e) => updateFilter("startDate", e.target.value)}
             />
           </div>
           
-          <div className="filter-group">
-            <label className="filter-label">Data Fim</label>
+          <div className={styles.filterGroup}>
+            <label className={styles.filterLabel}>Data Fim</label>
             <input
               type="date"
-              className="filter-input"
+              className={styles.filterInput}
               defaultValue={searchParams.endDate || ""}
               onChange={(e) => updateFilter("endDate", e.target.value)}
             />
