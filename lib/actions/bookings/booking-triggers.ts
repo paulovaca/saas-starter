@@ -1,6 +1,6 @@
 import { db } from "@/lib/db/drizzle";
 import { bookings, bookingTimeline } from "@/lib/db/schema/bookings";
-import { proposals } from "@/lib/db/schema/clients";
+import { proposals, clientsNew } from "@/lib/db/schema/clients";
 import { eq } from "drizzle-orm";
 import { generateBookingNumber } from "./utils";
 import { BOOKING_STATUS } from "@/lib/types/booking-status";
@@ -12,10 +12,27 @@ export async function createBookingFromProposal(
   proposalId: string,
   userId: string
 ): Promise<string> {
-  // Buscar dados da proposta
+  // Buscar dados completos da proposta com cliente
   const proposal = await db
-    .select()
+    .select({
+      id: proposals.id,
+      proposalNumber: proposals.proposalNumber,
+      agencyId: proposals.agencyId,
+      clientId: proposals.clientId,
+      userId: proposals.userId,
+      operatorId: proposals.operatorId,
+      totalAmount: proposals.totalAmount,
+      paymentMethod: proposals.paymentMethod,
+      notes: proposals.notes,
+      validUntil: proposals.validUntil,
+      approvedAt: proposals.approvedAt,
+      contractData: proposals.contractData,
+      clientName: clientsNew.name,
+      clientEmail: clientsNew.email,
+      clientPhone: clientsNew.phone
+    })
     .from(proposals)
+    .leftJoin(clientsNew, eq(proposals.clientId, clientsNew.id))
     .where(eq(proposals.id, proposalId))
     .limit(1);
 
@@ -40,7 +57,7 @@ export async function createBookingFromProposal(
   // Gerar número único de reserva
   const bookingNumber = await generateBookingNumber(proposalData.agencyId);
 
-  // Criar a reserva
+  // Criar a reserva com todos os dados relevantes
   const [newBooking] = await db
     .insert(bookings)
     .values({
@@ -54,9 +71,15 @@ export async function createBookingFromProposal(
         additionalInfo: {
           proposalNumber: proposalData.proposalNumber,
           clientId: proposalData.clientId,
+          clientName: proposalData.clientName,
+          clientEmail: proposalData.clientEmail,
+          clientPhone: proposalData.clientPhone,
           operatorId: proposalData.operatorId,
           totalAmount: proposalData.totalAmount,
-          paymentMethod: proposalData.paymentMethod
+          paymentMethod: proposalData.paymentMethod,
+          approvedAt: proposalData.approvedAt,
+          contractData: proposalData.contractData,
+          responsibleUserId: proposalData.userId
         }
       }
     })

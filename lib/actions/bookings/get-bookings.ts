@@ -1,10 +1,91 @@
 import { db } from "@/lib/db/drizzle";
-import { bookings } from "@/lib/db/schema/bookings";
+import { bookings, bookingTimeline } from "@/lib/db/schema/bookings";
 import { users } from "@/lib/db/schema/users";
 import { proposals, clientsNew } from "@/lib/db/schema/clients";
 import { eq, and, ilike, gte, lte, desc, sql } from "drizzle-orm";
 import type { BookingStatus } from "@/lib/types/booking-status";
 import { BOOKING_STATUS } from "@/lib/types/booking-status";
+import { generateBookingNumber } from "./utils";
+
+// Função interna para sincronizar propostas active_booking sem reserva
+async function syncActiveBookings(agencyId: string) {
+  try {
+    // Buscar propostas com status active_booking que não têm reserva
+    const proposalsWithoutBooking = await db
+      .select({
+        proposal: proposals,
+        booking: bookings.id,
+        clientName: clientsNew.name,
+        clientEmail: clientsNew.email,
+        clientPhone: clientsNew.phone
+      })
+      .from(proposals)
+      .leftJoin(bookings, eq(proposals.id, bookings.proposalId))
+      .leftJoin(clientsNew, eq(proposals.clientId, clientsNew.id))
+      .where(
+        and(
+          eq(proposals.agencyId, agencyId),
+          eq(proposals.status, 'active_booking'),
+          sql`${bookings.id} IS NULL`
+        )
+      );
+
+    // Criar reserva para cada proposta sem reserva
+    for (const row of proposalsWithoutBooking) {
+      if (!row.booking) {
+        const bookingNumber = await generateBookingNumber(agencyId);
+        
+        // Criar a reserva
+        const [newBooking] = await db
+          .insert(bookings)
+          .values({
+            proposalId: row.proposal.id,
+            agencyId: row.proposal.agencyId,
+            bookingNumber: bookingNumber,
+            status: 'pending_documents',
+            notes: row.proposal.notes,
+            createdBy: row.proposal.userId,
+            metadata: {
+              additionalInfo: {
+                proposalNumber: row.proposal.proposalNumber,
+                clientId: row.proposal.clientId,
+                clientName: row.clientName,
+                clientEmail: row.clientEmail,
+                clientPhone: row.clientPhone,
+                operatorId: row.proposal.operatorId,
+                totalAmount: row.proposal.totalAmount,
+                paymentMethod: row.proposal.paymentMethod,
+                responsibleUserId: row.proposal.userId,
+                autoCreated: true,
+                syncedAt: new Date().toISOString()
+              }
+            }
+          })
+          .returning();
+
+        // Adicionar evento na timeline
+        await db.insert(bookingTimeline).values({
+          bookingId: newBooking.id,
+          eventType: 'created',
+          description: `Reserva criada automaticamente (sincronização) para proposta ${row.proposal.proposalNumber}`,
+          userId: row.proposal.userId,
+          metadata: {
+            additionalInfo: {
+              proposalId: row.proposal.id,
+              proposalNumber: row.proposal.proposalNumber,
+              automaticSync: true
+            }
+          }
+        });
+
+        console.log(`✅ Reserva ${bookingNumber} criada automaticamente para proposta ${row.proposal.proposalNumber}`);
+      }
+    }
+  } catch (error) {
+    // Log do erro mas não interrompe o fluxo principal
+    console.error('Erro na sincronização automática de bookings:', error);
+  }
+}
 
 interface GetBookingsParams {
   agencyId: string;
@@ -50,6 +131,9 @@ export async function getBookings(params: GetBookingsParams): Promise<GetBooking
   } = params;
 
   try {
+    // SINCRONIZAÇÃO AUTOMÁTICA: Criar reservas para propostas active_booking sem reserva
+    await syncActiveBookings(agencyId);
+    
     // Construir condições WHERE
     const whereConditions = [eq(bookings.agencyId, agencyId)];
 

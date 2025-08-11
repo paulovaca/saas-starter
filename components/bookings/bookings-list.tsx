@@ -88,9 +88,9 @@ export async function BookingsList({ searchParams, user }: BookingsListProps) {
                   <td className={styles.tableCell}>
                     <div className={styles.bookingNumber}>
                       <strong>{booking.bookingNumber}</strong>
-                      {booking.metadata?.proposalNumber && (
+                      {(booking.metadata?.proposalNumber || booking.proposalNumber) && (
                         <div className={styles.proposalRef}>
-                          Proposta: {booking.metadata.proposalNumber}
+                          Proposta: {booking.metadata?.proposalNumber || booking.proposalNumber}
                         </div>
                       )}
                     </div>
@@ -98,9 +98,16 @@ export async function BookingsList({ searchParams, user }: BookingsListProps) {
                   
                   <td className={styles.tableCell}>
                     <div className={styles.clientInfo}>
-                      {booking.clientName || "Cliente não encontrado"}
-                      {booking.clientEmail && (
-                        <div className={styles.clientEmail}>{booking.clientEmail}</div>
+                      {booking.clientName || booking.metadata?.clientName || "Cliente não encontrado"}
+                      {(booking.clientEmail || booking.metadata?.clientEmail) && (
+                        <div className={styles.clientEmail}>
+                          {booking.clientEmail || booking.metadata?.clientEmail}
+                        </div>
+                      )}
+                      {booking.metadata?.clientPhone && (
+                        <div className={styles.clientPhone}>
+                          📞 {booking.metadata.clientPhone}
+                        </div>
                       )}
                     </div>
                   </td>

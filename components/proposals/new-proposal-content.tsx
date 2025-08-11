@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import CreateProposalModal from '@/components/proposals/create-proposal-modal';
 import { getProposal } from '@/lib/actions/proposals/get-proposal';
+import { createProposal } from '@/lib/actions/proposals/create-proposal';
+import { toast } from 'sonner';
 import styles from './new-proposal-content.module.css';
 
 export default function NewProposalContent() {
@@ -77,10 +79,19 @@ export default function NewProposalContent() {
   const handleCreateProposal = async (proposalData: any) => {
     try {
       console.log('🚀 Creating proposal:', proposalData);
-      // The modal will handle the actual creation
-      router.push('/proposals');
+      
+      // Criar proposta no banco de dados
+      const result = await createProposal(proposalData);
+      
+      if (result.success) {
+        toast.success(`Proposta criada com sucesso!`);
+        router.push('/proposals');
+      } else {
+        throw new Error('Erro ao criar proposta');
+      }
     } catch (error) {
       console.error('Error in handleCreateProposal:', error);
+      toast.error(error instanceof Error ? error.message : 'Erro ao criar proposta');
     }
   };
 

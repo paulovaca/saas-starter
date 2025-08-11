@@ -105,6 +105,16 @@ export const transitionProposalStatus = createPermissionAction(
   async (input, user) => {
     const { proposalId, toStatus, reason } = input;
 
+    // Se for transição para ACTIVE_BOOKING, usar changeProposalStatus que tem a trigger
+    if (toStatus === ProposalStatus.ACTIVE_BOOKING) {
+      const { changeProposalStatus } = await import('./change-status');
+      return changeProposalStatus({
+        proposalId,
+        newStatus: ProposalStatus.ACTIVE_BOOKING,
+        reason: reason || 'Transição para reserva ativa',
+      });
+    }
+
     // Buscar proposta atual
     const [proposal] = await db
       .select()
@@ -156,9 +166,6 @@ export const transitionProposalStatus = createPermissionAction(
       case ProposalStatus.CANCELLED:
         updateData.cancelledAt = new Date();
         updateData.cancellationReason = reason;
-        break;
-      case ProposalStatus.ACTIVE_BOOKING:
-        updateData.activatedAt = new Date();
         break;
     }
 
@@ -384,12 +391,17 @@ export const confirmPayment = createPermissionAction(
         .where(eq(proposals.id, proposalId));
     }
 
-    // Transicionar para reserva ativa
-    return transitionProposalStatus({
+    // Transicionar para reserva ativa usando change-status que tem a trigger
+    const { changeProposalStatus } = await import('./change-status');
+    
+    // Usar a função que tem a trigger de criação de booking
+    const result = await changeProposalStatus({
       proposalId,
-      toStatus: ProposalStatus.ACTIVE_BOOKING,
+      newStatus: ProposalStatus.ACTIVE_BOOKING,
       reason: 'Pagamento confirmado',
     });
+
+    return result;
   },
   {
     rateLimitKey: 'confirm-payment',
