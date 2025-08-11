@@ -23,6 +23,7 @@ export async function handleChangePassword() {
 const updateProfileSchema = z.object({
   name: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
   email: z.string().email('Email inválido'),
+  phone: z.string().optional(),
 });
 
 // Schema para validação de mudança de senha
@@ -45,6 +46,7 @@ export async function updateProfile(formData: FormData) {
     const data = {
       name: formData.get('name') as string,
       email: formData.get('email') as string,
+      phone: formData.get('phone') as string || undefined,
     };
 
     const result = updateProfileSchema.safeParse(data);
@@ -55,6 +57,7 @@ export async function updateProfile(formData: FormData) {
     await updateUser(session.user.id, {
       name: result.data.name,
       email: result.data.email,
+      phone: result.data.phone,
     });
 
     revalidatePath('/profile');

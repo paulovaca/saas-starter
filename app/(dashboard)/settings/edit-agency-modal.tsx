@@ -38,25 +38,47 @@ export function EditAgencyModal({ agency }: EditAgencyModalProps) {
 
   const handleSubmit = async () => {
     setMessage(null);
-    const form = document.querySelector('form') as HTMLFormElement;
-    const formData = new FormData(form);
+    setIsSubmitting(true);
     
-    // Convert formatted phone back to unformatted for storage
-    const formattedPhone = formData.get('phone') as string;
-    if (formattedPhone) {
-      formData.set('phone', getUnformattedPhone(formattedPhone));
-    }
-    
-    const result = await updateAgencyData(formData);
-    
-    if (result.success) {
-      setMessage({ type: 'success', text: result.success });
-      setTimeout(() => {
-        closeModal();
-      }, 2000);
-    } else {
-      setMessage({ type: 'error', text: result.error || 'Erro desconhecido' });
-      throw new Error(result.error || 'Erro desconhecido');
+    try {
+      // Manually collect form data since there's no form element
+      const formData = new FormData();
+      
+      const nameInput = document.getElementById('name') as HTMLInputElement;
+      const emailInput = document.getElementById('email') as HTMLInputElement;
+      const phoneInput = document.getElementById('phone') as HTMLInputElement;
+      const websiteInput = document.getElementById('website') as HTMLInputElement;
+      const addressInput = document.getElementById('address') as HTMLInputElement;
+      const descriptionInput = document.getElementById('description') as HTMLTextAreaElement;
+      
+      formData.set('name', nameInput?.value || '');
+      formData.set('email', emailInput?.value || '');
+      
+      // Convert formatted phone back to unformatted for storage
+      const formattedPhone = phoneInput?.value || '';
+      if (formattedPhone) {
+        formData.set('phone', getUnformattedPhone(formattedPhone));
+      }
+      
+      formData.set('website', websiteInput?.value || '');
+      formData.set('address', addressInput?.value || '');
+      formData.set('description', descriptionInput?.value || '');
+      
+      const result = await updateAgencyData(formData);
+      
+      if (result.success) {
+        setMessage({ type: 'success', text: result.success });
+        setTimeout(() => {
+          closeModal();
+        }, 2000);
+      } else {
+        setMessage({ type: 'error', text: result.error || 'Erro desconhecido' });
+      }
+    } catch (error) {
+      console.error('Erro ao atualizar agência:', error);
+      setMessage({ type: 'error', text: 'Erro interno do servidor' });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 

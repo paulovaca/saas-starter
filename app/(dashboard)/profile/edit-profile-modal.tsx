@@ -28,19 +28,35 @@ export function EditProfileModal({ user }: EditProfileModalProps) {
 
   const handleSubmit = async () => {
     setMessage(null);
-    const form = document.querySelector('form') as HTMLFormElement;
-    const formData = new FormData(form);
+    setIsSubmitting(true);
     
-    const result = await updateProfile(formData);
-    
-    if (result.success) {
-      setMessage({ type: 'success', text: result.success });
-      setTimeout(() => {
-        closeModal();
-      }, 2000);
-    } else {
-      setMessage({ type: 'error', text: result.error || 'Erro desconhecido' });
-      throw new Error(result.error || 'Erro desconhecido');
+    try {
+      // Manually collect form data since there's no form element
+      const formData = new FormData();
+      
+      const nameInput = document.getElementById('name') as HTMLInputElement;
+      const emailInput = document.getElementById('email') as HTMLInputElement;
+      const phoneInput = document.getElementById('phone') as HTMLInputElement;
+      
+      formData.set('name', nameInput?.value || '');
+      formData.set('email', emailInput?.value || '');
+      formData.set('phone', phoneInput?.value || '');
+      
+      const result = await updateProfile(formData);
+      
+      if (result.success) {
+        setMessage({ type: 'success', text: result.success });
+        setTimeout(() => {
+          closeModal();
+        }, 2000);
+      } else {
+        setMessage({ type: 'error', text: result.error || 'Erro desconhecido' });
+      }
+    } catch (error) {
+      console.error('Erro ao atualizar perfil:', error);
+      setMessage({ type: 'error', text: 'Erro interno do servidor' });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
