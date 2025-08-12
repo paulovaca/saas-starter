@@ -53,7 +53,9 @@ export const createCommissionRuleSchema = baseCommissionRuleSchema.refine((data)
   message: 'Valor máximo deve ser maior que o valor mínimo',
 });
 
-export const updateCommissionRuleSchema = baseCommissionRuleSchema.extend({
+export const updateCommissionRuleSchema = baseCommissionRuleSchema.omit({
+  operatorItemId: true,
+}).extend({
   id: z.string().uuid('ID inválido'),
 }).refine((data) => {
   return data.percentage !== undefined || data.fixedValue !== undefined;

@@ -125,6 +125,12 @@ export async function getCurrentUser() {
 
     return user;
   } catch (error) {
+    // Re-throw PPR postpone errors - they should not be caught
+    if (error && typeof error === 'object' && '$$typeof' in error && 
+        error.$$typeof === Symbol.for('react.postpone')) {
+      throw error;
+    }
+    
     console.error('Error getting current user:', error);
     return null;
   }

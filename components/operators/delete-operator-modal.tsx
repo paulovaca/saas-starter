@@ -40,6 +40,10 @@ export function DeleteOperatorModal({ isOpen, onClose, operator }: DeleteOperato
               window.location.reload();
             }, 1000);
             resolve();
+          } else {
+            // Caso não tenha nem error nem success
+            showError('Ocorreu um erro inesperado ao excluir a operadora');
+            reject(new Error('Ocorreu um erro inesperado ao excluir a operadora'));
           }
         } catch (error) {
           showError('Erro inesperado ao deletar operadora');
@@ -68,7 +72,10 @@ export function DeleteOperatorModal({ isOpen, onClose, operator }: DeleteOperato
         <p className={styles.dangerTitle}>⚠️ ATENÇÃO: Esta ação é irreversível!</p>
         <ul className={styles.dangerList}>
           <li>• A operadora será removida permanentemente do sistema</li>
-          <li>• Todos os dados associados serão perdidos</li>
+          <li>• Todos os itens/produtos desta operadora serão excluídos</li>
+          <li>• Todas as regras de comissão serão removidas</li>
+          <li>• Todos os documentos associados serão apagados</li>
+          <li>• Esta ação não pode ser desfeita</li>
         </ul>
       </div>
     </div>

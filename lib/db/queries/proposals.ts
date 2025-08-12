@@ -290,41 +290,39 @@ export async function getProposalsList(
       whereConditions.push(eq(proposals.operatorId, filters.operatorId));
     }
 
-    const proposalsList = await db.query.proposals.findMany({
-      where: and(...whereConditions),
-      with: {
-        client: {
-          columns: {
-            name: true,
-          }
-        },
-        operator: {
-          columns: {
-            name: true,
-          }
-        },
-        user: {
-          columns: {
-            name: true,
-          }
-        }
-      },
-      orderBy: [desc(proposals.createdAt)],
-      limit,
-      offset
-    });
+    // Use manual joins instead of query builder with relations
+    const proposalsList = await db
+      .select({
+        id: proposals.id,
+        proposalNumber: proposals.proposalNumber,
+        totalAmount: proposals.totalAmount,
+        status: proposals.status,
+        createdAt: proposals.createdAt,
+        validUntil: proposals.validUntil,
+        clientName: clientsNew.name,
+        operatorName: operators.name,
+        userName: users.name,
+      })
+      .from(proposals)
+      .innerJoin(clientsNew, eq(proposals.clientId, clientsNew.id))
+      .innerJoin(operators, eq(proposals.operatorId, operators.id))
+      .innerJoin(users, eq(proposals.userId, users.id))
+      .where(and(...whereConditions))
+      .orderBy(desc(proposals.createdAt))
+      .limit(limit)
+      .offset(offset);
 
     // Transform to list format
     const transformedProposals = proposalsList.map(proposal => ({
       id: proposal.id,
       proposalNumber: proposal.proposalNumber,
-      clientName: proposal.client.name,
-      operatorName: proposal.operator.name,
+      clientName: proposal.clientName,
+      operatorName: proposal.operatorName,
       totalAmount: parseFloat(proposal.totalAmount),
       status: proposal.status,
       createdAt: proposal.createdAt,
       validUntil: proposal.validUntil,
-      userName: proposal.user.name,
+      userName: proposal.userName,
     }));
 
     return transformedProposals;

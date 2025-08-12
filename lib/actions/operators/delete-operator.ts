@@ -4,7 +4,7 @@ import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { getUser } from '@/lib/db/queries/auth';
 import { db } from '@/lib/db/drizzle';
-import { operators } from '@/lib/db/schema';
+import { operators, operatorItems, operatorDocuments, commissionRules } from '@/lib/db/schema';
 import { z } from 'zod';
 
 const deleteOperatorSchema = z.object({
@@ -43,12 +43,12 @@ export async function deleteOperator(input: DeleteOperatorInput): Promise<Delete
       };
     }
 
-    // Verificar permissão - apenas MASTER pode fazer hard delete
-    if (user.role !== 'MASTER') {
+    // Verificar permissão - apenas MASTER e DEVELOPER podem fazer hard delete
+    if (user.role !== 'MASTER' && user.role !== 'DEVELOPER') {
       return {
         success: false,
         message: 'Permissão negada',
-        error: 'Apenas usuários MASTER podem excluir operadoras permanentemente',
+        error: 'Apenas usuários MASTER ou DEVELOPER podem excluir operadoras permanentemente',
       };
     }
 
@@ -76,17 +76,38 @@ export async function deleteOperator(input: DeleteOperatorInput): Promise<Delete
       };
     }
 
-    // TODO: Verificar dependências antes da exclusão
-    // Aqui seria ideal verificar se a operadora tem:
-    // - Propostas ativas
-    // - Reservas pendentes
-    // - Itens associados
-    // Por enquanto, vamos permitir a exclusão
+    // Iniciar transação para deletar em cascata
+    await db.transaction(async (tx) => {
+      // 1. Primeiro, buscar todos os operator_items desta operadora
+      const operatorItemsList = await tx
+        .select({ id: operatorItems.id })
+        .from(operatorItems)
+        .where(eq(operatorItems.operatorId, operatorId));
 
-    // Executar hard delete
-    await db
-      .delete(operators)
-      .where(eq(operators.id, operatorId));
+      // 2. Deletar commission_rules associadas aos operator_items
+      if (operatorItemsList.length > 0) {
+        for (const item of operatorItemsList) {
+          await tx
+            .delete(commissionRules)
+            .where(eq(commissionRules.operatorItemId, item.id));
+        }
+      }
+
+      // 3. Deletar operator_items
+      await tx
+        .delete(operatorItems)
+        .where(eq(operatorItems.operatorId, operatorId));
+
+      // 4. Deletar operator_documents
+      await tx
+        .delete(operatorDocuments)
+        .where(eq(operatorDocuments.operatorId, operatorId));
+
+      // 5. Finalmente, deletar a operadora
+      await tx
+        .delete(operators)
+        .where(eq(operators.id, operatorId));
+    });
 
     // Revalidar cache
     revalidatePath('/operators');

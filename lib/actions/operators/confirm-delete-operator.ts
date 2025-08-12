@@ -39,7 +39,7 @@ export async function confirmDeleteOperator(formData: FormData): Promise<Confirm
     }
 
     if (!result.success) {
-      return { error: result.message };
+      return { error: result.message || 'Falha ao excluir operadora' };
     }
 
     // Revalidar as páginas de operadoras

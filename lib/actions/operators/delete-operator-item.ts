@@ -1,7 +1,7 @@
 'use server';
 
 import { db } from '@/lib/db/drizzle';
-import { operatorItems } from '@/lib/db/schema';
+import { operatorItems, commissionRules } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { auth } from '@/lib/auth/auth';
 import { redirect } from 'next/navigation';
@@ -43,12 +43,22 @@ export async function deleteOperatorItem(data: DeleteOperatorItemInput) {
 
     console.log('Deletando associação item-operadora:', validatedData.operatorItemId);
     
-    // Delete association (hard delete)
-    const deleteResult = await db
-      .delete(operatorItems)
-      .where(eq(operatorItems.id, validatedData.operatorItemId));
-
-    console.log('Resultado da deleção:', deleteResult);
+    // Use transaction to delete commission rules first, then operator item
+    await db.transaction(async (tx) => {
+      // First delete all commission rules associated with this operator item
+      await tx
+        .delete(commissionRules)
+        .where(eq(commissionRules.operatorItemId, validatedData.operatorItemId));
+      
+      console.log('Regras de comissão deletadas');
+      
+      // Then delete the operator item association
+      await tx
+        .delete(operatorItems)
+        .where(eq(operatorItems.id, validatedData.operatorItemId));
+      
+      console.log('Associação item-operadora deletada');
+    });
 
     // Verificar se a deleção realmente aconteceu
     const remainingItems = await db
@@ -67,7 +77,7 @@ export async function deleteOperatorItem(data: DeleteOperatorItemInput) {
 
     return {
       success: true,
-      message: 'Item removido da operadora com sucesso!',
+      message: 'Item e suas regras de comissão foram removidos da operadora com sucesso!',
     };
   } catch (error) {
     console.error('Error deleting operator item:', error);

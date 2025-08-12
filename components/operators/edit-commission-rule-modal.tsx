@@ -82,7 +82,6 @@ export function EditCommissionRuleModal({
     try {
       const data: any = {
         id: rule.id,
-        operatorItemId: rule.operatorItemId,
         ruleType: formData.ruleType,
       };
 
