@@ -1,344 +1,581 @@
-# 📘 GUIA DE IMPLEMENTAÇÃO DETALHADO - FASE 4: PÓS-VENDA E FINANCEIRO
+# 📘 GUIA DE IMPLEMENTAÇÃO - FASE 4: MÓDULO FINANCEIRO COMPLETO
 
-## 🎯 O que vamos fazer nesta fase
+## 🎯 Status Atual e Objetivo
 
-Com o CRM operacional (Fases 1-3), agora vamos implementar o sistema de **Reservas** (pós-venda) e o **Módulo Financeiro** completo. Estes módulos garantem o acompanhamento após a venda e o controle financeiro de comissões e pagamentos.
+### ✅ O que já está implementado:
+- **Sistema de Reservas (Bookings)** - Totalmente funcional
+  - Criação automática de reservas quando propostas são aceitas
+  - Gestão de status com histórico completo
+  - Sistema de documentos com upload
+  - Timeline de eventos
+  - Anotações e observações
+  - Sincronização com propostas
+- **CRM Completo** (Fases 1-3)
+  - Gestão de clientes, operadores e catálogo
+  - Sistema de propostas com aprovação
+  - Funis de vendas personalizados
+  - Sistema de permissões RBAC
+
+### 🎯 O que vamos implementar nesta fase:
+Implementar o **Módulo Financeiro Completo** com gestão de comissões, pagamentos e relatórios financeiros, integrando com o sistema de reservas existente.
 
 ## ✅ Pré-requisitos da Fase 4
 
 Antes de começar, confirme que você tem:
-- [ ] Fases 1, 2 e 3 completamente implementadas
-- [ ] Pelo menos uma proposta aceita no sistema
-- [ ] Sistema de logs funcionando
-- [ ] Permissões configuradas corretamente
-- [x] Implantação de claro e escuro. 
-- [x] Criação de arquivos individuais css. Nao aceitar estilos inline. 
+- [x] Sistema de reservas funcionando
+- [x] Pelo menos uma proposta aceita convertida em reserva
+- [x] Sistema de permissões configurado
+- [x] Activity log registrando ações
+- [ ] Configuração de regras de comissão nas operadoras
 
-## 🚀 PASSO A PASSO DETALHADO
+## 🚀 IMPLEMENTAÇÃO DO MÓDULO FINANCEIRO
 
-### 📋 MÓDULO 1: SISTEMA DE RESERVAS
+### 💰 MÓDULO 1: ESTRUTURA BASE FINANCEIRA
 
-#### Etapa 1.1: Criar estrutura para reservas
-
-No terminal do VS Code, execute:
+#### Etapa 1.1: Criar estrutura de pastas
 
 ```bash
-# Criar estrutura de pastas para reservas
-mkdir -p app/(dashboard)/bookings
-mkdir -p app/(dashboard)/bookings/[bookingId]
-mkdir -p lib/actions/bookings
-mkdir -p lib/validations/bookings
-mkdir -p components/bookings
-mkdir -p components/bookings/documents
-mkdir -p components/bookings/status
-mkdir -p lib/services/storage
+# Execute no terminal
+mkdir -p app/(dashboard)/finance
+mkdir -p app/(dashboard)/finance/commissions
+mkdir -p app/(dashboard)/finance/transactions
+mkdir -p app/(dashboard)/finance/reports
+mkdir -p app/(dashboard)/my-commissions
+mkdir -p lib/actions/finance
+mkdir -p lib/validations/finance
+mkdir -p lib/services/finance
+mkdir -p components/finance
+mkdir -p components/finance/charts
+mkdir -p components/finance/forms
 ```
 
-#### Etapa 1.2: Criar schema para reservas
+#### Etapa 1.2: Criar schema financeiro
 
-1. Na pasta `lib/db/schema`, crie o arquivo `bookings.ts`
-2. **Este arquivo servirá para**: Definir tabelas do sistema de reservas
-3. **Tabelas necessárias**:
-   - `bookings`: id, proposalId, bookingNumber, status, notes, createdAt
-   - `booking_status_history`: id, bookingId, previousStatus, newStatus, reason, userId, createdAt
-   - `booking_documents`: id, bookingId, documentType, fileName, fileUrl, uploadedBy, uploadedAt
-   - `booking_timeline`: id, bookingId, eventType, description, userId, createdAt
+**Arquivo**: `lib/db/schema/finance.ts`
 
-#### Etapa 1.3: Definir tipos de status
+```typescript
+// Estrutura das tabelas financeiras necessárias:
 
-1. Na pasta `lib/types`, crie `booking-status.ts`
-2. **Este arquivo servirá para**: Definir todos os status possíveis
-3. **Status necessários**:
-   - `pending_documents`: Aguardando documentos
-   - `under_analysis`: Em análise
-   - `approved`: Aprovado
-   - `pending_installation`: Aguardando instalação
-   - `installed`: Instalado
-   - `active`: Ativo
-   - `cancelled`: Cancelado
-   - `suspended`: Suspenso
+// 1. Tabela de comissões
+export const commissions = pgTable("commissions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  agencyId: uuid("agency_id").notNull(),
+  userId: uuid("user_id").notNull(), // Agente que receberá
+  proposalId: uuid("proposal_id").notNull(),
+  bookingId: uuid("booking_id"), // Vincula com reserva
+  
+  // Valores
+  baseValue: decimal("base_value", { precision: 10, scale: 2 }).notNull(),
+  percentage: decimal("percentage", { precision: 5, scale: 2 }).notNull(),
+  calculatedValue: decimal("calculated_value", { precision: 10, scale: 2 }).notNull(),
+  adjustedValue: decimal("adjusted_value", { precision: 10, scale: 2 }), // Após ajustes
+  finalValue: decimal("final_value", { precision: 10, scale: 2 }).notNull(),
+  
+  // Status
+  status: commissionStatusEnum("status").notNull().default("pending"),
+  
+  // Datas
+  referenceMonth: varchar("reference_month", { length: 7 }), // YYYY-MM
+  calculatedAt: timestamp("calculated_at"),
+  approvedAt: timestamp("approved_at"),
+  approvedBy: uuid("approved_by"),
+  paidAt: timestamp("paid_at"),
+  
+  // Metadados
+  metadata: jsonb("metadata"), // Detalhes do cálculo, splits, etc
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull()
+});
+
+// 2. Tabela de ajustes de comissão
+export const commissionAdjustments = pgTable("commission_adjustments", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  commissionId: uuid("commission_id").notNull(),
+  
+  reason: text("reason").notNull(),
+  adjustmentType: adjustmentTypeEnum("adjustment_type").notNull(), // bonus, discount, correction
+  oldValue: decimal("old_value", { precision: 10, scale: 2 }).notNull(),
+  newValue: decimal("new_value", { precision: 10, scale: 2 }).notNull(),
+  difference: decimal("difference", { precision: 10, scale: 2 }).notNull(),
+  
+  adjustedBy: uuid("adjusted_by").notNull(),
+  adjustedAt: timestamp("adjusted_at").defaultNow().notNull(),
+  
+  metadata: jsonb("metadata")
+});
+
+// 3. Tabela de transações financeiras
+export const financialTransactions = pgTable("financial_transactions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  agencyId: uuid("agency_id").notNull(),
+  
+  type: transactionTypeEnum("type").notNull(), // income, expense
+  category: varchar("category", { length: 50 }).notNull(),
+  description: text("description").notNull(),
+  
+  value: decimal("value", { precision: 10, scale: 2 }).notNull(),
+  date: date("date").notNull(),
+  
+  // Referências opcionais
+  proposalId: uuid("proposal_id"),
+  bookingId: uuid("booking_id"),
+  commissionId: uuid("commission_id"),
+  
+  // Anexos
+  attachments: jsonb("attachments").$type<Array<{
+    name: string;
+    url: string;
+    type: string;
+  }>>(),
+  
+  createdBy: uuid("created_by").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull()
+});
+
+// 4. Tabela de confirmações de pagamento
+export const paymentConfirmations = pgTable("payment_confirmations", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  proposalId: uuid("proposal_id").notNull(),
+  bookingId: uuid("booking_id"),
+  
+  paymentDate: date("payment_date").notNull(),
+  amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
+  paymentMethod: varchar("payment_method", { length: 50 }),
+  
+  receipt: jsonb("receipt"), // URL do comprovante
+  notes: text("notes"),
+  
+  confirmedBy: uuid("confirmed_by").notNull(),
+  confirmedAt: timestamp("confirmed_at").defaultNow().notNull()
+});
+
+// 5. Tabela de metas e bonificações
+export const commissionTargets = pgTable("commission_targets", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  agencyId: uuid("agency_id").notNull(),
+  userId: uuid("user_id"), // null = meta da agência
+  
+  targetMonth: varchar("target_month", { length: 7 }).notNull(), // YYYY-MM
+  targetValue: decimal("target_value", { precision: 10, scale: 2 }).notNull(),
+  achievedValue: decimal("achieved_value", { precision: 10, scale: 2 }).default(0),
+  
+  bonusPercentage: decimal("bonus_percentage", { precision: 5, scale: 2 }), // Bônus se atingir
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull()
+});
+```
+
+#### Etapa 1.3: Criar enums e tipos
+
+**Arquivo**: `lib/db/schema/finance.ts` (adicionar no início)
+
+```typescript
+// Enums
+export const commissionStatusEnum = pgEnum("commission_status", [
+  "pending",      // Aguardando pagamento do cliente
+  "confirmed",    // Pagamento confirmado, aguardando cálculo
+  "calculated",   // Calculada, aguardando aprovação
+  "approved",     // Aprovada para pagamento
+  "paid",         // Paga ao agente
+  "cancelled",    // Cancelada
+  "adjusted"      // Ajustada manualmente
+]);
+
+export const adjustmentTypeEnum = pgEnum("adjustment_type", [
+  "bonus",        // Bonificação
+  "discount",     // Desconto
+  "correction",   // Correção de valor
+  "split",        // Divisão entre agentes
+  "target_bonus"  // Bônus por meta
+]);
+
+export const transactionTypeEnum = pgEnum("transaction_type", [
+  "income",       // Receita
+  "expense"       // Despesa
+]);
+
+// Categorias de transação (não enum, para flexibilidade)
+export const TRANSACTION_CATEGORIES = {
+  income: [
+    "commission",
+    "service",
+    "product",
+    "other_income"
+  ],
+  expense: [
+    "salary",
+    "rent",
+    "utilities",
+    "marketing",
+    "office",
+    "other_expense"
+  ]
+} as const;
+```
 
 #### Etapa 1.4: Executar migrations
 
-No terminal:
 ```bash
 npm run db:generate
 npm run db:migrate
 ```
 
-#### Etapa 1.5: Criar trigger de geração automática
+### 📊 MÓDULO 2: CALCULADORA DE COMISSÕES
 
-1. Na pasta `lib/actions/bookings`, crie `booking-triggers.ts`
-2. **Este arquivo servirá para**: Criar reserva automaticamente quando proposta é aceita
-3. **Funcionalidades**:
-   - Gerar número único de reserva
-   - Copiar dados da proposta
-   - Definir status inicial
-   - Notificar responsáveis
+#### Etapa 2.1: Criar serviço de cálculo
 
-#### Etapa 1.6: Criar página de listagem de reservas
+**Arquivo**: `lib/services/finance/commission-calculator.ts`
 
-1. Na pasta `app/(dashboard)/bookings`, crie `page.tsx`
-2. **Este arquivo servirá para**: Listar todas as reservas
-3. **Funcionalidades essenciais**:
-   - Tabela com número, cliente, status, data
-   - Filtros por status e período
-   - Indicadores visuais por status (cores)
-   - Busca por número ou cliente
-   - **Permissões**: Agentes veem apenas suas reservas
-
-#### Etapa 1.7: Criar página de detalhes da reserva
-
-1. Na pasta `app/(dashboard)/bookings/[bookingId]`, crie `page.tsx`
-2. **Este arquivo servirá para**: Central de gestão da reserva
-3. **Seções necessárias**:
-   - Header com informações principais
-   - Timeline de eventos
-   - Gestão de documentos
-   - Mudança de status
-   - Dados da proposta original
-   - Anotações internas
-
-#### Etapa 1.8: Criar sistema de upload de documentos
-
-1. Na pasta `components/bookings/documents`, crie `document-uploader.tsx`
-2. **Este arquivo servirá para**: Upload e gestão de documentos
-3. **Tipos de documento**:
-   - RG/CPF
-   - Comprovante de residência
-   - Comprovante de renda
-   - Contrato assinado
-   - Outros documentos
-
-#### Etapa 1.9: Criar componente de mudança de status
-
-1. Na pasta `components/bookings/status`, crie `status-changer.tsx`
-2. **Este arquivo servirá para**: Alterar status com justificativa
-3. **Funcionalidades**:
-   - Seletor de novo status (apenas válidos)
-   - Campo obrigatório de justificativa
-   - Confirmação para status críticos
-   - Registro automático no histórico
-
-#### Etapa 1.10: Configurar storage de arquivos
-
-1. Na pasta `lib/services/storage`, crie `file-storage.ts`
-2. **Este arquivo servirá para**: Gerenciar upload e download de arquivos
-3. **Funcionalidades**:
-   - Upload para cloud (S3, Cloudinary, etc)
-   - Validação de tipos permitidos
-   - Compressão de imagens
-   - URLs temporárias para download
-
-#### Etapa 1.11: Criar actions de reservas
-
-1. Na pasta `lib/actions/bookings`, crie:
-   - `create-booking.ts` - **Servirá para**: Criar reserva manualmente
-   - `update-booking-status.ts` - **Servirá para**: Mudar status com validações
-   - `upload-document.ts` - **Servirá para**: Fazer upload de documento
-   - `delete-document.ts` - **Servirá para**: Remover documento
-   - `add-note.ts` - **Servirá para**: Adicionar anotação
-   - `get-bookings.ts` - **Servirá para**: Buscar reservas com filtros
-
-### 💰 MÓDULO 2: SISTEMA FINANCEIRO
-
-#### Etapa 2.1: Criar estrutura financeira
-
-No terminal:
-
-```bash
-# Criar estrutura de pastas para financeiro
-mkdir -p app/(dashboard)/finance
-mkdir -p app/(dashboard)/finance/commissions
-mkdir -p app/(dashboard)/finance/transactions
-mkdir -p app/(dashboard)/finance/reports
-mkdir -p lib/actions/finance
-mkdir -p lib/validations/finance
-mkdir -p components/finance
-mkdir -p components/finance/charts
-mkdir -p lib/services/commission-calculator
+```typescript
+// Estrutura do calculador de comissões
+export class CommissionCalculator {
+  // Calcular comissão base
+  calculateBase(proposal: Proposal, rules: CommissionRule[]): number
+  
+  // Aplicar ajustes (metas, bônus, splits)
+  applyAdjustments(baseValue: number, adjustments: Adjustment[]): number
+  
+  // Calcular split entre múltiplos agentes
+  calculateSplit(totalValue: number, agents: Agent[]): SplitResult[]
+  
+  // Verificar e aplicar bônus de meta
+  checkTargetBonus(userId: string, month: string): number
+  
+  // Gerar detalhamento do cálculo
+  generateBreakdown(calculation: CalculationResult): CommissionBreakdown
+}
 ```
 
-#### Etapa 2.2: Criar schema financeiro
+#### Etapa 2.2: Criar triggers automáticos
 
-1. Na pasta `lib/db/schema`, crie `finance.ts`
-2. **Este arquivo servirá para**: Definir tabelas financeiras
-3. **Tabelas necessárias**:
-   - `commissions`: id, userId, proposalId, baseValue, percentage, finalValue, status, paidAt
-   - `commission_adjustments`: id, commissionId, reason, oldValue, newValue, adjustedBy
-   - `financial_transactions`: id, type, category, description, value, date, agencyId
-   - `payment_confirmations`: id, proposalId, paymentDate, amount, confirmedBy
+**Arquivo**: `lib/actions/finance/commission-triggers.ts`
 
-#### Etapa 2.3: Criar calculadora de comissões
+```typescript
+// Triggers que devem ser implementados:
 
-1. Na pasta `lib/services/commission-calculator`, crie `index.ts`
-2. **Este arquivo servirá para**: Calcular comissões com regras complexas
-3. **Funcionalidades**:
-   - Aplicar tabela de comissões da operadora
-   - Considerar metas e bonificações
-   - Calcular splits (divisão entre agentes)
-   - Aplicar descontos e ajustes
+// 1. Quando pagamento é confirmado
+export async function onPaymentConfirmed(proposalId: string) {
+  // Buscar proposta e regras de comissão
+  // Calcular comissão base
+  // Aplicar ajustes e bônus
+  // Criar registro de comissão
+  // Notificar agente
+}
 
-#### Etapa 2.4: Criar trigger de cálculo automático
+// 2. Quando reserva muda de status
+export async function onBookingStatusChanged(bookingId: string, newStatus: string) {
+  // Se cancelada: marcar comissão como cancelada
+  // Se instalada: liberar comissão para pagamento
+  // Se suspensa: suspender comissão
+}
 
-1. Na pasta `lib/actions/finance`, crie `commission-triggers.ts`
-2. **Este arquivo servirá para**: Calcular comissão quando pagamento é confirmado
-3. **Fluxo**:
-   - Proposta aceita → Comissão pendente
-   - Pagamento confirmado → Comissão aprovada
-   - Ciclo fechado → Comissão liberada
+// 3. Fim do mês - calcular bônus de meta
+export async function calculateMonthlyTargets() {
+  // Buscar todas as vendas do mês
+  // Comparar com metas
+  // Aplicar bônus se atingido
+  // Gerar relatório
+}
+```
 
-#### Etapa 2.5: Criar dashboard financeiro global
+### 💼 MÓDULO 3: INTERFACE DO FINANCEIRO
 
-1. Na pasta `app/(dashboard)/finance`, crie `page.tsx`
-2. **Este arquivo servirá para**: Visão geral financeira (Master/Admin)
-3. **Componentes**:
-   - Cards com totais (vendas, comissões, despesas)
-   - Gráfico de evolução mensal
-   - Tabela de últimas transações
-   - Filtros por período
+#### Etapa 3.1: Dashboard financeiro principal
 
-#### Etapa 2.6: Criar página de comissões
+**Arquivo**: `app/(dashboard)/finance/page.tsx`
 
-1. Na pasta `app/(dashboard)/finance/commissions`, crie `page.tsx`
-2. **Este arquivo servirá para**: Gerenciar comissões
-3. **Para Admin/Master**:
-   - Lista todas as comissões
-   - Filtros por agente, status, período
-   - Ações de aprovar/ajustar
-   - Exportar relatório
+Componentes necessários:
+- Cards de resumo (receitas, despesas, lucro, comissões pendentes)
+- Gráfico de evolução mensal (últimos 12 meses)
+- Tabela de transações recentes
+- Atalhos rápidos (confirmar pagamento, lançar despesa, aprovar comissões)
 
-#### Etapa 2.7: Criar página "Minhas Comissões"
+#### Etapa 3.2: Gestão de comissões (Admin/Master)
 
-1. Crie também `app/(dashboard)/my-commissions/page.tsx`
-2. **Este arquivo servirá para**: Agentes verem suas comissões
-3. **Funcionalidades**:
-   - Apenas comissões do agente logado
-   - Resumo do mês atual
-   - Histórico de pagamentos
-   - Detalhamento por proposta
+**Arquivo**: `app/(dashboard)/finance/commissions/page.tsx`
 
-#### Etapa 2.8: Criar sistema de confirmação de pagamento
+Funcionalidades:
+- Tabela com todas as comissões
+- Filtros por: agente, status, período, operadora
+- Ações em lote: aprovar, ajustar, pagar
+- Detalhamento do cálculo ao clicar
+- Exportação para Excel/PDF
 
-1. Na pasta `components/finance`, crie `payment-confirmation.tsx`
-2. **Este arquivo servirá para**: Confirmar pagamento de propostas
-3. **Campos necessários**:
-   - Data do pagamento
-   - Valor recebido
-   - Comprovante (upload)
-   - Observações
+#### Etapa 3.3: Minhas comissões (Agentes)
 
-#### Etapa 2.9: Criar relatórios financeiros
+**Arquivo**: `app/(dashboard)/my-commissions/page.tsx`
 
-1. Na pasta `app/(dashboard)/finance/reports`, crie `page.tsx`
-2. **Este arquivo servirá para**: Gerar relatórios detalhados
-3. **Tipos de relatório**:
-   - Comissões por período
-   - Vendas por operadora
-   - Performance por agente
-   - Fluxo de caixa
+Funcionalidades:
+- Resumo do mês atual (vendas, comissões, meta)
+- Histórico de comissões
+- Detalhamento por proposta
+- Status de pagamentos
+- Projeção de ganhos
 
-#### Etapa 2.10: Criar gráficos interativos
+#### Etapa 3.4: Confirmação de pagamentos
 
-1. Na pasta `components/finance/charts`, crie:
-   - `revenue-chart.tsx` - Evolução de receita
-   - `commission-chart.tsx` - Distribuição de comissões
-   - `agent-ranking.tsx` - Ranking de vendas
+**Arquivo**: `components/finance/forms/payment-confirmation.tsx`
 
-#### Etapa 2.11: Criar sistema de lançamentos manuais
+Campos:
+- Seletor de proposta/reserva
+- Data do pagamento
+- Valor recebido
+- Método de pagamento
+- Upload de comprovante
+- Observações
 
-1. Na pasta `components/finance`, crie `manual-transaction.tsx`
-2. **Este arquivo servirá para**: Registrar receitas/despesas extras
-3. **Campos**:
-   - Tipo (receita/despesa)
-   - Categoria
-   - Descrição
-   - Valor
-   - Data
-   - Anexos
+Validações:
+- Valor não pode ser menor que o da proposta (sem autorização)
+- Data não pode ser futura
+- Comprovante obrigatório para valores altos
 
-#### Etapa 2.12: Criar actions financeiras
+#### Etapa 3.5: Lançamentos manuais
 
-1. Na pasta `lib/actions/finance`, crie:
-   - `confirm-payment.ts` - **Servirá para**: Confirmar pagamento de proposta
-   - `calculate-commissions.ts` - **Servirá para**: Calcular comissões
-   - `adjust-commission.ts` - **Servirá para**: Ajustar valor de comissão
-   - `approve-commissions.ts` - **Servirá para**: Aprovar lote de comissões
-   - `create-transaction.ts` - **Servirá para**: Criar lançamento manual
-   - `generate-report.ts` - **Servirá para**: Gerar relatórios
+**Arquivo**: `components/finance/forms/manual-transaction.tsx`
 
-### 🔗 INTEGRAÇÕES ENTRE MÓDULOS
+Campos:
+- Tipo (receita/despesa)
+- Categoria (dropdown dinâmico)
+- Descrição detalhada
+- Valor
+- Data
+- Anexos opcionais
+- Vincular a proposta/reserva (opcional)
 
-#### Etapa 3.1: Conectar reservas com financeiro
+### 📈 MÓDULO 4: RELATÓRIOS E GRÁFICOS
 
-1. Crie `lib/services/booking-finance-sync.ts`
-2. **Este arquivo servirá para**: Sincronizar status entre módulos
-3. **Regras**:
-   - Reserva cancelada → Estornar comissão
-   - Instalação concluída → Liberar comissão
-   - Documento pendente → Notificar financeiro
+#### Etapa 4.1: Página de relatórios
 
-#### Etapa 3.2: Criar notificações automáticas
+**Arquivo**: `app/(dashboard)/finance/reports/page.tsx`
 
-1. Na pasta `lib/services`, crie `notification-scheduler.ts`
-2. **Este arquivo servirá para**: Enviar notificações programadas
-3. **Exemplos**:
-   - Documentos pendentes há 3 dias
-   - Comissões aprovadas
-   - Pagamentos vencidos
+Tipos de relatório:
+1. **Comissões por período**: Detalhamento de todas as comissões
+2. **Performance por agente**: Ranking e evolução individual
+3. **Análise por operadora**: Qual operadora gera mais comissão
+4. **Fluxo de caixa**: Entradas e saídas detalhadas
+5. **Previsão de recebimentos**: Baseado em propostas aceitas
+
+#### Etapa 4.2: Componentes de visualização
+
+**Pasta**: `components/finance/charts/`
+
+Criar componentes:
+- `revenue-chart.tsx`: Gráfico de linha com evolução de receita
+- `commission-distribution.tsx`: Pizza com distribuição por agente
+- `cash-flow-chart.tsx`: Barras com entradas vs saídas
+- `agent-ranking.tsx`: Ranking de vendas com barras horizontais
+- `target-progress.tsx`: Indicador de progresso de meta
+
+### 🔧 MÓDULO 5: ACTIONS E VALIDAÇÕES
+
+#### Etapa 5.1: Actions financeiras
+
+**Pasta**: `lib/actions/finance/`
+
+Criar actions:
+```typescript
+// confirm-payment.ts
+export const confirmPayment = createPermissionAction(
+  confirmPaymentSchema,
+  Permission.FINANCE_MANAGE,
+  async (input, user) => {
+    // Validar proposta existe
+    // Criar registro de pagamento
+    // Disparar cálculo de comissão
+    // Atualizar status da reserva
+    // Registrar no activity log
+  }
+);
+
+// calculate-commissions.ts
+export const calculateCommissions = createPermissionAction(
+  calculateCommissionsSchema,
+  Permission.FINANCE_MANAGE,
+  async (input, user) => {
+    // Buscar propostas do período
+    // Aplicar regras de cálculo
+    // Considerar metas e bônus
+    // Gerar registros de comissão
+  }
+);
+
+// approve-commissions.ts
+export const approveCommissions = createPermissionAction(
+  approveCommissionsSchema,
+  Permission.FINANCE_MANAGE,
+  async (input, user) => {
+    // Validar comissões existem
+    // Atualizar status para approved
+    // Registrar quem aprovou
+    // Notificar agentes
+  }
+);
+
+// adjust-commission.ts
+export const adjustCommission = createPermissionAction(
+  adjustCommissionSchema,
+  Permission.FINANCE_MANAGE,
+  async (input, user) => {
+    // Criar registro de ajuste
+    // Recalcular valor final
+    // Justificar mudança
+    // Notificar agente afetado
+  }
+);
+
+// create-transaction.ts
+export const createTransaction = createPermissionAction(
+  createTransactionSchema,
+  Permission.FINANCE_MANAGE,
+  async (input, user) => {
+    // Validar categoria
+    // Criar transação
+    // Atualizar saldos
+    // Anexar comprovantes
+  }
+);
+```
+
+#### Etapa 5.2: Validações Zod
+
+**Arquivo**: `lib/validations/finance/index.ts`
+
+```typescript
+// Schemas de validação necessários
+export const confirmPaymentSchema = z.object({
+  proposalId: z.string().uuid(),
+  paymentDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  amount: z.number().positive(),
+  paymentMethod: z.string().optional(),
+  receipt: z.object({
+    url: z.string().url(),
+    name: z.string()
+  }).optional(),
+  notes: z.string().optional()
+});
+
+export const adjustCommissionSchema = z.object({
+  commissionId: z.string().uuid(),
+  adjustmentType: z.enum(['bonus', 'discount', 'correction']),
+  newValue: z.number().positive(),
+  reason: z.string().min(10, "Justificativa deve ter pelo menos 10 caracteres")
+});
+
+// Adicionar outros schemas...
+```
+
+### 🔄 MÓDULO 6: INTEGRAÇÕES
+
+#### Etapa 6.1: Sincronização Booking-Finance
+
+**Arquivo**: `lib/services/finance/booking-sync.ts`
+
+```typescript
+// Sincronizar mudanças de status
+export async function syncBookingStatus(bookingId: string, newStatus: string) {
+  switch(newStatus) {
+    case 'cancelled':
+      // Cancelar comissões relacionadas
+      await cancelRelatedCommissions(bookingId);
+      break;
+    case 'active':
+      // Liberar comissões para pagamento
+      await releaseCommissions(bookingId);
+      break;
+    case 'suspended':
+      // Suspender comissões
+      await suspendCommissions(bookingId);
+      break;
+  }
+}
+```
+
+#### Etapa 6.2: Notificações automáticas
+
+**Arquivo**: `lib/services/finance/notifications.ts`
+
+Notificações necessárias:
+- Comissão calculada
+- Comissão aprovada
+- Pagamento confirmado
+- Meta atingida
+- Ajuste realizado
 
 ### ✅ TESTES E VALIDAÇÃO
 
-#### Etapa 4.1: Testar fluxo de reservas
+#### Testes do fluxo financeiro
 
-1. Aceite uma proposta e verifique criação automática
-2. Faça upload de 3 documentos diferentes
-3. Mude status com justificativas
-4. Verifique timeline completa
-5. Teste permissões de visualização
+1. **Teste de cálculo de comissão**:
+   - Confirmar pagamento de uma proposta
+   - Verificar cálculo automático correto
+   - Validar aplicação de regras da operadora
 
-#### Etapa 4.2: Testar fluxo financeiro
+2. **Teste de ajustes**:
+   - Fazer ajuste manual em comissão
+   - Verificar histórico de mudanças
+   - Confirmar notificação ao agente
 
-1. Confirme pagamento de uma proposta
-2. Verifique cálculo automático de comissão
-3. Faça um ajuste manual
-4. Aprove lote de comissões
-5. Gere relatório mensal
-6. Crie lançamento manual
+3. **Teste de aprovação em lote**:
+   - Selecionar múltiplas comissões
+   - Aprovar todas
+   - Verificar mudança de status
 
-#### Etapa 4.3: Testar integrações
+4. **Teste de relatórios**:
+   - Gerar relatório mensal
+   - Verificar precisão dos dados
+   - Exportar para Excel
 
-1. Cancele uma reserva e verifique estorno
-2. Complete instalação e verifique liberação
-3. Teste notificações automáticas
+5. **Teste de permissões**:
+   - Agente vê apenas suas comissões
+   - Admin pode aprovar e ajustar
+   - Master tem acesso total
 
-### 📋 Checklist de Conclusão da Fase 4
+### 📋 Checklist de Conclusão
 
-- [ ] Reservas sendo criadas automaticamente
-- [ ] Upload de documentos funcionando
-- [ ] Timeline de eventos registrando tudo
-- [ ] Mudanças de status com histórico
-- [ ] Cálculo automático de comissões
-- [ ] Dashboard financeiro com métricas
-- [ ] Agentes visualizando suas comissões
+- [ ] Schema financeiro criado e migrado
+- [ ] Calculadora de comissões funcionando
+- [ ] Confirmação de pagamentos operacional
+- [ ] Dashboard financeiro com métricas reais
+- [ ] Gestão de comissões para admin
+- [ ] Página "Minhas Comissões" para agentes
+- [ ] Lançamentos manuais funcionando
 - [ ] Relatórios sendo gerados corretamente
-- [ ] Notificações automáticas funcionando
-- [ ] Permissões respeitadas em todos módulos
+- [ ] Gráficos interativos implementados
+- [ ] Sincronização com bookings ativa
+- [ ] Notificações automáticas configuradas
+- [ ] Exportação de dados funcionando
+- [ ] Permissões respeitadas em todas as páginas
+- [ ] Activity log registrando ações financeiras
 
 ### 🎯 Próximos Passos
 
-Com o sistema completo de pós-venda e financeiro:
-- **Fase 5**: Relatórios avançados, logs detalhados e configurações
+Com o módulo financeiro completo:
+- **Fase 5**: Integrações externas (NF-e, boletos, gateway de pagamento)
+- **Fase 6**: Analytics avançado e BI
+- **Fase 7**: Automações e workflows customizáveis
 
-### 💡 Dicas Importantes para a Fase 4
+### 💡 Dicas Importantes
 
-1. **Segurança em primeiro lugar** - Dados financeiros são críticos
-2. **Auditoria completa** - Todo valor alterado deve ter justificativa
-3. **Backup de documentos** - Implemente redundância no storage
-4. **Cálculos precisos** - Use bibliotecas para cálculos monetários
-5. **Validações rigorosas** - Impeça alterações indevidas em comissões
-6. **Performance em relatórios** - Use queries otimizadas e cache
+1. **Precisão monetária**: Use tipos `decimal` no banco, nunca `float`
+2. **Auditoria completa**: Toda alteração financeira deve ter justificativa
+3. **Imutabilidade**: Comissões pagas nunca devem ser alteradas, apenas ajustadas com novo registro
+4. **Performance**: Implemente cache para relatórios pesados
+5. **Segurança**: Logs detalhados de todas as operações financeiras
+6. **Backup**: Implemente rotina de backup específica para dados financeiros
+7. **Conformidade**: Prepare estrutura para futuras integrações fiscais
+
+### 🔒 Considerações de Segurança
+
+- Implementar rate limiting em operações financeiras
+- Dupla confirmação para valores acima de limites
+- Logs imutáveis de todas as transações
+- Criptografia de dados sensíveis
+- Sessões com timeout reduzido em páginas financeiras
+- Notificação imediata de atividades suspeitas
 
 ---
 
-Parabéns! Com a Fase 4 completa, você tem um sistema robusto de CRM com controle financeiro completo. O sistema está quase pronto para produção! 💪
+🎉 **Parabéns!** Com a conclusão da Fase 4, seu sistema terá um módulo financeiro robusto e completo, pronto para gerenciar comissões, pagamentos e fornecer insights financeiros valiosos para a agência!

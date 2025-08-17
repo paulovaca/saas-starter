@@ -45,8 +45,10 @@ npm run validate:env
   - `actions/` - Server actions with universal wrapper (validation, permissions, rate limiting)
   - `auth/` - JWT authentication, session management, permission system
   - `db/` - Drizzle configuration, schemas, queries, and migrations
+    - `schema/` - Modular schema definitions (auth, agency, clients, etc.)
   - `services/` - Cross-cutting concerns (error handling, rate limiting, activity logging)
   - `validations/` - Zod schemas with Brazilian business logic validation
+- `scripts/` - Utility scripts for environment validation, database operations
 
 ### Data Architecture
 
@@ -56,7 +58,7 @@ Agency (Root Tenant)
 ├── Users (DEVELOPER/MASTER/ADMIN/AGENT roles)
 ├── Sales Funnels → Stages → Client Progression
 ├── Base Items → Operator Items → Commission Rules
-├── Clients → Interactions/Tasks → Proposals
+├── Clients → Interactions/Tasks → Proposals → Bookings
 └── Activity Log (Comprehensive audit trail)
 ```
 
@@ -66,6 +68,7 @@ Agency (Root Tenant)
 - **Soft Deletes**: `deletedAt` fields for data retention
 - **Brazilian Compliance**: CPF/CNPJ validation, CEP formatting, state codes
 - **Flexible Schema**: JSON fields for custom data with type safety
+- **Modular Schema Organization**: Schemas split into logical modules (auth, agency, clients, etc.)
 
 ### Authentication & Permission System
 
@@ -78,9 +81,10 @@ Agency (Root Tenant)
 **Security Implementation:**
 - JWT tokens in httpOnly cookies with 24-hour expiration
 - Database session tracking with device information
-- CSRF protection with dedicated middleware
-- Comprehensive security headers (XSS, clickjacking, content sniffing)
-- Automatic session refresh and cleanup
+- CSRF protection with dedicated middleware (lib/auth/csrf.ts)
+- Comprehensive security headers in middleware.ts (XSS, clickjacking, content sniffing)
+- Automatic session refresh and cleanup via SessionManager
+- Protected routes defined in middleware.ts: `/users`, `/funnels`, `/catalog`, `/operators`, `/clients`, `/proposals`, `/reports`, `/profile`, `/settings`
 
 **Permission Middleware:**
 ```typescript
@@ -111,6 +115,14 @@ export const createOperator = createPermissionAction(
 );
 ```
 
+**Action Wrapper Features:**
+- Automatic Zod validation with detailed error messages
+- Authentication and permission checks
+- Rate limiting (configurable per action)
+- Activity logging for audit trails
+- Standardized error responses (ActionResponse<T>)
+- Database error handling with user-friendly messages
+
 ### Query Patterns
 
 **Multi-Tenant Data Access:**
@@ -138,61 +150,120 @@ const cepSchema = z.string().regex(/^\d{5}-?\d{3}$/, 'CEP inválido');
 - Customizable funnels with ordered stages
 - Client progression tracking with audit trails
 - Stage-specific instructions and color coding
+- Automatic client advancement through stages
 
 **Product Catalog System:**
 - Base items as templates with custom fields
 - Operator-specific variations with pricing
 - Flexible commission rules (percentage, fixed, tiered)
+- Hierarchical item relationships
 
 **Client Relationship Management:**
 - Enhanced client records with Brazilian document validation
 - Interaction history with duration tracking
 - Task management with priority and assignment
 - Proposal generation with approval workflow
+- Booking management with status tracking
 
 **Supplier/Operator Management:**
 - Contact information and document storage
 - Custom product variations and pricing
 - Commission rule configuration
+- Associated items cascade deletion
 
 ### Development Environment
 
-**Required Configuration:**
-- `DATABASE_URL` - PostgreSQL connection (Docker or remote)
-- `AUTH_SECRET` - JWT secret (minimum 32 characters)
-- `BASE_URL` - Application URL (defaults to localhost:3000)
+**Required Environment Variables:**
+```bash
+DATABASE_URL        # PostgreSQL connection (Docker or remote)
+AUTH_SECRET         # JWT secret (minimum 32 characters)
+CSRF_SECRET         # CSRF protection secret (minimum 32 characters)
+BASE_URL            # Application URL (defaults to localhost:3000)
+```
 
 **Optional Integrations:**
-- Stripe for payments (`STRIPE_SECRET_KEY`, `STRIPE_PUBLISHABLE_KEY`)
-- Upstash Redis for caching (falls back to in-memory)
-- SMTP for email notifications
+```bash
+# Stripe payments
+STRIPE_SECRET_KEY
+STRIPE_PUBLISHABLE_KEY
+STRIPE_WEBHOOK_SECRET
+
+# Upstash Redis (falls back to in-memory if not configured)
+UPSTASH_REDIS_REST_URL
+UPSTASH_REDIS_REST_TOKEN
+
+# Email notifications
+EMAIL_FROM
+EMAIL_SERVER
+
+# Monitoring
+SENTRY_DSN
+```
 
 **Setup Process:**
-1. Run `npm run db:setup` for interactive database configuration
-2. Environment validation runs automatically before dev/build
-3. Default seeded credentials: `admin@demoagency.com` / `admin123`
+1. Copy `.env.example` to `.env` and configure variables
+2. Run `npm run db:setup` for interactive database configuration
+3. Run `npm run db:migrate` to apply database schema
+4. Run `npm run db:seed` for demo data
+5. Environment validation runs automatically before dev/build
+6. Default seeded credentials: `admin@demoagency.com` / `admin123`
 
 ### Testing Strategy
 
+**Configuration (jest.config.js):**
 - Jest with jsdom environment
 - Tests in `__tests__/` directory with coverage reporting
 - Module path mapping with `@/` alias
 - Node.js polyfills for crypto and TextEncoder
+- Transform ignores for jose module (ES modules handling)
+
+**Test Coverage:**
+- Collect from `lib/**` and `app/**`
+- Exclude type definitions, node_modules, and build outputs
+
+**Running Tests:**
+```bash
+npm test              # Run all tests
+npm run test:watch    # Watch mode for development
+npm run test:coverage # Generate coverage report
+```
 
 ### Code Style and Architecture Principles
 
-- **Never use inline styles** - Always use CSS files
-- **Server-first approach** - Default to server components, minimal client-side JS
-- **Type safety** - TypeScript + Zod for runtime validation
+- **Never use inline styles** - Always use CSS files for styling
+- **Server-first approach** - Default to server components, minimize client-side JavaScript
+- **Type safety** - TypeScript strict mode + Zod for runtime validation
 - **Multi-tenant by default** - All queries automatically scoped by agency
 - **Permission-driven UI** - Components hide/show based on user permissions
 - **Brazilian market compliance** - Built-in CPF/CNPJ/CEP validation
+- **Error handling** - Centralized error handling with user-friendly messages
+- **Modular code organization** - Separate concerns into logical modules
 
 ### Key Security Considerations
 
 - All server actions require authentication and proper permissions
 - Agent role users can only access their own assigned clients
 - Database queries are automatically scoped by `agencyId`
-- CSRF protection for all state-changing operations
+- CSRF protection for all state-changing operations (except Stripe webhooks)
 - Comprehensive activity logging for audit compliance
-- Rate limiting to prevent abuse
+- Rate limiting to prevent abuse (configurable per action)
+- Security headers configured in middleware for XSS, clickjacking protection
+- Session management with automatic cleanup of expired sessions
+- Password hashing with bcrypt (10 salt rounds)
+
+### Middleware Configuration
+
+The middleware.ts file handles:
+- Authentication checks for protected routes
+- CSRF token validation for mutations
+- Security headers injection
+- Session refresh and validation
+- Automatic redirects for authenticated/unauthenticated users
+
+### Database Migration Workflow
+
+1. Make schema changes in `lib/db/schema/` modules
+2. Run `npm run db:generate` to create migration files
+3. Review generated migrations in `drizzle/` directory
+4. Run `npm run db:migrate` to apply changes
+5. Use `npm run db:studio` for visual database management
