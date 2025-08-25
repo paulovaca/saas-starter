@@ -3,7 +3,7 @@
 import { z } from 'zod'
 import { createAuthenticatedAction } from '@/lib/actions/action-wrapper'
 import { db } from '@/lib/db/drizzle'
-import { clientsNew, activityLog, agencySettings, salesFunnelStages } from '@/lib/db/schema'
+import { clientsNew, activityLog } from '@/lib/db/schema'
 import { eq, and } from 'drizzle-orm'
 import { AppError } from '@/lib/services/error-handler'
 import { validateCPF, validateCNPJ } from '@/lib/validations/brazilian'
@@ -22,8 +22,6 @@ const createClientSchema = z.object({
   addressNeighborhood: z.string().optional(),
   addressCity: z.string().optional(),
   addressState: z.string().length(2, 'Estado deve ter 2 caracteres').optional(),
-  funnelId: z.string().uuid('ID do funil inválido').optional(),
-  funnelStageId: z.string().uuid('ID da etapa inválido').optional(),
   notes: z.string().optional()
 }).refine(data => {
   if (data.documentType && data.documentNumber) {
@@ -70,33 +68,7 @@ export const createClient = createAuthenticatedAction(
       }
     }
 
-    // Se não foi especificado funil, usar o padrão da agência
-    let funnelId = input.funnelId
-    let funnelStageId = input.funnelStageId
-
-    if (!funnelId) {
-      const settings = await db.query.agencySettings.findFirst({
-        where: eq(agencySettings.agencyId, user.agencyId)
-      })
-
-      if (settings?.defaultFunnelId) {
-        funnelId = settings.defaultFunnelId
-        
-        // Buscar a primeira etapa do funil padrão
-        const firstStage = await db.query.salesFunnelStages.findFirst({
-          where: eq(salesFunnelStages.funnelId, funnelId),
-          orderBy: (stages, { asc }) => [asc(stages.order)]
-        })
-
-        if (firstStage) {
-          funnelStageId = firstStage.id
-        }
-      }
-    }
-
-    if (!funnelId || !funnelStageId) {
-      throw new AppError('Funil ou etapa não especificados e nenhum funil padrão configurado', 'INVALID_INPUT')
-    }
+    // Cliente inicia na Jornada Geral - etapa 'em_qualificacao'
 
     // Criar o cliente
     const [newClient] = await db.insert(clientsNew).values({
@@ -115,8 +87,8 @@ export const createClient = createAuthenticatedAction(
       addressNeighborhood: input.addressNeighborhood,
       addressCity: input.addressCity,
       addressState: input.addressState,
-      funnelId,
-      funnelStageId,
+      jornadaStage: 'em_qualificacao',
+      dealStatus: 'active',
       notes: input.notes,
       isActive: true
     }).returning()

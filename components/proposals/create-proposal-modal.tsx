@@ -3,7 +3,7 @@
 import React, { useState, useCallback } from 'react';
 import { Modal } from '@/components/ui/modal';
 import { Button } from '@/components/ui/button';
-import { Plus, Edit, Trash2, Calendar, User, Package } from 'lucide-react';
+import { Plus, Edit, Trash2, Calendar, User, Package, Target } from 'lucide-react';
 import AddProductModal from './add-product-modal';
 import { calculateSubtotal, formatCurrency } from '@/lib/services/proposal-calculator';
 import styles from './create-proposal-modal.module.css';
@@ -45,6 +45,11 @@ export default function CreateProposalModal({
   isDuplicate = false
 }: CreateProposalModalProps) {
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
+  const [selectedFunnel, setSelectedFunnel] = useState<string>('');
+  const [selectedFunnelStage, setSelectedFunnelStage] = useState<string>('');
+  const [funnels, setFunnels] = useState<any[]>([]);
+  const [funnelStages, setFunnelStages] = useState<any[]>([]);
+  const [loadingFunnels, setLoadingFunnels] = useState(false);
   const [validUntil, setValidUntil] = useState(() => {
     const date = new Date();
     date.setDate(date.getDate() + 30); // 30 days from now
@@ -63,12 +68,23 @@ export default function CreateProposalModal({
   const [clients, setClients] = useState<Client[]>([]);
   const [loadingClients, setLoadingClients] = useState(false);
 
-  // Load clients when modal opens
+  // Load clients and funnels when modal opens
   React.useEffect(() => {
     if (isOpen) {
       loadAllClients();
+      loadFunnels();
     }
   }, [isOpen]);
+
+  // Load funnel stages when funnel is selected
+  React.useEffect(() => {
+    if (selectedFunnel) {
+      loadFunnelStages(selectedFunnel);
+    } else {
+      setFunnelStages([]);
+      setSelectedFunnelStage('');
+    }
+  }, [selectedFunnel]);
 
   // Load initial data for duplication
   React.useEffect(() => {
@@ -148,6 +164,49 @@ export default function CreateProposalModal({
     }
   };
 
+  const loadFunnels = async () => {
+    try {
+      setLoadingFunnels(true);
+      const response = await fetch('/api/funnels');
+      
+      if (!response.ok) {
+        throw new Error('Erro ao carregar funis');
+      }
+      
+      const result = await response.json();
+      if (result.funnels && Array.isArray(result.funnels)) {
+        setFunnels(result.funnels);
+      }
+    } catch (error) {
+      console.error('Erro ao carregar funis:', error);
+      setFunnels([]);
+    } finally {
+      setLoadingFunnels(false);
+    }
+  };
+
+  const loadFunnelStages = async (funnelId: string) => {
+    try {
+      const response = await fetch(`/api/funnels/${funnelId}/stages`);
+      
+      if (!response.ok) {
+        throw new Error('Erro ao carregar etapas do funil');
+      }
+      
+      const result = await response.json();
+      if (result.stages && Array.isArray(result.stages)) {
+        setFunnelStages(result.stages);
+        // Automaticamente selecionar a primeira etapa se não houver seleção
+        if (!selectedFunnelStage && result.stages.length > 0) {
+          setSelectedFunnelStage(result.stages[0].id);
+        }
+      }
+    } catch (error) {
+      console.error('Erro ao carregar etapas do funil:', error);
+      setFunnelStages([]);
+    }
+  };
+
   const handleSelectClient = useCallback((client: Client) => {
     setSelectedClient(client);
   }, []);
@@ -188,6 +247,11 @@ export default function CreateProposalModal({
       return;
     }
 
+    if (!selectedFunnel) {
+      alert('Selecione um funil');
+      return;
+    }
+
     if (items.length === 0) {
       alert('Adicione pelo menos um produto');
       return;
@@ -218,6 +282,8 @@ export default function CreateProposalModal({
     const proposalData = {
       clientId: selectedClient.id,
       operatorId: items.length > 0 ? items[0].operatorId : '', // Use operator from first item
+      funnelId: selectedFunnel,
+      funnelStageId: selectedFunnelStage || undefined,
       validUntil: validUntil, // Keep as YYYY-MM-DD format
       items: items.map(item => ({
         operatorId: item.operatorId,
@@ -313,6 +379,56 @@ export default function CreateProposalModal({
               </div>
             )}
           </div>
+
+          {/* Funnel Selection */}
+          <div className={styles.section}>
+            <label className={styles.label}>
+              <Target className={styles.labelIcon} />
+              Funil *
+            </label>
+            {loadingFunnels ? (
+              <div className={styles.loadingState}>Carregando funis...</div>
+            ) : (
+              <select
+                value={selectedFunnel}
+                onChange={(e) => setSelectedFunnel(e.target.value)}
+                className={styles.input}
+                required
+              >
+                <option value="">Selecione um funil...</option>
+                {funnels.map((funnel) => (
+                  <option key={funnel.id} value={funnel.id}>
+                    {funnel.name}
+                  </option>
+                ))}
+              </select>
+            )}
+          </div>
+
+          {/* Funnel Stage Selection */}
+          {selectedFunnel && (
+            <div className={styles.section}>
+              <label className={styles.label}>
+                <Target className={styles.labelIcon} />
+                Etapa do Funil
+              </label>
+              <select
+                value={selectedFunnelStage}
+                onChange={(e) => setSelectedFunnelStage(e.target.value)}
+                className={styles.input}
+              >
+                <option value="">Selecionar etapa (padrão: primeira)</option>
+                {funnelStages.map((stage) => (
+                  <option key={stage.id} value={stage.id}>
+                    {stage.name}
+                  </option>
+                ))}
+              </select>
+              <small className={styles.helpText}>
+                Se não selecionada, usará a primeira etapa do funil
+              </small>
+            </div>
+          )}
 
           {/* Valid Until */}
           <div className={styles.section}>

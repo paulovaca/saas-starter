@@ -67,6 +67,10 @@ export const updateClient = createPermissionAction(
       }
     }
 
+    // Remover campos da Jornada Geral que não devem ser editados manualmente
+    delete updateData.jornadaStage;
+    delete updateData.dealStatus;
+
     // Preparar dados para atualização - só incluir campos que mudaram
     const dataToUpdate: any = {
       updatedAt: new Date()

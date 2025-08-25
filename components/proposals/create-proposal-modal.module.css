@@ -46,6 +46,12 @@
   box-shadow: 0 0 0 3px rgb(from var(--primary) r g b / 0.1);
 }
 
+.helpText {
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}
+
 /* Client Selector */
 .clientSelector {
   position: relative;

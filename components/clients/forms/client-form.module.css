@@ -339,6 +339,53 @@
   animation: spin 1s linear infinite;
 }
 
+/* Jornada Geral */
+.jornadaStageDisplay {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.jornadaBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  max-width: fit-content;
+}
+
+.jornada-em_qualificacao {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.jornada-em_negociacao {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.jornada-reserva_ativa {
+  background: #d1fae5;
+  color: #047857;
+}
+
+.jornada-lead_dormente {
+  background: #e5e7eb;
+  color: #6b7280;
+}
+
+.jornada-inativo {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.jornadaHelp {
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+}
+
 /* Responsividade */
 @media (max-width: 768px) {
   .formGridTwoCols {

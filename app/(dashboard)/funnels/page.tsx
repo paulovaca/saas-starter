@@ -203,7 +203,7 @@ export default function FunnelsPage() {
         <div className={styles.headerContent}>
           <h1 className={styles.title}>Funis de Venda</h1>
           <p className={styles.description}>
-            Gerencie os funis de venda da sua agência
+            Gerencie os funis de venda para propostas e reservas. Clientes seguem a Jornada Geral automática.
           </p>
         </div>
         {canManageFunnels() && (
@@ -255,6 +255,36 @@ export default function FunnelsPage() {
         }}
         />
       </Suspense>
+
+      {/* Informação sobre Jornada Geral */}
+      <div className={styles.infoSection}>
+        <div className={styles.infoCard}>
+          <div className={styles.infoHeader}>
+            <Users className={styles.infoIcon} />
+            <h3>Jornada Geral dos Clientes</h3>
+          </div>
+          <p className={styles.infoText}>
+            Todos os clientes seguem automaticamente a <strong>Jornada Geral</strong> com 5 etapas fixas:
+          </p>
+          <div className={styles.journeyStages}>
+            <span className={`${styles.stageBadge} ${styles.stageQualificacao}`}>Em Qualificação</span>
+            <span className={`${styles.stageBadge} ${styles.stageNegociacao}`}>Em Negociação</span>
+            <span className={`${styles.stageBadge} ${styles.stageAtiva}`}>Reserva Ativa</span>
+            <span className={`${styles.stageBadge} ${styles.stageDormente}`}>Lead Dormente</span>
+            <span className={`${styles.stageBadge} ${styles.stageInativo}`}>Inativo</span>
+          </div>
+          <p className={styles.infoSubtext}>
+            A Jornada Geral é atualizada automaticamente conforme o progresso comercial do cliente.
+          </p>
+        </div>
+      </div>
+
+      <div className={styles.sectionDivider}>
+        <h2 className={styles.sectionTitle}>Funis Personalizados</h2>
+        <p className={styles.sectionDescription}>
+          Configure funis específicos para propostas e reservas com etapas personalizadas.
+        </p>
+      </div>
 
       <div className={styles.content}>
         {filteredFunnels.length === 0 ? (

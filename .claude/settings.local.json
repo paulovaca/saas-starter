@@ -9,7 +9,14 @@
       "Bash(npm run:*)",
       "mcp__puppeteer__puppeteer_evaluate",
       "mcp__puppeteer__puppeteer_screenshot",
-      "Bash(mv:*)"
+      "Bash(mv:*)",
+      "Read(/h:\\Programação\\saas-starter/**)",
+      "Bash(npx drizzle-kit generate:*)",
+      "Bash(node:*)",
+      "Read(/h:\\Programação\\saas-starter/**)",
+      "Read(/h:\\Programação\\saas-starter/**)",
+      "Read(/h:\\Programação\\saas-starter/**)",
+      "mcp__puppeteer__puppeteer_click"
     ],
     "deny": []
   }

@@ -19,6 +19,9 @@ interface BookingHeaderProps {
     clientPhone: string | null;
     operatorName: string | null;
     agentName: string | null;
+    funnelName?: string | null;
+    funnelStageName?: string | null;
+    funnelStageColor?: string | null;
   };
   user: CurrentUser;
 }
@@ -85,6 +88,20 @@ export function BookingHeader({ booking, user }: BookingHeaderProps) {
             {booking.agentName || "Não atribuído"}
           </div>
         </div>
+        
+        {booking.funnelName && (
+          <div className={styles.infoGroup}>
+            <span className={styles.infoLabel}>Funil</span>
+            <div className={styles.infoValue}>
+              {booking.funnelName}
+              {booking.funnelStageName && (
+                <div className={`${styles.infoSecondary} ${styles.stageBadge}`} style={{ backgroundColor: booking.funnelStageColor || '#e5e7eb' }}>
+                  {booking.funnelStageName}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
         
         <div className={styles.infoGroup}>
           <span className={styles.infoLabel}>Valor Total</span>

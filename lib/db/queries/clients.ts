@@ -24,8 +24,8 @@ export interface ClientWithRelations {
   addressNeighborhood: string | null;
   addressCity: string | null;
   addressState: string | null;
-  funnelId: string;
-  funnelStageId: string;
+  jornadaStage: 'em_qualificacao' | 'em_negociacao' | 'reserva_ativa' | 'lead_dormente' | 'inativo';
+  dealStatus: 'active' | 'dormant' | 'inactive';
   notes: string | null;
   isActive: boolean;
   createdAt: Date;
@@ -37,16 +37,6 @@ export interface ClientWithRelations {
     id: string;
     name: string;
     email: string;
-  };
-  funnel: {
-    id: string;
-    name: string;
-  };
-  funnelStage: {
-    id: string;
-    name: string;
-    instructions: string | null;
-    color: string;
   };
   totalProposals: number;
   totalValue: number;
@@ -86,12 +76,12 @@ export async function getClientsWithFilters(
     whereConditions = and(whereConditions, eq(clientsNew.userId, filters.userId));
   }
   
-  if (filters.funnelId) {
-    whereConditions = and(whereConditions, eq(clientsNew.funnelId, filters.funnelId));
+  if (filters.jornadaStage) {
+    whereConditions = and(whereConditions, eq(clientsNew.jornadaStage, filters.jornadaStage));
   }
   
-  if (filters.funnelStageId) {
-    whereConditions = and(whereConditions, eq(clientsNew.funnelStageId, filters.funnelStageId));
+  if (filters.dealStatus) {
+    whereConditions = and(whereConditions, eq(clientsNew.dealStatus, filters.dealStatus));
   }
   
   // Buscar clientes com dados de propostas
@@ -113,8 +103,8 @@ export async function getClientsWithFilters(
       addressNeighborhood: clientsNew.addressNeighborhood,
       addressCity: clientsNew.addressCity,
       addressState: clientsNew.addressState,
-      funnelId: clientsNew.funnelId,
-      funnelStageId: clientsNew.funnelStageId,
+      jornadaStage: clientsNew.jornadaStage,
+      dealStatus: clientsNew.dealStatus,
       notes: clientsNew.notes,
       isActive: clientsNew.isActive,
       createdAt: clientsNew.createdAt,
@@ -125,21 +115,9 @@ export async function getClientsWithFilters(
         name: users.name,
         email: users.email,
       },
-      funnel: {
-        id: salesFunnels.id,
-        name: salesFunnels.name,
-      },
-      funnelStage: {
-        id: salesFunnelStages.id,
-        name: salesFunnelStages.name,
-        instructions: salesFunnelStages.guidelines,
-        color: salesFunnelStages.color,
-      },
     })
     .from(clientsNew)
     .leftJoin(users, eq(clientsNew.userId, users.id))
-    .leftJoin(salesFunnels, eq(clientsNew.funnelId, salesFunnels.id))
-    .leftJoin(salesFunnelStages, eq(clientsNew.funnelStageId, salesFunnelStages.id))
     .where(whereConditions)
     .orderBy(desc(clientsNew.createdAt))
     .limit(limit)
@@ -236,8 +214,8 @@ export async function getClientWithDetails(clientId: string, agencyId: string) {
       addressNeighborhood: clientsNew.addressNeighborhood,
       addressCity: clientsNew.addressCity,
       addressState: clientsNew.addressState,
-      funnelId: clientsNew.funnelId,
-      funnelStageId: clientsNew.funnelStageId,
+      jornadaStage: clientsNew.jornadaStage,
+      dealStatus: clientsNew.dealStatus,
       notes: clientsNew.notes,
       isActive: clientsNew.isActive,
       createdAt: clientsNew.createdAt,
@@ -248,21 +226,9 @@ export async function getClientWithDetails(clientId: string, agencyId: string) {
         name: users.name,
         email: users.email,
       },
-      funnel: {
-        id: salesFunnels.id,
-        name: salesFunnels.name,
-      },
-      funnelStage: {
-        id: salesFunnelStages.id,
-        name: salesFunnelStages.name,
-        instructions: salesFunnelStages.guidelines,
-        color: salesFunnelStages.color,
-      },
     })
     .from(clientsNew)
     .leftJoin(users, eq(clientsNew.userId, users.id))
-    .leftJoin(salesFunnels, eq(clientsNew.funnelId, salesFunnels.id))
-    .leftJoin(salesFunnelStages, eq(clientsNew.funnelStageId, salesFunnelStages.id))
     .where(
       and(
         eq(clientsNew.id, clientId),

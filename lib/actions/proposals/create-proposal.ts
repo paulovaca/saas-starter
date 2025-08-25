@@ -2,16 +2,18 @@
 
 import { z } from 'zod';
 import { db } from '@/lib/db/drizzle';
-import { proposals, proposalItems } from '@/lib/db/schema/clients';
+import { proposals, proposalItems, clientsNew, salesFunnelStages } from '@/lib/db/schema';
 import { createPermissionAction } from '@/lib/actions/action-wrapper';
 import { Permission } from '@/lib/auth/permissions';
 import { ProposalStatus } from '@/lib/types/proposal';
-import { sql } from 'drizzle-orm';
+import { sql, eq, and } from 'drizzle-orm';
 
 // Schema para validar os dados de criação da proposta
 const createProposalSchema = z.object({
   clientId: z.string().uuid('ID do cliente inválido'),
   operatorId: z.string().uuid('ID da operadora inválido'),
+  funnelId: z.string().uuid('ID do funil inválido'),
+  funnelStageId: z.string().uuid('ID da etapa do funil inválido').optional(),
   validUntil: z.string().refine(date => !isNaN(Date.parse(date)), 'Data inválida'),
   items: z.array(z.object({
     baseItemId: z.string().uuid().optional(),
@@ -30,7 +32,27 @@ export const createProposal = createPermissionAction(
   createProposalSchema,
   Permission.PROPOSAL_CREATE,
   async (input, user) => {
-    const { clientId, operatorId, validUntil, items, paymentMethod, notes } = input;
+    const { clientId, operatorId, funnelId, funnelStageId, validUntil, items, paymentMethod, notes } = input;
+
+    // Validar se o funil existe e pertence à agência
+    if (!funnelId) {
+      throw new Error('Escolha um funil válido');
+    }
+
+    // Se não foi especificada a etapa, usar a primeira do funil
+    let finalFunnelStageId = funnelStageId;
+    if (!finalFunnelStageId) {
+      const firstStage = await db.query.salesFunnelStages.findFirst({
+        where: eq(salesFunnelStages.funnelId, funnelId),
+        orderBy: (stages, { asc }) => [asc(stages.order)]
+      });
+      
+      if (!firstStage) {
+        throw new Error('Funil não possui etapas configuradas');
+      }
+      
+      finalFunnelStageId = firstStage.id;
+    }
 
     try {
       // Calcular totais
@@ -71,14 +93,27 @@ export const createProposal = createPermissionAction(
       await db.execute(sql`
         INSERT INTO proposals (
           id, proposal_number, agency_id, client_id, user_id, operator_id, 
-          status, subtotal, total_amount, commission_amount, commission_percent,
-          payment_method, valid_until, notes, created_at, updated_at
+          funnel_id, funnel_stage_id, status, subtotal, total_amount, 
+          commission_amount, commission_percent, payment_method, valid_until, 
+          notes, created_at, updated_at
         ) VALUES (
           ${proposalId}, ${proposalNumber}, ${user.agencyId}, ${clientId}, ${user.id}, ${operatorId},
-          ${ProposalStatus.DRAFT}, ${subtotal.toString()}, ${subtotal.toString()}, ${'0'}, ${'0'},
-          ${paymentMethod || null}, ${validUntil}, ${notes || null}, NOW(), NOW()
+          ${funnelId}, ${finalFunnelStageId}, ${ProposalStatus.DRAFT}, ${subtotal.toString()}, 
+          ${subtotal.toString()}, ${'0'}, ${'0'}, ${paymentMethod || null}, ${validUntil}, 
+          ${notes || null}, NOW(), NOW()
         )
       `);
+
+      // Atualizar cliente para 'em_negociacao' na Jornada Geral
+      await db.update(clientsNew)
+        .set({ 
+          jornadaStage: 'em_negociacao',
+          updatedAt: new Date()
+        })
+        .where(and(
+          eq(clientsNew.id, clientId),
+          eq(clientsNew.agencyId, user.agencyId)
+        ));
 
       // Inserir itens da proposta
       for (const item of processedItems) {

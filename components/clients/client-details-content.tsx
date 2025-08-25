@@ -29,7 +29,7 @@ import {
 import { formatCPF, formatCNPJ, formatPhone } from '@/lib/validations/clients/client.schema';
 import { Client } from '@/lib/types/clients';
 import type { User } from '@/lib/db/schema';
-import ClientFunnelStageEditor from './client-funnel-stage-editor';
+// Removido ClientFunnelStageEditor - clientes não usam funis
 import { InteractionForm } from './interactions/interaction-form';
 import { TaskForm } from './tasks/task-form';
 import { TransferModal } from './transfer-modal';
@@ -50,16 +50,9 @@ interface ClientWithDetails extends Client {
     email: string;
     role: string;
   };
-  funnel: {
-    id: string;
-    name: string;
-  };
-  funnelStage: {
-    id: string;
-    name: string;
-    color: string;
-    order: number;
-  };
+  // Jornada Geral
+  jornadaStage: 'em_qualificacao' | 'em_negociacao' | 'reserva_ativa' | 'lead_dormente' | 'inativo';
+  dealStatus: 'active' | 'dormant' | 'inactive';
   
   // Dados computados
   totalProposals: number;
@@ -267,24 +260,7 @@ export default function ClientDetailsContent({ clientId }: ClientDetailsContentP
     fetchClient();
   };
 
-  // Função para atualizar dados do cliente após mudança de funil/etapa
-  const handleFunnelStageUpdate = async (funnelId: string, stageId: string) => {
-    if (!client) return;
-
-    try {
-      // Recarregar dados completos do cliente
-      const response = await fetch(`/api/clients/${clientId}`);
-      if (response.ok) {
-        const clientData = await response.json();
-        const transformedClient: ClientWithDetails = {
-          ...clientData,
-        };
-        setClient(transformedClient);
-      }
-    } catch (error) {
-      console.error('Erro ao recarregar dados do cliente:', error);
-    }
-  };
+  // Removido handleFunnelStageUpdate - clientes não usam funis
 
   // Formatação de dados
   const formatDocument = (type: 'cpf' | 'cnpj', number: string | null) => {
@@ -462,6 +438,41 @@ export default function ClientDetailsContent({ clientId }: ClientDetailsContentP
     }
   };
 
+  // Funções para Jornada Geral
+  const getJornadaStageLabel = (stage: string) => {
+    switch (stage) {
+      case 'em_qualificacao':
+        return 'Em Qualificação';
+      case 'em_negociacao':
+        return 'Em Negociação';
+      case 'reserva_ativa':
+        return 'Reserva Ativa';
+      case 'lead_dormente':
+        return 'Lead Dormente';
+      case 'inativo':
+        return 'Inativo';
+      default:
+        return 'Desconhecido';
+    }
+  };
+
+  const getJornadaStageClass = (stage: string) => {
+    switch (stage) {
+      case 'em_qualificacao':
+        return badgeStyles.jornadaQualificacao;
+      case 'em_negociacao':
+        return badgeStyles.jornadaNegociacao;
+      case 'reserva_ativa':
+        return badgeStyles.jornadaAtiva;
+      case 'lead_dormente':
+        return badgeStyles.jornadaDormente;
+      case 'inativo':
+        return badgeStyles.jornadaInativo;
+      default:
+        return badgeStyles.statusDefault;
+    }
+  };
+
   // Cores para etapas do funil
   const getStageColorClass = (color: string) => {
     const colorMap: Record<string, string> = {
@@ -515,8 +526,8 @@ export default function ClientDetailsContent({ clientId }: ClientDetailsContentP
               )}
             </div>
             <div className={styles.clientDetailsMetaTags}>
-              <Badge variant="outline" className={`${styles.clientStatus} ${styles.active} ${client.funnelStage?.color ? getStageColorClass(client.funnelStage.color) : ''}`}>
-                {client.funnelStage?.name}
+              <Badge variant="outline" className={`${styles.clientStatus} ${styles.active} ${getJornadaStageClass(client.jornadaStage)}`}>
+                {getJornadaStageLabel(client.jornadaStage)}
               </Badge>
               <span className={styles.clientDetailsDocumentText}>
                 {formatDocument(client.documentType, client.documentNumber)}
@@ -687,13 +698,22 @@ export default function ClientDetailsContent({ clientId }: ClientDetailsContentP
                 </CardContent>
               </Card>
 
-              <ClientFunnelStageEditor
-                clientId={client.id}
-                currentFunnel={client.funnel}
-                currentStage={client.funnelStage}
-                clientUserId={client.userId}
-                onUpdate={handleFunnelStageUpdate}
-              />
+              {/* Jornada Geral é atualizada automaticamente */}
+              <Card className={styles.jornadaCard}>
+                <CardHeader>
+                  <CardTitle>Jornada Geral</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className={styles.jornadaInfo}>
+                    <Badge className={getJornadaStageClass(client.jornadaStage)}>
+                      {getJornadaStageLabel(client.jornadaStage)}
+                    </Badge>
+                    <p className={styles.jornadaDescription}>
+                      A Jornada Geral é atualizada automaticamente conforme o cliente avança no processo comercial.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
 
               {client.notes && (
                 <Card>

@@ -289,8 +289,8 @@ export interface ProposalView {
 export interface ClientFilters {
   search?: string;
   status?: ClientStatus;
-  funnelId?: string;
-  funnelStageId?: string;
+  jornadaStage?: 'em_qualificacao' | 'em_negociacao' | 'reserva_ativa' | 'lead_dormente' | 'inativo';
+  dealStatus?: 'active' | 'dormant' | 'inactive';
   userId?: string;
   documentType?: DocumentType;
   city?: string;

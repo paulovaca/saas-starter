@@ -28,8 +28,8 @@ export async function GET(request: NextRequest) {
     const filters = {
       search: searchParams.get('search') || undefined,
       userId: searchParams.get('userId') || undefined,
-      funnelId: searchParams.get('funnelId') || undefined,
-      funnelStageId: searchParams.get('funnelStageId') || undefined,
+      jornadaStage: searchParams.get('jornadaStage') || undefined,
+      dealStatus: searchParams.get('dealStatus') || undefined,
     };
 
     // Parâmetros de paginação

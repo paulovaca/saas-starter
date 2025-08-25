@@ -94,11 +94,11 @@ async function seed() {
 
     // Create sales funnel stages
     const stages = [
-      { name: 'Novo Lead', instructions: 'Cliente acabou de entrar em contato', order: 1 },
-      { name: 'Qualificado', instructions: 'Cliente demonstrou interesse real', order: 2 },
-      { name: 'Proposta Enviada', instructions: 'Proposta foi enviada para o cliente', order: 3 },
-      { name: 'Negociação', instructions: 'Cliente está negociando valores/condições', order: 4 },
-      { name: 'Fechado', instructions: 'Venda foi concluída com sucesso', order: 5 },
+      { name: 'Novo Lead', guidelines: 'Cliente acabou de entrar em contato', order: 1 },
+      { name: 'Qualificado', guidelines: 'Cliente demonstrou interesse real', order: 2 },
+      { name: 'Proposta Enviada', guidelines: 'Proposta foi enviada para o cliente', order: 3 },
+      { name: 'Negociação', guidelines: 'Cliente está negociando valores/condições', order: 4 },
+      { name: 'Fechado', guidelines: 'Venda foi concluída com sucesso', order: 5 },
     ];
 
     for (const stage of stages) {

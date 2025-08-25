@@ -22,6 +22,10 @@ export const taskPriorityEnum = pgEnum('task_priority', ['low', 'medium', 'high'
 export const taskStatusEnum = pgEnum('task_status', ['pending', 'in_progress', 'completed', 'cancelled']);
 export const proposalStatusEnum = pgEnum('proposal_status', ['draft', 'sent', 'approved', 'contract', 'rejected', 'expired', 'awaiting_payment', 'active_booking', 'cancelled']);
 
+// Enums para Jornada Geral
+export const jornadaStageEnum = pgEnum('jornada_stage', ['em_qualificacao', 'em_negociacao', 'reserva_ativa', 'lead_dormente', 'inativo']);
+export const dealStatusEnum = pgEnum('deal_status', ['active', 'dormant', 'inactive']);
+
 // Tabela de clientes - versão atualizada
 export const clientsNew = pgTable('clients_new', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -40,8 +44,8 @@ export const clientsNew = pgTable('clients_new', {
   addressNeighborhood: varchar('address_neighborhood', { length: 100 }),
   addressCity: varchar('address_city', { length: 100 }),
   addressState: varchar('address_state', { length: 2 }),
-  funnelId: uuid('funnel_id').notNull(),
-  funnelStageId: uuid('funnel_stage_id').notNull(),
+  jornadaStage: jornadaStageEnum('jornada_stage').notNull().default('em_qualificacao'),
+  dealStatus: dealStatusEnum('deal_status').notNull().default('active'),
   notes: text('notes'),
   isActive: boolean('is_active').notNull().default(true),
   createdAt: timestamp('created_at').notNull().defaultNow(),
@@ -54,7 +58,7 @@ export const clientsNew = pgTable('clients_new', {
   
   // Índices de busca
   agencyUserIdx: index('clients_agency_user_idx').on(table.agencyId, table.userId),
-  funnelStageIdx: index('clients_funnel_stage_idx').on(table.funnelStageId),
+  jornadaStageIdx: index('clients_jornada_stage_idx').on(table.jornadaStage, table.agencyId, table.userId),
   createdAtIdx: index('clients_created_at_idx').on(table.createdAt),
   nameIdx: index('clients_name_idx').on(table.name),
   documentIdx: index('clients_document_idx').on(table.documentType, table.documentNumber),
@@ -121,6 +125,8 @@ export const proposals = pgTable('proposals', {
   clientId: uuid('client_id').notNull(),
   userId: uuid('user_id').notNull(),
   operatorId: uuid('operator_id').notNull(),
+  funnelId: uuid('funnel_id').notNull(),
+  funnelStageId: uuid('funnel_stage_id'),
   status: proposalStatusEnum('status').notNull().default('draft'),
   subtotal: decimal('subtotal', { precision: 10, scale: 2 }).notNull(),
   discountAmount: decimal('discount_amount', { precision: 10, scale: 2 }),
@@ -165,6 +171,7 @@ export const proposals = pgTable('proposals', {
   createdAtIdx: index('proposals_created_at_idx').on(table.createdAt),
   agencyIdx: index('proposals_agency_idx').on(table.agencyId),
   operatorIdx: index('proposals_operator_idx').on(table.operatorId),
+  funnelStatusIdx: index('proposals_funnel_status_idx').on(table.funnelId, table.funnelStageId, table.status, table.clientId),
 }));
 
 // Tabela de itens de propostas
@@ -221,14 +228,6 @@ export const clientsRelations = relations(clientsNew, ({ one, many }) => ({
   user: one(users, {
     fields: [clientsNew.userId],
     references: [users.id],
-  }),
-  funnel: one(salesFunnels, {
-    fields: [clientsNew.funnelId],
-    references: [salesFunnels.id],
-  }),
-  funnelStage: one(salesFunnelStages, {
-    fields: [clientsNew.funnelStageId],
-    references: [salesFunnelStages.id],
   }),
   interactions: many(clientInteractions),
   tasks: many(clientTasks),
@@ -297,6 +296,14 @@ export const proposalsRelations = relations(proposals, ({ one, many }) => ({
   operator: one(operators, {
     fields: [proposals.operatorId],
     references: [operators.id],
+  }),
+  funnel: one(salesFunnels, {
+    fields: [proposals.funnelId],
+    references: [salesFunnels.id],
+  }),
+  funnelStage: one(salesFunnelStages, {
+    fields: [proposals.funnelStageId],
+    references: [salesFunnelStages.id],
   }),
   items: many(proposalItems),
   statusHistory: many(proposalStatusHistory),

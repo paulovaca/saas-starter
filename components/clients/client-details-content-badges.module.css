@@ -4,6 +4,32 @@
   padding: 0.25rem 0.5rem;
 }
 
+/* Jornada Geral colors */
+.jornadaQualificacao {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+.jornadaNegociacao {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+
+.jornadaAtiva {
+  background-color: #d1fae5;
+  color: #047857;
+}
+
+.jornadaDormente {
+  background-color: #e5e7eb;
+  color: #6b7280;
+}
+
+.jornadaInativo {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
 /* Priority colors - replacing hardcoded Tailwind classes */
 .priorityHigh {
   background-color: var(--destructive);

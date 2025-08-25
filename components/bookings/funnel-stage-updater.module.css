@@ -1,0 +1,127 @@
+/* Funnel Stage Updater Component */
+.card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.cardHeader {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.cardTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.titleIcon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.cardContent {
+  padding: 1rem;
+}
+
+/* Display Mode */
+.displayMode {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.currentStage {
+  flex: 1;
+}
+
+.stageBadge {
+  display: inline-block;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #1f2937;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.editButton {
+  flex-shrink: 0;
+}
+
+/* Edit Mode */
+.editMode {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.formField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.formActions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.buttonIcon {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+.loading {
+  padding: 0.75rem;
+  text-align: center;
+  color: var(--muted-foreground);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+/* Stage Option in Select */
+.stageOption {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.stageColor {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* No Funnel State */
+.noFunnelContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+}
+
+.noFunnelIcon {
+  width: 3rem;
+  height: 3rem;
+  color: var(--muted-foreground);
+  margin-bottom: 1rem;
+}
+
+.noFunnelText {
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+  margin: 0;
+}

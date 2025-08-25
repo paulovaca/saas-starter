@@ -42,15 +42,8 @@ interface ClientData {
   city?: string;
   state?: string;
   userId: string;
-  funnel: {
-    id: string;
-    name: string;
-  } | null;
-  funnelStage: {
-    id: string;
-    name: string;
-    color: string;
-  } | null;
+  jornadaStage: 'em_qualificacao' | 'em_negociacao' | 'reserva_ativa' | 'lead_dormente' | 'inativo';
+  dealStatus: 'active' | 'dormant' | 'inactive';
   user: {
     id: string;
     name: string;
@@ -86,17 +79,17 @@ export default function ClientsPageContent({ searchParams }: ClientsPageContentP
   // Filtros com debounce
   const [searchTerm, setSearchTerm] = useState(searchParams?.search || '');
   const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout>();
-  const [selectedFunnel, setSelectedFunnel] = useState(searchParams?.funnelId || '');
-  const [selectedStage, setSelectedStage] = useState(searchParams?.funnelStageId || '');
   const [selectedUser, setSelectedUser] = useState(searchParams?.userId || '');
+  const [selectedJornadaStage, setSelectedJornadaStage] = useState(searchParams?.jornadaStage || '');
+  const [selectedDealStatus, setSelectedDealStatus] = useState(searchParams?.dealStatus || '');
 
   // Função para aplicar filtros
   const applyFilters = () => {
     const params = new URLSearchParams();
     if (searchTerm) params.set('search', searchTerm);
-    if (selectedFunnel) params.set('funnelId', selectedFunnel);
-    if (selectedStage) params.set('funnelStageId', selectedStage);
     if (selectedUser) params.set('userId', selectedUser);
+    if (selectedJornadaStage) params.set('jornadaStage', selectedJornadaStage);
+    if (selectedDealStatus) params.set('dealStatus', selectedDealStatus);
     if (currentPage > 1) params.set('page', currentPage.toString());
     
     router.push(`/clients?${params.toString()}`);
@@ -107,16 +100,16 @@ export default function ClientsPageContent({ searchParams }: ClientsPageContentP
     if (searchTimeout) clearTimeout(searchTimeout);
     
     if (searchTerm !== searchParams?.search ||
-        selectedFunnel !== searchParams?.funnelId ||
-        selectedStage !== searchParams?.funnelStageId ||
-        selectedUser !== searchParams?.userId) {
+        selectedUser !== searchParams?.userId ||
+        selectedJornadaStage !== searchParams?.jornadaStage ||
+        selectedDealStatus !== searchParams?.dealStatus) {
       setSearchTimeout(setTimeout(applyFilters, 500));
     }
     
     return () => {
       if (searchTimeout) clearTimeout(searchTimeout);
     };
-  }, [searchTerm, selectedFunnel, selectedStage, selectedUser]);
+  }, [searchTerm, selectedUser, selectedJornadaStage, selectedDealStatus]);
 
   // Função para buscar clientes
   const fetchClients = useCallback(async () => {
@@ -125,9 +118,9 @@ export default function ClientsPageContent({ searchParams }: ClientsPageContentP
       // Construir parâmetros da busca
       const params = new URLSearchParams();
       if (searchTerm) params.set('search', searchTerm);
-      if (selectedFunnel) params.set('funnelId', selectedFunnel);
-      if (selectedStage) params.set('funnelStageId', selectedStage);
       if (selectedUser) params.set('userId', selectedUser);
+      if (selectedJornadaStage) params.set('jornadaStage', selectedJornadaStage);
+      if (selectedDealStatus) params.set('dealStatus', selectedDealStatus);
       params.set('page', currentPage.toString());
       params.set('limit', '20');
 
@@ -150,15 +143,8 @@ export default function ClientsPageContent({ searchParams }: ClientsPageContentP
         documentNumber: client.documentNumber || '',
         city: client.city,
         state: client.state,
-        funnel: client.funnel ? {
-          id: client.funnel.id,
-          name: client.funnel.name
-        } : null,
-        funnelStage: client.funnelStage ? {
-          id: client.funnelStage.id,
-          name: client.funnelStage.name,
-          color: client.funnelStage.color || 'gray'
-        } : null,
+        jornadaStage: client.jornadaStage || 'em_qualificacao',
+        dealStatus: client.dealStatus || 'active',
         user: {
           id: client.user?.id || '',
           name: client.user?.name || 'Sem responsável'
@@ -185,7 +171,7 @@ export default function ClientsPageContent({ searchParams }: ClientsPageContentP
     } finally {
       setIsLoading(false);
     }
-  }, [searchTerm, selectedFunnel, selectedStage, selectedUser, currentPage]);
+  }, [searchTerm, selectedUser, selectedJornadaStage, selectedDealStatus, currentPage]);
 
   // Função para buscar dados de filtro
   const fetchFilterData = useCallback(async () => {
@@ -272,19 +258,38 @@ export default function ClientsPageContent({ searchParams }: ClientsPageContentP
     }
   };
 
-  // Função para obter classe CSS da cor
-  const getColorClass = (color: string) => {
-    const colorMap: Record<string, string> = {
-      blue: pageStyles.colorBlue,
-      green: pageStyles.colorGreen,
-      yellow: pageStyles.colorYellow,
-      red: pageStyles.colorRed,
-      purple: pageStyles.colorPurple,
-      gray: pageStyles.colorGray,
-      orange: pageStyles.colorOrange,
-      pink: pageStyles.colorPink,
+  // Função para obter classe CSS da cor baseada no stage
+  const getJornadaStageColor = (stage: string) => {
+    const stageColors: Record<string, string> = {
+      em_qualificacao: pageStyles.colorBlue,
+      em_negociacao: pageStyles.colorYellow,
+      reserva_ativa: pageStyles.colorGreen,
+      lead_dormente: pageStyles.colorOrange,
+      inativo: pageStyles.colorRed,
     };
-    return colorMap[color] || pageStyles.colorGray;
+    return stageColors[stage] || pageStyles.colorGray;
+  };
+
+  // Função para obter nome legível do stage
+  const getJornadaStageName = (stage: string) => {
+    const stageNames: Record<string, string> = {
+      em_qualificacao: 'Em Qualificação',
+      em_negociacao: 'Em Negociação', 
+      reserva_ativa: 'Reserva Ativa',
+      lead_dormente: 'Lead Dormente',
+      inativo: 'Inativo',
+    };
+    return stageNames[stage] || stage;
+  };
+
+  // Função para obter nome legível do deal status
+  const getDealStatusName = (status: string) => {
+    const statusNames: Record<string, string> = {
+      active: 'Ativo',
+      dormant: 'Dormente',
+      inactive: 'Inativo',
+    };
+    return statusNames[status] || status;
   };
 
   // Função para navegar para novo cliente
@@ -322,24 +327,26 @@ export default function ClientsPageContent({ searchParams }: ClientsPageContentP
   const renderFilters = () => {
     const dynamicFilters = [
       {
-        key: 'funnelId',
-        label: 'Todos os funis',
-        options: filterData.funnels.map(funnel => ({
-          value: funnel.id,
-          label: funnel.name
-        })),
-        defaultValue: selectedFunnel
+        key: 'jornadaStage',
+        label: 'Todas as etapas da jornada',
+        options: [
+          { value: 'em_qualificacao', label: 'Em Qualificação' },
+          { value: 'em_negociacao', label: 'Em Negociação' },
+          { value: 'reserva_ativa', label: 'Reserva Ativa' },
+          { value: 'lead_dormente', label: 'Lead Dormente' },
+          { value: 'inativo', label: 'Inativo' }
+        ],
+        defaultValue: selectedJornadaStage
       },
       {
-        key: 'funnelStageId',
-        label: 'Todas as etapas',
-        options: filterData.funnelStages
-          .filter(stage => !selectedFunnel || stage.funnelId === selectedFunnel)
-          .map(stage => ({
-            value: stage.id,
-            label: stage.name
-          })),
-        defaultValue: selectedStage
+        key: 'dealStatus',
+        label: 'Todos os status',
+        options: [
+          { value: 'active', label: 'Ativo' },
+          { value: 'dormant', label: 'Dormente' },
+          { value: 'inactive', label: 'Inativo' }
+        ],
+        defaultValue: selectedDealStatus
       }
     ];
 
@@ -348,7 +355,7 @@ export default function ClientsPageContent({ searchParams }: ClientsPageContentP
       dynamicFilters.push({
         key: 'userId',
         label: 'Todos os agentes',
-        options: filterData.users.map(user => ({
+        options: agencyUsers.map(user => ({
           value: user.id,
           label: user.name
         })),
@@ -363,8 +370,8 @@ export default function ClientsPageContent({ searchParams }: ClientsPageContentP
         defaultSearch={searchTerm}
         filters={dynamicFilters}
         onFiltersChange={(filters) => {
-          setSelectedFunnel(filters.funnelId || '');
-          setSelectedStage(filters.funnelStageId || '');
+          setSelectedJornadaStage(filters.jornadaStage || '');
+          setSelectedDealStatus(filters.dealStatus || '');
           setSelectedUser(filters.userId || '');
           setSearchTerm(filters.search || '');
         }}
@@ -381,8 +388,8 @@ export default function ClientsPageContent({ searchParams }: ClientsPageContentP
           <tr>
             <th>Cliente</th>
             <th>Contato</th>
-            <th>Funil</th>
-            <th>Etapa</th>
+            <th>Etapa da Jornada</th>
+            <th>Status do Deal</th>
             <th>Responsável</th>
             <th>Propostas</th>
             <th>Valor Total</th>
@@ -403,13 +410,13 @@ export default function ClientsPageContent({ searchParams }: ClientsPageContentP
                 {client.phone ? formatPhone(client.phone) : '-'}
               </td>
               <td className={styles.clientsTableCell}>
-                <Badge variant="outline" className={`${styles.clientStatus} ${styles.active} ${client.funnelStage?.color ? getColorClass(client.funnelStage.color) : ''}`}>
-                  {client.funnel?.name || 'Sem funil'}
+                <Badge variant="outline" className={`${styles.clientStatus} ${styles.active} ${getJornadaStageColor(client.jornadaStage)}`}>
+                  {getJornadaStageName(client.jornadaStage)}
                 </Badge>
               </td>
               <td className={styles.clientsTableCell}>
-                <Badge variant="outline" className={`${styles.clientStatus} ${styles.active} ${client.funnelStage?.color ? getColorClass(client.funnelStage.color) : ''}`}>
-                  {client.funnelStage?.name || 'Sem etapa'}
+                <Badge variant="outline" className={`${styles.clientStatus} ${styles.active}`}>
+                  {getDealStatusName(client.dealStatus)}
                 </Badge>
               </td>
               <td className={styles.clientsTableCell}>

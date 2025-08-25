@@ -275,9 +275,9 @@ export const clientSchema = z.object({
   addressCity: z.string().max(100, 'Cidade deve ter no máximo 100 caracteres').optional().or(z.literal('')),
   addressState: z.string().optional().or(z.literal('')),
   
-  // Campos de funil
-  funnelId: z.string().uuid('ID do funil deve ser um UUID válido').optional().or(z.literal('')),
-  funnelStageId: z.string().uuid('ID da etapa do funil deve ser um UUID válido').optional().or(z.literal('')),
+  // Jornada Geral - campos automaticamente gerenciados
+  jornadaStage: z.enum(['em_qualificacao', 'em_negociacao', 'reserva_ativa', 'lead_dormente', 'inativo']).default('em_qualificacao').optional(),
+  dealStatus: z.enum(['active', 'dormant', 'inactive']).default('active').optional(),
   
   notes: z.string().max(2000, 'Observações devem ter no máximo 2000 caracteres').optional().or(z.literal('')),
   
@@ -336,9 +336,8 @@ export const clientTransferSchema = z.object({
 // Schema para filtros de cliente
 export const clientFiltersSchema = z.object({
   search: z.string().max(255).optional(),
-  status: z.enum(['active', 'inactive', 'prospect', 'lost']).optional(),
-  funnelId: z.string().uuid().optional(),
-  funnelStageId: z.string().uuid().optional(),
+  jornadaStage: z.enum(['em_qualificacao', 'em_negociacao', 'reserva_ativa', 'lead_dormente', 'inativo']).optional(),
+  dealStatus: z.enum(['active', 'dormant', 'inactive']).optional(),
   userId: z.string().uuid().optional(),
   documentType: z.enum(['cpf', 'cnpj']).optional(),
   city: z.string().max(100).optional(),
@@ -383,8 +382,8 @@ export const clientUpdateSchema = z.object({
   addressNeighborhood: z.string().optional(),
   addressCity: z.string().optional(),
   addressState: z.string().optional(),
-  funnelId: z.string().uuid().optional(),
-  funnelStageId: z.string().uuid().optional(),
+  jornadaStage: z.enum(['em_qualificacao', 'em_negociacao', 'reserva_ativa', 'lead_dormente', 'inativo']).optional(),
+  dealStatus: z.enum(['active', 'dormant', 'inactive']).optional(),
   notes: z.string().optional(),
   isActive: z.boolean().optional()
 });

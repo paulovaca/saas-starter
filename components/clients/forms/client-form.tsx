@@ -31,6 +31,7 @@ const clientFormSchema = z.object({
   addressNeighborhood: z.string().optional(),
   addressCity: z.string().optional(),
   addressState: z.string().optional(),
+  jornadaStage: z.enum(['em_qualificacao', 'em_negociacao', 'reserva_ativa', 'lead_dormente', 'inativo']).optional(),
   notes: z.string().optional(),
   isActive: z.boolean(),
 });
@@ -88,6 +89,7 @@ export default function ClientForm({
       addressNeighborhood: initialData?.addressNeighborhood || '',
       addressCity: initialData?.addressCity || '',
       addressState: initialData?.addressState || '',
+      jornadaStage: initialData?.jornadaStage || 'em_qualificacao',
       notes: initialData?.notes || '',
       isActive: initialData?.isActive ?? true,
     },
@@ -501,6 +503,25 @@ export default function ClientForm({
           </CardTitle>
         </CardHeader>
         <CardContent className={styles.formCardContent}>
+          {/* Jornada Geral - apenas visualização */}
+          {initialData?.id && (
+            <div className={styles.formField}>
+              <Label>Jornada Geral</Label>
+              <div className={styles.jornadaStageDisplay}>
+                <span className={`${styles.jornadaBadge} ${styles[`jornada-${watch('jornadaStage')}`]}`}>
+                  {{
+                    'em_qualificacao': 'Em Qualificação',
+                    'em_negociacao': 'Em Negociação',
+                    'reserva_ativa': 'Reserva Ativa',
+                    'lead_dormente': 'Lead Dormente',
+                    'inativo': 'Inativo'
+                  }[watch('jornadaStage') as string]}
+                </span>
+                <small className={styles.jornadaHelp}>A Jornada Geral é atualizada automaticamente</small>
+              </div>
+            </div>
+          )}
+          
           <div className={styles.formField}>
             <Label htmlFor="notes">Observações</Label>
             <Textarea

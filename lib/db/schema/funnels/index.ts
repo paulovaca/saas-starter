@@ -6,10 +6,14 @@ import {
   timestamp,
   boolean,
   integer,
+  pgEnum,
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 import { agencies } from '../agency';
 import { users } from '../auth';
+
+// Enum para tipo de entidade nas transições
+export const entityTypeEnum = pgEnum('entity_type', ['proposal', 'booking']);
 
 // Funis de Venda
 export const salesFunnels = pgTable('sales_funnels', {
@@ -41,9 +45,10 @@ export const salesFunnelStages = pgTable('sales_funnel_stages', {
 // Transições entre etapas (para auditoria)
 export const stageTransitions = pgTable('stage_transitions', {
   id: uuid('id').primaryKey().defaultRandom(),
+  entityType: entityTypeEnum('entity_type').notNull(),
+  entityId: uuid('entity_id').notNull(),
   fromStageId: uuid('from_stage_id').references(() => salesFunnelStages.id),
   toStageId: uuid('to_stage_id').notNull().references(() => salesFunnelStages.id),
-  clientId: uuid('client_id').notNull(),
   userId: uuid('user_id').notNull().references(() => users.id),
   reason: text('reason'),
   createdAt: timestamp('created_at').notNull().defaultNow(),

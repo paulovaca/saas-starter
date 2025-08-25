@@ -8,6 +8,7 @@ export * from './catalog';
 export * from './operators';
 export * from './clients';
 export * from './bookings';
+export * from './views';
 
 // Import tables for relations
 import { users, passwordResetTokens, emailVerificationTokens, userInvitations, activeSessions } from './auth';

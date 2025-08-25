@@ -10,3 +10,5 @@ export * from './create-stage';
 export * from './update-stage';
 export * from './delete-stage';
 export * from './reorder-stages';
+export * from './funnel-utils';
+export * from './update-stage-manually';

@@ -21,6 +21,8 @@ export async function createBookingFromProposal(
       clientId: proposals.clientId,
       userId: proposals.userId,
       operatorId: proposals.operatorId,
+      funnelId: proposals.funnelId,
+      funnelStageId: proposals.funnelStageId,
       totalAmount: proposals.totalAmount,
       paymentMethod: proposals.paymentMethod,
       notes: proposals.notes,
@@ -63,6 +65,8 @@ export async function createBookingFromProposal(
     .values({
       proposalId: proposalId,
       agencyId: proposalData.agencyId,
+      funnelId: proposalData.funnelId,
+      funnelStageId: proposalData.funnelStageId, // Herda da proposta - pode ser alterado manualmente
       bookingNumber: bookingNumber,
       status: BOOKING_STATUS.PENDING_DOCUMENTS,
       notes: proposalData.notes,

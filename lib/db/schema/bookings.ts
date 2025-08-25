@@ -1,4 +1,4 @@
-import { pgTable, uuid, varchar, text, timestamp, pgEnum, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, uuid, varchar, text, timestamp, pgEnum, jsonb, index } from "drizzle-orm/pg-core";
 // import { relations } from "drizzle-orm";
 // import { proposals } from "./clients";
 // import { users } from "./users";
@@ -42,6 +42,8 @@ export const bookings = pgTable("bookings", {
   id: uuid("id").primaryKey().defaultRandom(),
   proposalId: uuid("proposal_id").notNull(), // .references(() => proposals.id),
   agencyId: uuid("agency_id").notNull(), // .references(() => agencies.id),
+  funnelId: uuid("funnel_id"),
+  funnelStageId: uuid("funnel_stage_id"),
   bookingNumber: varchar("booking_number", { length: 50 }).notNull().unique(),
   status: bookingStatusEnum("status").notNull().default("pending_documents"),
   notes: text("notes"),
@@ -54,7 +56,9 @@ export const bookings = pgTable("bookings", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
   createdBy: uuid("created_by").notNull() // .references(() => users.id)
-});
+}, (table) => ({
+  funnelIdx: index('bookings_funnel_idx').on(table.funnelId, table.funnelStageId, table.proposalId),
+}));
 
 // Histórico de mudanças de status
 export const bookingStatusHistory = pgTable("booking_status_history", {

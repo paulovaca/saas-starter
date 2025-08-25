@@ -2,7 +2,7 @@
 
 import { z } from 'zod';
 import { db } from '@/lib/db/drizzle';
-import { proposals, proposalStatusHistory } from '@/lib/db/schema/clients';
+import { proposals, proposalStatusHistory, clientsNew } from '@/lib/db/schema';
 import { getCurrentUser } from '@/lib/auth/session';
 import { createPermissionAction } from '@/lib/actions/action-wrapper';
 import { Permission } from '@/lib/auth/permissions';
@@ -188,11 +188,23 @@ async function executeStatusAutomations(
         break;
         
       case ProposalStatus.ACTIVE_BOOKING:
-        // ✅ AUTOMATICAMENTE criar reserva quando proposta vira active_travel
+        // ✅ AUTOMATICAMENTE criar reserva quando proposta vira active_booking
         console.log(`Criando reserva automaticamente para proposta ${proposalId}`);
         try {
           const bookingId = await createBookingFromProposal(proposalId, user.id);
           console.log(`🎉 Reserva criada automaticamente: ${bookingId}`);
+          
+          // Atualizar cliente para 'reserva_ativa' na Jornada Geral
+          await db.update(clientsNew)
+            .set({ 
+              jornadaStage: 'reserva_ativa',
+              updatedAt: new Date()
+            })
+            .where(and(
+              eq(clientsNew.id, currentProposal.clientId),
+              eq(clientsNew.agencyId, user.agencyId)
+            ));
+            
         } catch (bookingError) {
           console.error(`Erro ao criar reserva para proposta ${proposalId}:`, bookingError);
           // Não bloquear o fluxo principal se der erro na criação da reserva
