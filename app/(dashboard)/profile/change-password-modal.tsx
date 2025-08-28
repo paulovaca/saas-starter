@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { FormModal } from '@/components/ui/form-modal';
 import { Button } from '@/components/ui/button';
@@ -20,6 +20,7 @@ interface ChangePasswordModalProps {
 
 export function ChangePasswordModal({ user }: ChangePasswordModalProps) {
   const router = useRouter();
+  const formRef = useRef<HTMLFormElement>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [showPasswords, setShowPasswords] = useState({
@@ -42,9 +43,12 @@ export function ChangePasswordModal({ user }: ChangePasswordModalProps) {
   const handleSubmit = async () => {
     setMessage(null);
 
-    // Get form data from the DOM since FormModal doesn't pass the event
-    const form = document.querySelector('form') as HTMLFormElement;
-    const formData = new FormData(form);
+    if (!formRef.current) {
+      setMessage({ type: 'error', text: 'Erro ao processar formulário' });
+      return;
+    }
+
+    const formData = new FormData(formRef.current);
     
     const result = await changePassword(formData);
     
@@ -69,7 +73,7 @@ export function ChangePasswordModal({ user }: ChangePasswordModalProps) {
       submitLabel={isSubmitting ? 'Alterando...' : 'Alterar Senha'}
       size="md"
     >
-      <div className={styles.container}>
+      <form ref={formRef} className={styles.container}>
         <div>
           <Label htmlFor="currentPassword" className={styles.fieldLabel}>
             Senha Atual
@@ -169,7 +173,7 @@ export function ChangePasswordModal({ user }: ChangePasswordModalProps) {
             {message.text}
           </div>
         )}
-      </div>
+      </form>
     </FormModal>
   );
 }

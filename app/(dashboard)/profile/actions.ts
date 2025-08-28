@@ -44,8 +44,8 @@ export async function updateProfile(formData: FormData) {
     }
 
     const data = {
-      name: formData.get('name') as string,
-      email: formData.get('email') as string,
+      name: formData.get('name') as string || '',
+      email: formData.get('email') as string || '',
       phone: formData.get('phone') as string || undefined,
     };
 
@@ -76,9 +76,9 @@ export async function changePassword(formData: FormData) {
     }
 
     const data = {
-      currentPassword: formData.get('currentPassword') as string,
-      newPassword: formData.get('newPassword') as string,
-      confirmPassword: formData.get('confirmPassword') as string,
+      currentPassword: formData.get('currentPassword') as string || '',
+      newPassword: formData.get('newPassword') as string || '',
+      confirmPassword: formData.get('confirmPassword') as string || '',
     };
 
     const result = changePasswordSchema.safeParse(data);
@@ -94,11 +94,25 @@ export async function changePassword(formData: FormData) {
       return { error: 'Usuário não encontrado' };
     }
 
+    // Debug: log para verificar o que está sendo comparado
+    console.log('Verificando senha atual...');
+    console.log('ID do usuário:', session.user.id);
+    console.log('Usuário encontrado:', userData.user.email);
+    console.log('Senha enviada tem', result.data.currentPassword.length, 'caracteres');
+    console.log('Hash da senha armazenada:', userData.user.password?.substring(0, 10) + '...');
+
+    // Verificar se a senha está definida no banco
+    if (!userData.user.password) {
+      return { error: 'Usuário não tem senha definida. Entre em contato com o administrador.' };
+    }
+
     // Verificar senha atual
     const isCurrentPasswordValid = await comparePasswords(
       result.data.currentPassword,
       userData.user.password
     );
+
+    console.log('Senha válida?', isCurrentPasswordValid);
 
     if (!isCurrentPasswordValid) {
       return { error: 'Senha atual incorreta' };
@@ -127,7 +141,7 @@ export async function updateAvatar(formData: FormData) {
       return { error: 'Usuário não autenticado' };
     }
 
-    const avatarUrl = formData.get('avatarUrl') as string;
+    const avatarUrl = formData.get('avatarUrl') as string || '';
     
     if (!avatarUrl) {
       return { error: 'URL do avatar é obrigatória' };
