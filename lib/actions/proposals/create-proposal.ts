@@ -32,10 +32,17 @@ export const createProposal = createPermissionAction(
   createProposalSchema,
   Permission.PROPOSAL_CREATE,
   async (input, user) => {
+    console.log('📥 createProposal received input:', input);
+    console.log('📥 FunnelId received:', input.funnelId);
+    console.log('📥 FunnelStageId received:', input.funnelStageId);
+    console.log('📥 Full input object:', JSON.stringify(input, null, 2));
+    
     const { clientId, operatorId, funnelId, funnelStageId, validUntil, items, paymentMethod, notes } = input;
 
     // Validar se o funil existe e pertence à agência
     if (!funnelId) {
+      console.error('❌ FunnelId is missing or invalid:', funnelId);
+      console.error('❌ Full input at error:', input);
       throw new Error('Escolha um funil válido');
     }
 

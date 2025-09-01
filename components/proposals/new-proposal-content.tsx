@@ -32,11 +32,17 @@ export default function NewProposalContent() {
       try {
         const result = await getProposal({ proposalId: duplicateId });
         
+        console.log('📋 Raw proposal data from getProposal:', result.data);
+        console.log('📋 FunnelId:', result.data?.funnelId);
+        console.log('📋 FunnelStageId:', result.data?.funnelStageId);
+        
         if (result.success && result.data) {
           // Prepare data for duplication (remove IDs and status-specific fields)
           const proposalData = {
             clientId: result.data.clientId,
             operatorId: result.data.operatorId,
+            funnelId: result.data.funnelId,
+            funnelStageId: result.data.funnelStageId,
             validUntil: (() => {
               const date = new Date();
               date.setDate(date.getDate() + 30); // 30 days from now
@@ -59,6 +65,8 @@ export default function NewProposalContent() {
           
           console.log('🔄 Original proposal data:', result.data);
           console.log('🔄 Prepared duplication data:', proposalData);
+          console.log('🔄 FunnelId in prepared data:', proposalData.funnelId);
+          console.log('🔄 FunnelStageId in prepared data:', proposalData.funnelStageId);
           
           setDuplicateData(proposalData);
           setShowModal(true);
@@ -78,7 +86,10 @@ export default function NewProposalContent() {
 
   const handleCreateProposal = async (proposalData: any) => {
     try {
-      console.log('🚀 Creating proposal:', proposalData);
+      console.log('🚀 Creating proposal with data:', proposalData);
+      console.log('🚀 FunnelId being sent:', proposalData.funnelId);
+      console.log('🚀 FunnelStageId being sent:', proposalData.funnelStageId);
+      console.log('🚀 Full proposal object:', JSON.stringify(proposalData, null, 2));
       
       // Criar proposta no banco de dados
       const result = await createProposal(proposalData);

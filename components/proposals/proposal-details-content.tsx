@@ -31,6 +31,7 @@ import ProposalStatusBadge from '@/components/proposals/status/status-badge';
 import ProposalStatusActions from '@/components/proposals/status/status-actions';
 import ProposalTimeline from '@/components/proposals/status/status-timeline';
 import { CustomFieldsDisplay } from '@/components/proposals/custom-fields-display';
+import FunnelStageInfo from '@/components/proposals/funnel-stage-info';
 import styles from './proposal-details-content.module.css';
 
 interface ProposalDetailsContentProps {
@@ -62,6 +63,8 @@ export default function ProposalDetailsContent({ proposalId }: ProposalDetailsCo
           
           console.log('✅ Frontend: Setting proposal data:', {
             id: result.data.id,
+            funnelId: result.data.funnelId,
+            funnelStageId: result.data.funnelStageId,
             clientName: result.data.client?.name,
             operatorName: result.data.operator?.name,
             keys: Object.keys(result.data),
@@ -70,6 +73,8 @@ export default function ProposalDetailsContent({ proposalId }: ProposalDetailsCo
             hasOperator: !!result.data.operator,
             hasUser: !!result.data.user
           });
+          
+          console.log('🎯 Frontend: Full proposal object:', result.data);
           
           setProposal(result.data);
         } else {
@@ -252,6 +257,12 @@ export default function ProposalDetailsContent({ proposalId }: ProposalDetailsCo
               )}
             </CardContent>
           </Card>
+
+          {/* Funnel and Stage Information */}
+          <FunnelStageInfo 
+            funnelId={proposal.funnelId} 
+            funnelStageId={proposal.funnelStageId} 
+          />
 
           {/* Items Section */}
           <Card className={styles.itemsCard}>

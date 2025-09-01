@@ -34,6 +34,8 @@ export async function getProposalWithRelations(
         clientId: proposals.clientId,
         userId: proposals.userId,
         operatorId: proposals.operatorId,
+        funnelId: proposals.funnelId,
+        funnelStageId: proposals.funnelStageId,
         status: proposals.status,
         subtotal: proposals.subtotal,
         discountAmount: proposals.discountAmount,
@@ -78,6 +80,8 @@ export async function getProposalWithRelations(
     if (proposalData) {
       console.log('📋 Raw data preview:', {
         id: proposalData.id,
+        funnelId: proposalData.funnelId,
+        funnelStageId: proposalData.funnelStageId,
         clientName: proposalData.clientName,
         operatorName: proposalData.operatorName,
         userName: proposalData.userName
@@ -104,6 +108,8 @@ export async function getProposalWithRelations(
       clientId: proposalData.clientId,
       userId: proposalData.userId,
       operatorId: proposalData.operatorId,
+      funnelId: proposalData.funnelId,
+      funnelStageId: proposalData.funnelStageId,
       status: proposalData.status,
       subtotal: proposalData.subtotal,
       discountAmount: proposalData.discountAmount,
@@ -167,6 +173,15 @@ export async function getProposalWithRelations(
       userName: transformedProposal.user?.name,
       keys: Object.keys(transformedProposal)
     });
+    
+    console.log('🎯 Final proposal data being returned:', {
+      id: transformedProposal.id,
+      funnelId: transformedProposal.funnelId,
+      funnelStageId: transformedProposal.funnelStageId,
+      hasFunnelId: !!transformedProposal.funnelId,
+      hasFunnelStageId: !!transformedProposal.funnelStageId
+    });
+    
     return transformedProposal;
 
   } catch (error) {

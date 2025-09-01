@@ -16,7 +16,8 @@
       "Read(/h:\\Programação\\saas-starter/**)",
       "Read(/h:\\Programação\\saas-starter/**)",
       "Read(/h:\\Programação\\saas-starter/**)",
-      "mcp__puppeteer__puppeteer_click"
+      "mcp__puppeteer__puppeteer_click",
+      "Bash(ls:*)"
     ],
     "deny": []
   }

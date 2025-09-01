@@ -1,0 +1,336 @@
+.funnelCard {
+  background: hsl(var(--card));
+  color: hsl(var(--card-foreground));
+  border: 1px solid hsl(var(--border));
+  border-radius: calc(var(--radius) + 2px);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.cardTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+  font-weight: 600;
+  color: hsl(var(--foreground));
+}
+
+.titleIcon {
+  width: 20px;
+  height: 20px;
+  color: hsl(var(--primary));
+}
+
+.cardContent {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.loadingContent,
+.emptyContent,
+.errorContent {
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 120px;
+}
+
+.loadingText {
+  color: hsl(var(--muted-foreground));
+  font-size: 14px;
+}
+
+.emptyContent {
+  flex-direction: column;
+  gap: 12px;
+}
+
+.emptyIcon {
+  width: 32px;
+  height: 32px;
+  color: hsl(var(--muted-foreground));
+}
+
+.emptyText {
+  color: hsl(var(--muted-foreground));
+  font-size: 14px;
+  text-align: center;
+}
+
+.funnelInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.funnelName {
+  font-size: 16px;
+  font-weight: 600;
+  color: hsl(var(--foreground));
+}
+
+.funnelDescription {
+  font-size: 14px;
+  color: hsl(var(--muted-foreground));
+  line-height: 1.5;
+}
+
+.currentStage {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  background: hsl(var(--muted));
+  border-radius: var(--radius);
+  border: 1px solid hsl(var(--border));
+}
+
+.stageHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stageIcon {
+  width: 18px;
+  height: 18px;
+  color: hsl(var(--primary));
+}
+
+.stageLabel {
+  font-size: 14px;
+  font-weight: 500;
+  color: hsl(var(--muted-foreground));
+}
+
+.stageContent {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stageBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid hsl(var(--primary));
+  background: hsl(var(--primary) / 0.1);
+  color: hsl(var(--primary));
+  border-radius: calc(var(--radius) - 2px);
+  width: fit-content;
+}
+
+.stageDescription {
+  font-size: 14px;
+  color: hsl(var(--card-foreground));
+  line-height: 1.5;
+}
+
+.guidelines {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  background: hsl(var(--primary) / 0.05);
+  border-radius: var(--radius);
+  border: 1px solid hsl(var(--primary) / 0.2);
+}
+
+.guidelinesHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.guidelinesIcon {
+  width: 18px;
+  height: 18px;
+  color: hsl(var(--primary));
+}
+
+.guidelinesTitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: hsl(var(--primary));
+}
+
+.guidelinesContent {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.guidelineItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 14px;
+  color: hsl(var(--foreground));
+  line-height: 1.5;
+}
+
+.guidelineIcon {
+  width: 16px;
+  height: 16px;
+  color: hsl(var(--primary));
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.stageProgress {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.progressTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: hsl(var(--foreground));
+}
+
+.progressBar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  background: hsl(var(--secondary));
+  border-radius: var(--radius);
+  border: 1px solid hsl(var(--border));
+  overflow-x: auto;
+}
+
+.progressStep {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+  min-width: 90px;
+  padding: 0 8px;
+}
+
+.stepDot {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: hsl(var(--muted-foreground));
+  border: 2px solid hsl(var(--background));
+  position: relative;
+  z-index: 2;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.activeStep .stepDot {
+  width: 28px;
+  height: 28px;
+  background: hsl(var(--primary));
+  box-shadow: 0 0 0 4px hsl(var(--primary) / 0.1), var(--shadow-md);
+  border-color: hsl(var(--background));
+}
+
+.pastStep .stepDot {
+  background: hsl(var(--success)) !important;
+  border-color: hsl(var(--background));
+}
+
+.stepName {
+  font-size: 12px;
+  color: hsl(var(--muted-foreground));
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 90px;
+  font-weight: 500;
+}
+
+.activeStep .stepName {
+  font-weight: 600;
+  color: hsl(var(--foreground));
+}
+
+.pastStep .stepName {
+  color: hsl(var(--success));
+  font-weight: 500;
+}
+
+.stepConnector {
+  position: absolute;
+  top: 12px;
+  left: calc(100% - 8px);
+  width: calc(100% - 16px);
+  height: 2px;
+  background: hsl(var(--border));
+  z-index: 1;
+  transition: background-color 0.3s ease;
+}
+
+.pastStep .stepConnector {
+  background: hsl(var(--success));
+}
+
+.activeStep .stepConnector {
+  background: hsl(var(--primary) / 0.3);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .progressBar {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    gap: 4px;
+  }
+  
+  .progressStep {
+    min-width: 70px;
+    padding: 0 4px;
+  }
+
+  .stepName {
+    max-width: 70px;
+    font-size: 11px;
+  }
+
+  .guidelines {
+    padding: 12px;
+  }
+
+  .currentStage {
+    padding: 12px;
+  }
+}
+
+/* Dark theme specific adjustments */
+.dark .stepConnector {
+  background: hsl(var(--border));
+}
+
+.dark .pastStep .stepConnector {
+  background: hsl(var(--success));
+}
+
+.dark .progressBar {
+  background: hsl(var(--secondary));
+}
+
+/* Hover effects */
+.progressStep:hover .stepDot {
+  transform: scale(1.05);
+}
+
+.progressStep:hover .stepName {
+  color: hsl(var(--foreground));
+}
+
+/* Focus states for accessibility */
+.progressStep:focus-visible .stepDot {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}

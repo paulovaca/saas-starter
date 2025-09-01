@@ -7,7 +7,7 @@ import { eq, and, asc } from 'drizzle-orm';
 // GET /api/funnels/[funnelId]/stages - Buscar etapas de um funil específico
 export async function GET(
   request: NextRequest,
-  { params }: { params: { funnelId: string } }
+  { params }: { params: Promise<{ funnelId: string }> }
 ) {
   try {
     const session = await auth();
@@ -20,7 +20,7 @@ export async function GET(
       return NextResponse.json({ error: 'Usuário não pertence a nenhuma agência' }, { status: 403 });
     }
 
-    const { funnelId } = params;
+    const { funnelId } = await params;
 
     // Verificar se o funil pertence à agência do usuário
     const funnel = await db

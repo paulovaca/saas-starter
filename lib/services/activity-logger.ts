@@ -3,7 +3,7 @@ import { db } from '@/lib/db/drizzle';
 import { pgTable, uuid, text, timestamp, jsonb } from 'drizzle-orm/pg-core';
 
 // Create activity logs table schema (this would normally be in schema files)
-export const activityLogs = pgTable('activity_logs', {
+export const activityLogs = pgTable('activity_log', {
   id: uuid('id').primaryKey().defaultRandom(),
   userId: uuid('user_id').notNull(),
   agencyId: uuid('agency_id').notNull(),

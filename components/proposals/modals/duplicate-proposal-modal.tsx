@@ -65,8 +65,8 @@ export default function DuplicateProposalModal({
         toast.success(result.data.message);
         onClose();
         
-        // Redirecionar para a nova proposta
-        router.push(`/proposals/${result.data.newProposalId}/edit`);
+        // Redirecionar para a página de propostas ou detalhes da nova proposta
+        router.push(`/proposals/${result.data.newProposalId}`);
       } else {
         throw new Error('Erro ao duplicar proposta');
       }
